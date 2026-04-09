@@ -9,6 +9,7 @@
   --radius: 1.25rem;
   --max: 1180px;
   --shadow: 0 25px 50px -35px rgba(17, 14, 11, 0.5);
+  --easing-premium: cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 
 *,
@@ -27,6 +28,7 @@ body {
   color: var(--ink);
   background: radial-gradient(circle at 85% 15%, #efe9df, transparent 40%), var(--bg);
   line-height: 1.5;
+  overflow-x: clip;
 }
 
 img {
@@ -86,11 +88,32 @@ img {
   text-decoration: none;
   color: var(--ink);
   font-size: 0.94rem;
+  position: relative;
+  transition: color 350ms var(--easing-premium);
+}
+
+.nav-links a::after,
+.footer a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -0.18rem;
+  width: 100%;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 420ms var(--easing-premium);
 }
 
 .nav-links a:hover,
 .footer a:hover {
   color: var(--accent);
+}
+
+.nav-links a:hover::after,
+.footer a:hover::after {
+  transform: scaleX(1);
 }
 
 .menu-toggle {
@@ -106,11 +129,18 @@ img {
   padding: 0.76rem 1.28rem;
   font-size: 0.93rem;
   font-weight: 600;
-  transition: transform 220ms ease, background-color 220ms ease, color 220ms ease;
+  transition:
+    transform 360ms var(--easing-premium),
+    background-color 360ms var(--easing-premium),
+    border-color 360ms var(--easing-premium),
+    color 360ms var(--easing-premium),
+    box-shadow 360ms var(--easing-premium);
+  cursor: pointer;
 }
 
 .btn:hover {
-  transform: translateY(-1px);
+  transform: translateY(-2px);
+  box-shadow: 0 14px 30px -22px rgba(24, 21, 16, 0.7);
 }
 
 .btn-solid {
@@ -134,6 +164,32 @@ img {
 
 .hero {
   padding: 5.5rem 0 3rem;
+  position: relative;
+  isolation: isolate;
+}
+
+.hero::before,
+.hero::after {
+  content: "";
+  position: absolute;
+  inset: -2rem -3rem;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.hero::before {
+  background:
+    linear-gradient(90deg, color-mix(in srgb, var(--line) 25%, transparent) 1px, transparent 1px) 0 0 / 36px 36px,
+    linear-gradient(color-mix(in srgb, var(--line) 23%, transparent) 1px, transparent 1px) 0 0 / 36px 36px;
+  mask-image: radial-gradient(circle at 35% 25%, black 22%, transparent 78%);
+  opacity: 0.4;
+  animation: gridDrift 15s linear infinite;
+}
+
+.hero::after {
+  background: radial-gradient(circle at 25% 20%, rgba(123, 95, 71, 0.1), transparent 52%);
+  filter: blur(2px);
+  animation: glowPulse 8s ease-in-out infinite alternate;
 }
 
 .eyebrow,
@@ -172,6 +228,21 @@ h1 span {
   color: color-mix(in srgb, var(--ink) 82%, var(--accent) 18%);
 }
 
+.hero h1 .word {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(16px);
+  transition:
+    transform 460ms var(--easing-premium),
+    opacity 460ms var(--easing-premium);
+  transition-delay: calc(var(--word-index, 0) * 65ms + 220ms);
+}
+
+.hero.hero-is-ready h1 .word {
+  opacity: 1;
+  transform: translateY(0);
+}
+
 .lead {
   margin: 1.6rem 0 2.2rem;
   max-width: 56ch;
@@ -188,6 +259,8 @@ h1 span {
 .hero-visual {
   position: relative;
   min-height: 28rem;
+  transform: translate3d(0, var(--parallax-y, 0), 0);
+  will-change: transform;
 }
 
 .panel {
@@ -198,6 +271,7 @@ h1 span {
   padding: 1.45rem;
   box-shadow: var(--shadow);
   backdrop-filter: blur(3px);
+  transition: transform 500ms var(--easing-premium), box-shadow 500ms var(--easing-premium);
 }
 
 .panel strong {
@@ -230,6 +304,22 @@ h1 span {
 
 .section {
   padding: 6.5rem 0;
+  position: relative;
+  transition: opacity 500ms var(--easing-premium), filter 500ms var(--easing-premium);
+}
+
+.section::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.16), transparent 36%);
+  opacity: 0;
+  transition: opacity 450ms var(--easing-premium);
+  pointer-events: none;
+}
+
+.section:hover::before {
+  opacity: 1;
 }
 
 .statement {
@@ -265,12 +355,16 @@ h1 span {
   border: 1px solid var(--line);
   border-radius: var(--radius);
   padding: 1.75rem;
-  transition: border-color 250ms ease, transform 250ms ease;
+  transition:
+    border-color 420ms var(--easing-premium),
+    transform 420ms var(--easing-premium),
+    box-shadow 420ms var(--easing-premium);
 }
 
 .service-card:hover {
   border-color: color-mix(in srgb, var(--accent) 36%, var(--line));
-  transform: translateY(-4px);
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 22px 40px -34px rgba(26, 20, 13, 0.68);
 }
 
 .service-card h3 {
@@ -299,11 +393,13 @@ h1 span {
 
 .case-media {
   min-height: 13.5rem;
-  transition: transform 600ms ease;
+  transition: transform 560ms var(--easing-premium);
+  transform: translate3d(0, var(--parallax-y, 0), 0);
+  will-change: transform;
 }
 
 .case:hover .case-media {
-  transform: scale(1.03);
+  transform: translate3d(0, var(--parallax-y, 0), 0) scale(1.02);
 }
 
 .gradient-1 {
@@ -376,6 +472,12 @@ h1 span {
   display: grid;
   grid-template-columns: 12rem 1fr;
   gap: 1rem;
+  transition: transform 360ms var(--easing-premium), box-shadow 360ms var(--easing-premium);
+}
+
+.process-list li:hover {
+  transform: translateY(-2px) scale(1.01);
+  box-shadow: 0 16px 32px -28px rgba(24, 20, 13, 0.6);
 }
 
 .process-list strong {
@@ -395,6 +497,8 @@ h1 span {
   border-radius: calc(var(--radius) + 0.8rem);
   padding: clamp(2rem, 5vw, 4rem);
   box-shadow: var(--shadow);
+  transform: translate3d(0, var(--parallax-y, 0), 0);
+  will-change: transform;
 }
 
 .cta-inner h2 {
@@ -438,12 +542,52 @@ h1 span {
 .reveal {
   opacity: 0;
   transform: translateY(24px);
-  transition: transform 700ms cubic-bezier(0.2, 0.6, 0.2, 1), opacity 700ms ease;
+  transition:
+    transform 560ms var(--easing-premium),
+    opacity 560ms var(--easing-premium),
+    filter 560ms var(--easing-premium);
+  transition-delay: var(--reveal-delay, 0ms);
+  filter: blur(3px);
 }
 
 .reveal.is-visible {
   opacity: 1;
   transform: translateY(0);
+  filter: blur(0);
+}
+
+.hero-enter {
+  opacity: 0;
+  transform: translateY(12px) scale(0.985);
+  transition:
+    opacity 460ms var(--easing-premium),
+    transform 460ms var(--easing-premium);
+  transition-delay: var(--hero-delay, 0ms);
+}
+
+.hero.hero-is-ready .hero-enter {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+@keyframes gridDrift {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-22px, -18px, 0);
+  }
+}
+
+@keyframes glowPulse {
+  from {
+    opacity: 0.35;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0.62;
+    transform: scale(1.02);
+  }
 }
 
 @media (max-width: 960px) {
