@@ -11,7 +11,7 @@ const observer = new IntersectionObserver(
   },
   {
     threshold: 0.15,
-    rootMargin: '0px 0px -48px 0px',
+    rootMargin: '0px 0px -40px 0px',
   },
 );
 
@@ -34,35 +34,15 @@ if (menuToggle && navLinks) {
   });
 }
 
-const navbar = document.querySelector('.navbar');
 const panels = document.querySelectorAll('.panel');
-let ticking = false;
-
-const updateScrollEffects = () => {
-  const scrollY = window.scrollY;
-
-  if (navbar) {
-    navbar.classList.toggle('is-scrolled', scrollY > 16);
-  }
-
-  const offset = Math.min(scrollY * 0.055, 28);
-  panels.forEach((panel, index) => {
-    const depth = index + 1;
-    panel.style.transform = `translate3d(0, ${offset / depth}px, 0)`;
-  });
-
-  ticking = false;
-};
-
 window.addEventListener(
   'scroll',
   () => {
-    if (!ticking) {
-      window.requestAnimationFrame(updateScrollEffects);
-      ticking = true;
-    }
+    const offset = window.scrollY * 0.06;
+    panels.forEach((panel, index) => {
+      const depth = index + 1;
+      panel.style.transform = `translateY(${offset / depth}px)`;
+    });
   },
   { passive: true },
 );
-
-updateScrollEffects();
