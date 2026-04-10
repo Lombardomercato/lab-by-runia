@@ -5,7 +5,10 @@ const heroHeadline = document.querySelector('.hero h1');
 const heroLead = document.querySelector('.hero .lead');
 const heroActions = document.querySelector('.hero .hero-actions');
 const heroEyebrow = document.querySelector('.hero .eyebrow');
+const heroVisual = document.querySelector('.hero-visual');
+const heroLayers = document.querySelectorAll('.hero-layer');
 const parallaxElements = document.querySelectorAll('.hero-visual, .case-media, .cta-inner');
+const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 const splitWords = (element) => {
   if (!element || element.dataset.split === 'true') return;
@@ -102,3 +105,35 @@ window.addEventListener(
   },
   { passive: true },
 );
+
+if (heroVisual && heroLayers.length && !prefersReducedMotion) {
+  let rafId = null;
+
+  const updateLayers = (event) => {
+    const rect = heroVisual.getBoundingClientRect();
+    const relativeX = (event.clientX - rect.left) / rect.width - 0.5;
+    const relativeY = (event.clientY - rect.top) / rect.height - 0.5;
+
+    heroLayers.forEach((layer) => {
+      const depth = Number(layer.dataset.depth || 0.25);
+      layer.style.setProperty('--mx', `${relativeX * depth * 22}px`);
+      layer.style.setProperty('--my', `${relativeY * depth * 18}px`);
+      layer.style.setProperty('--rx', `${relativeY * depth * -4}deg`);
+      layer.style.setProperty('--ry', `${relativeX * depth * 5}deg`);
+    });
+  };
+
+  heroVisual.addEventListener('pointermove', (event) => {
+    if (rafId) cancelAnimationFrame(rafId);
+    rafId = requestAnimationFrame(() => updateLayers(event));
+  });
+
+  heroVisual.addEventListener('pointerleave', () => {
+    heroLayers.forEach((layer) => {
+      layer.style.setProperty('--mx', '0px');
+      layer.style.setProperty('--my', '0px');
+      layer.style.setProperty('--rx', '0deg');
+      layer.style.setProperty('--ry', '0deg');
+    });
+  });
+}

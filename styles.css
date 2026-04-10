@@ -258,35 +258,108 @@ h1 span {
 
 .hero-visual {
   position: relative;
-  min-height: 31rem;
-  border-radius: calc(var(--radius) + 0.55rem);
-  border: 1px solid rgba(96, 87, 77, 0.38);
-  overflow: hidden;
+  min-height: clamp(24rem, 48vw, 38rem);
+  perspective: 1400px;
   transform: translate3d(0, var(--parallax-y, 0), 0);
   will-change: transform;
-  box-shadow: 0 44px 58px -40px rgba(6, 5, 9, 0.9);
-  background: radial-gradient(circle at 28% 20%, rgba(72, 77, 100, 0.2), transparent 53%), #07080b;
+  isolation: isolate;
 }
 
-.hero-visual-canvas {
+.hero-layer {
   position: absolute;
-  inset: 0;
+  border-radius: clamp(0.8rem, 1.4vw, 1.4rem);
+  overflow: clip;
+  border: 1px solid rgba(133, 114, 93, 0.14);
+  box-shadow: 0 35px 60px -44px rgba(17, 14, 11, 0.9);
+  transform-style: preserve-3d;
+  transform: translate3d(var(--mx, 0), calc(var(--parallax-y, 0) + var(--my, 0)), 0)
+    rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+  transition: transform 900ms var(--easing-premium), box-shadow 700ms var(--easing-premium);
+  animation: heroFloat var(--float-duration, 13s) ease-in-out infinite;
+  animation-delay: var(--float-delay, 0s);
 }
 
-.hero-visual-canvas canvas {
+.hero-layer img {
   width: 100%;
   height: 100%;
-  display: block;
+  object-fit: cover;
 }
 
-.hero-visual-overlay {
+.layer-main {
+  right: -5%;
+  top: 10%;
+  width: min(72%, 31.5rem);
+  aspect-ratio: 1.53;
+  z-index: 6;
+  --float-duration: 14s;
+  --float-delay: -2s;
+}
+
+.layer-brand {
+  left: -4%;
+  top: -1%;
+  width: min(43%, 17rem);
+  aspect-ratio: 1.2;
+  z-index: 4;
+  opacity: 0.95;
+  --float-duration: 16s;
+  --float-delay: -8s;
+}
+
+.layer-system {
+  left: 2%;
+  bottom: 5%;
+  width: min(47%, 18.2rem);
+  aspect-ratio: 1.17;
+  z-index: 5;
+  --float-duration: 15s;
+  --float-delay: -5s;
+}
+
+.layer-mobile {
+  right: 3%;
+  bottom: -2%;
+  width: min(28%, 9.5rem);
+  aspect-ratio: 0.56;
+  z-index: 7;
+  --float-duration: 12s;
+  --float-delay: -7s;
+}
+
+.layer-abstract {
+  left: 6%;
+  top: 14%;
+  width: min(54%, 22rem);
+  aspect-ratio: 1.28;
+  z-index: 2;
+  mix-blend-mode: multiply;
+  opacity: 0.92;
+  --float-duration: 20s;
+}
+
+.layer-texture {
+  inset: -3% 12% 8% -10%;
+  border: none;
+  border-radius: 1.7rem;
+  box-shadow: none;
+  opacity: 0.34;
+  filter: saturate(0.82) contrast(0.95);
+  z-index: 1;
+  --float-duration: 24s;
+}
+
+.layer-texture img {
+  object-fit: cover;
+}
+
+.hero-visual::after {
+  content: "";
   position: absolute;
-  inset: 0;
+  inset: 13% 6% 8% 18%;
+  background: radial-gradient(circle at 50% 50%, rgba(12, 10, 8, 0.24), transparent 72%);
+  z-index: 0;
+  filter: blur(20px);
   pointer-events: none;
-  background:
-    linear-gradient(135deg, rgba(13, 15, 21, 0.42), transparent 45%),
-    radial-gradient(circle at 80% 14%, rgba(143, 150, 180, 0.18), transparent 48%),
-    radial-gradient(circle at 14% 88%, rgba(42, 54, 82, 0.28), transparent 52%);
 }
 
 .section {
@@ -577,6 +650,18 @@ h1 span {
   }
 }
 
+@keyframes heroFloat {
+  0%,
+  100% {
+    transform: translate3d(var(--mx, 0), calc(var(--parallax-y, 0) + var(--my, 0)), 0)
+      rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+  }
+  50% {
+    transform: translate3d(var(--mx, 0), calc(var(--parallax-y, 0) + var(--my, 0) - 8px), 0)
+      rotateX(calc(var(--rx, 0deg) + 0.4deg)) rotateY(calc(var(--ry, 0deg) - 0.4deg));
+  }
+}
+
 @media (max-width: 960px) {
   .nav-wrap {
     flex-wrap: wrap;
@@ -621,6 +706,28 @@ h1 span {
     min-height: 24rem;
   }
 
+  .layer-main {
+    right: -2%;
+    top: 17%;
+    width: 78%;
+  }
+
+  .layer-brand {
+    left: 0;
+    width: 46%;
+  }
+
+  .layer-system {
+    left: 1%;
+    bottom: 7%;
+    width: 49%;
+  }
+
+  .layer-mobile {
+    right: 0;
+    width: 30%;
+  }
+
   .services-grid {
     grid-template-columns: 1fr;
   }
@@ -655,6 +762,11 @@ h1 span {
 
   .cta-inner {
     border-radius: 1.2rem;
+  }
+
+  .layer-texture {
+    inset: 0;
+    opacity: 0.28;
   }
 }
 
