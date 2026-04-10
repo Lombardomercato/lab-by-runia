@@ -116,10 +116,10 @@ if (heroVisual && heroLayers.length && !prefersReducedMotion) {
 
     heroLayers.forEach((layer) => {
       const depth = Number(layer.dataset.depth || 0.25);
-      layer.style.setProperty('--mx', `${relativeX * depth * 22}px`);
-      layer.style.setProperty('--my', `${relativeY * depth * 18}px`);
-      layer.style.setProperty('--rx', `${relativeY * depth * -4}deg`);
-      layer.style.setProperty('--ry', `${relativeX * depth * 5}deg`);
+      layer.style.setProperty('--mx', `${relativeX * depth * 14}px`);
+      layer.style.setProperty('--my', `${relativeY * depth * 12}px`);
+      layer.style.setProperty('--rx', `${relativeY * depth * -2.8}deg`);
+      layer.style.setProperty('--ry', `${relativeX * depth * 3.2}deg`);
     });
   };
 

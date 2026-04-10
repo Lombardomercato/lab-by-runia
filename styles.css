@@ -204,8 +204,8 @@ img {
 
 .hero-grid {
   display: grid;
-  grid-template-columns: 1.2fr 1fr;
-  gap: 3.2rem;
+  grid-template-columns: 0.95fr 1.3fr;
+  gap: clamp(2.4rem, 5.5vw, 5.8rem);
   align-items: end;
 }
 
@@ -258,11 +258,12 @@ h1 span {
 
 .hero-visual {
   position: relative;
-  min-height: clamp(24rem, 48vw, 38rem);
+  min-height: clamp(27rem, 54vw, 43rem);
   perspective: 1400px;
   transform: translate3d(0, var(--parallax-y, 0), 0);
   will-change: transform;
   isolation: isolate;
+  margin-right: -4%;
 }
 
 .hero-layer {
@@ -272,8 +273,15 @@ h1 span {
   border: 1px solid rgba(133, 114, 93, 0.14);
   box-shadow: 0 35px 60px -44px rgba(17, 14, 11, 0.9);
   transform-style: preserve-3d;
-  transform: translate3d(var(--mx, 0), calc(var(--parallax-y, 0) + var(--my, 0)), 0)
-    rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+  transform: translate3d(
+      calc(var(--base-x, 0px) + var(--mx, 0px)),
+      calc(var(--base-y, 0px) + var(--parallax-y, 0px) + var(--my, 0px)),
+      var(--base-z, 0px)
+    )
+    rotateX(calc(var(--base-rx, 0deg) + var(--rx, 0deg)))
+    rotateY(calc(var(--base-ry, 0deg) + var(--ry, 0deg)))
+    rotateZ(var(--base-rz, 0deg))
+    scale(var(--base-scale, 1));
   transition: transform 900ms var(--easing-premium), box-shadow 700ms var(--easing-premium);
   animation: heroFloat var(--float-duration, 13s) ease-in-out infinite;
   animation-delay: var(--float-delay, 0s);
@@ -286,66 +294,96 @@ h1 span {
 }
 
 .layer-main {
-  right: -5%;
-  top: 10%;
-  width: min(72%, 31.5rem);
+  right: -11%;
+  top: 2%;
+  width: min(89%, 40rem);
   aspect-ratio: 1.53;
   z-index: 6;
+  --base-x: 0px;
+  --base-y: 0px;
+  --base-z: 90px;
+  --base-rx: 4.5deg;
+  --base-ry: -11deg;
+  --base-rz: 1.4deg;
   --float-duration: 14s;
   --float-delay: -2s;
 }
 
 .layer-brand {
-  left: -4%;
-  top: -1%;
-  width: min(43%, 17rem);
+  left: -15%;
+  top: -8%;
+  width: min(42%, 17.4rem);
   aspect-ratio: 1.2;
-  z-index: 4;
-  opacity: 0.95;
-  --float-duration: 16s;
+  z-index: 3;
+  opacity: 0.85;
+  --base-z: -40px;
+  --base-rx: 6deg;
+  --base-ry: 8deg;
+  --base-rz: -9deg;
+  --float-duration: 17s;
   --float-delay: -8s;
 }
 
 .layer-system {
-  left: 2%;
-  bottom: 5%;
-  width: min(47%, 18.2rem);
+  left: 9%;
+  bottom: 6%;
+  width: min(36%, 14rem);
   aspect-ratio: 1.17;
-  z-index: 5;
+  z-index: 7;
+  --base-z: 35px;
+  --base-rx: 2deg;
+  --base-ry: 13deg;
+  --base-rz: -4.5deg;
   --float-duration: 15s;
   --float-delay: -5s;
 }
 
 .layer-mobile {
-  right: 3%;
-  bottom: -2%;
-  width: min(28%, 9.5rem);
+  right: 8%;
+  bottom: -7%;
+  width: min(16%, 6.4rem);
   aspect-ratio: 0.56;
-  z-index: 7;
-  --float-duration: 12s;
+  z-index: 8;
+  opacity: 0.72;
+  --base-z: 18px;
+  --base-rx: -1.5deg;
+  --base-ry: -5deg;
+  --base-rz: 6deg;
+  --float-duration: 13s;
   --float-delay: -7s;
 }
 
 .layer-abstract {
-  left: 6%;
-  top: 14%;
-  width: min(54%, 22rem);
-  aspect-ratio: 1.28;
+  left: -6%;
+  top: 6%;
+  width: min(74%, 29rem);
+  aspect-ratio: 1.35;
   z-index: 2;
+  border: none;
+  box-shadow: none;
   mix-blend-mode: multiply;
-  opacity: 0.92;
-  --float-duration: 20s;
+  opacity: 0.44;
+  filter: blur(0.2px);
+  --base-z: -120px;
+  --base-rx: 2deg;
+  --base-ry: 4deg;
+  --base-rz: -5deg;
+  --float-duration: 24s;
 }
 
 .layer-texture {
-  inset: -3% 12% 8% -10%;
+  inset: -10% -16% -7% -20%;
   border: none;
-  border-radius: 1.7rem;
+  border-radius: 0;
   box-shadow: none;
-  opacity: 0.34;
-  filter: saturate(0.82) contrast(0.95);
-  z-index: 1;
-  --float-duration: 24s;
+  opacity: 0.2;
+  filter: saturate(0.72) contrast(0.9);
+  z-index: 0;
+  --base-z: -200px;
+  --base-rx: 0deg;
+  --base-ry: 0deg;
+  --base-rz: 0deg;
+  --float-duration: 30s;
 }
 
 .layer-texture img {
@@ -355,10 +393,10 @@ h1 span {
 .hero-visual::after {
   content: "";
   position: absolute;
-  inset: 13% 6% 8% 18%;
-  background: radial-gradient(circle at 50% 50%, rgba(12, 10, 8, 0.24), transparent 72%);
-  z-index: 0;
-  filter: blur(20px);
+  inset: 9% -2% -3% 15%;
+  background: radial-gradient(circle at 45% 40%, rgba(20, 16, 12, 0.3), transparent 72%);
+  z-index: 1;
+  filter: blur(28px);
   pointer-events: none;
 }
 
@@ -653,12 +691,26 @@ h1 span {
 @keyframes heroFloat {
   0%,
   100% {
-    transform: translate3d(var(--mx, 0), calc(var(--parallax-y, 0) + var(--my, 0)), 0)
-      rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+    transform: translate3d(
+        calc(var(--base-x, 0px) + var(--mx, 0px)),
+        calc(var(--base-y, 0px) + var(--parallax-y, 0px) + var(--my, 0px)),
+        var(--base-z, 0px)
+      )
+      rotateX(calc(var(--base-rx, 0deg) + var(--rx, 0deg)))
+      rotateY(calc(var(--base-ry, 0deg) + var(--ry, 0deg)))
+      rotateZ(var(--base-rz, 0deg))
+      scale(var(--base-scale, 1));
   }
   50% {
-    transform: translate3d(var(--mx, 0), calc(var(--parallax-y, 0) + var(--my, 0) - 8px), 0)
-      rotateX(calc(var(--rx, 0deg) + 0.4deg)) rotateY(calc(var(--ry, 0deg) - 0.4deg));
+    transform: translate3d(
+        calc(var(--base-x, 0px) + var(--mx, 0px)),
+        calc(var(--base-y, 0px) + var(--parallax-y, 0px) + var(--my, 0px) - 10px),
+        var(--base-z, 0px)
+      )
+      rotateX(calc(var(--base-rx, 0deg) + var(--rx, 0deg) + 0.35deg))
+      rotateY(calc(var(--base-ry, 0deg) + var(--ry, 0deg) - 0.35deg))
+      rotateZ(var(--base-rz, 0deg))
+      scale(var(--base-scale, 1));
   }
 }
 
@@ -703,29 +755,30 @@ h1 span {
   }
 
   .hero-visual {
-    min-height: 24rem;
+    min-height: 26rem;
+    margin-right: 0;
   }
 
   .layer-main {
-    right: -2%;
-    top: 17%;
-    width: 78%;
+    right: -14%;
+    top: 11%;
+    width: 90%;
   }
 
   .layer-brand {
-    left: 0;
-    width: 46%;
+    left: -10%;
+    width: 44%;
   }
 
   .layer-system {
-    left: 1%;
-    bottom: 7%;
-    width: 49%;
+    left: 8%;
+    bottom: 11%;
+    width: 38%;
   }
 
   .layer-mobile {
-    right: 0;
-    width: 30%;
+    right: 9%;
+    width: 17%;
   }
 
   .services-grid {
@@ -765,8 +818,8 @@ h1 span {
   }
 
   .layer-texture {
-    inset: 0;
-    opacity: 0.28;
+    inset: -5% -15%;
+    opacity: 0.18;
   }
 }
 
