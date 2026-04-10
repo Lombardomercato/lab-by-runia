@@ -92,16 +92,9 @@ if (menuToggle && navLinks) {
   });
 }
 
-const panels = document.querySelectorAll('.panel');
 window.addEventListener(
   'scroll',
   () => {
-    const offset = window.scrollY * 0.06;
-    panels.forEach((panel, index) => {
-      const depth = index + 1;
-      panel.style.transform = `translateY(${offset / depth}px)`;
-    });
-
     parallaxElements.forEach((element, index) => {
       const depth = (index + 2) * 0.015;
       const y = window.scrollY * depth;
