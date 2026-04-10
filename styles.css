@@ -574,6 +574,32 @@ h1 span {
   }
 }
 
+@keyframes heroFloat {
+  0%,
+  100% {
+    transform: translate3d(
+        calc(var(--base-x, 0px) + var(--mx, 0px)),
+        calc(var(--base-y, 0px) + var(--parallax-y, 0px) + var(--my, 0px)),
+        var(--base-z, 0px)
+      )
+      rotateX(calc(var(--base-rx, 0deg) + var(--rx, 0deg)))
+      rotateY(calc(var(--base-ry, 0deg) + var(--ry, 0deg)))
+      rotateZ(var(--base-rz, 0deg))
+      scale(var(--base-scale, 1));
+  }
+  50% {
+    transform: translate3d(
+        calc(var(--base-x, 0px) + var(--mx, 0px)),
+        calc(var(--base-y, 0px) + var(--parallax-y, 0px) + var(--my, 0px) - 10px),
+        var(--base-z, 0px)
+      )
+      rotateX(calc(var(--base-rx, 0deg) + var(--rx, 0deg) + 0.35deg))
+      rotateY(calc(var(--base-ry, 0deg) + var(--ry, 0deg) - 0.35deg))
+      rotateZ(var(--base-rz, 0deg))
+      scale(var(--base-scale, 1));
+  }
+}
+
 @media (max-width: 960px) {
   .nav-wrap {
     flex-wrap: wrap;
