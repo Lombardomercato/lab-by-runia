@@ -58,24 +58,7 @@
             </div>
           </div>
           <div class="hero-visual reveal" aria-hidden="true">
-            <div class="hero-layer layer-abstract" data-depth="0.05">
-              <img src="assets/hero/hero-abstract.webp" alt="" loading="lazy" />
-            </div>
-            <div class="hero-layer layer-texture" data-depth="0.03">
-              <img src="assets/hero/hero-texture.webp" alt="" loading="lazy" />
-            </div>
-            <div class="hero-layer layer-brand" data-depth="0.2">
-              <img src="assets/hero/hero-brand.webp" alt="" loading="lazy" />
-            </div>
-            <div class="hero-layer layer-system" data-depth="0.28">
-              <img src="assets/hero/hero-system.webp" alt="" loading="lazy" />
-            </div>
-            <div class="hero-layer layer-main" data-depth="0.4">
-              <img src="assets/hero/hero-main.webp" alt="" loading="eager" />
-            </div>
-            <div class="hero-layer layer-mobile" data-depth="0.45">
-              <img src="assets/hero/hero-mobile.webp" alt="" loading="lazy" />
-            </div>
+            <div class="hero-canvas" id="hero-canvas"></div>
           </div>
         </div>
       </section>
@@ -210,6 +193,7 @@
       </div>
     </footer>
 
+    <script type="module" src="hero3d.js"></script>
     <script src="script.js"></script>
     <script type="module" src="hero-scene.js"></script>
   </body>
