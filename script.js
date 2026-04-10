@@ -5,7 +5,10 @@ const heroHeadline = document.querySelector('.hero h1');
 const heroLead = document.querySelector('.hero .lead');
 const heroActions = document.querySelector('.hero .hero-actions');
 const heroEyebrow = document.querySelector('.hero .eyebrow');
+const heroVisual = document.querySelector('.hero-visual');
+const heroLayers = document.querySelectorAll('.hero-layer');
 const parallaxElements = document.querySelectorAll('.hero-visual, .case-media, .cta-inner');
+const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 const splitWords = (element) => {
   if (!element) return;
@@ -92,16 +95,9 @@ if (menuToggle && navLinks) {
   });
 }
 
-const panels = document.querySelectorAll('.panel');
 window.addEventListener(
   'scroll',
   () => {
-    const offset = window.scrollY * 0.06;
-    panels.forEach((panel, index) => {
-      const depth = index + 1;
-      panel.style.transform = `translateY(${offset / depth}px)`;
-    });
-
     parallaxElements.forEach((element, index) => {
       const depth = (index + 2) * 0.015;
       const y = window.scrollY * depth;
@@ -110,3 +106,35 @@ window.addEventListener(
   },
   { passive: true },
 );
+
+if (heroVisual && heroLayers.length && !prefersReducedMotion) {
+  let rafId = null;
+
+  const updateLayers = (event) => {
+    const rect = heroVisual.getBoundingClientRect();
+    const relativeX = (event.clientX - rect.left) / rect.width - 0.5;
+    const relativeY = (event.clientY - rect.top) / rect.height - 0.5;
+
+    heroLayers.forEach((layer) => {
+      const depth = Number(layer.dataset.depth || 0.25);
+      layer.style.setProperty('--mx', `${relativeX * depth * 14}px`);
+      layer.style.setProperty('--my', `${relativeY * depth * 12}px`);
+      layer.style.setProperty('--rx', `${relativeY * depth * -2.8}deg`);
+      layer.style.setProperty('--ry', `${relativeX * depth * 3.2}deg`);
+    });
+  };
+
+  heroVisual.addEventListener('pointermove', (event) => {
+    if (rafId) cancelAnimationFrame(rafId);
+    rafId = requestAnimationFrame(() => updateLayers(event));
+  });
+
+  heroVisual.addEventListener('pointerleave', () => {
+    heroLayers.forEach((layer) => {
+      layer.style.setProperty('--mx', '0px');
+      layer.style.setProperty('--my', '0px');
+      layer.style.setProperty('--rx', '0deg');
+      layer.style.setProperty('--ry', '0deg');
+    });
+  });
+}
