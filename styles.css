@@ -258,48 +258,35 @@ h1 span {
 
 .hero-visual {
   position: relative;
-  min-height: 28rem;
+  min-height: 31rem;
+  border-radius: calc(var(--radius) + 0.55rem);
+  border: 1px solid rgba(96, 87, 77, 0.38);
+  overflow: hidden;
   transform: translate3d(0, var(--parallax-y, 0), 0);
   will-change: transform;
+  box-shadow: 0 44px 58px -40px rgba(6, 5, 9, 0.9);
+  background: radial-gradient(circle at 28% 20%, rgba(72, 77, 100, 0.2), transparent 53%), #07080b;
 }
 
-.panel {
+.hero-visual-canvas {
   position: absolute;
-  background: linear-gradient(155deg, rgba(255, 255, 255, 0.82), rgba(246, 241, 233, 0.58));
-  border: 1px solid rgba(133, 114, 93, 0.2);
-  border-radius: var(--radius);
-  padding: 1.45rem;
-  box-shadow: var(--shadow);
-  backdrop-filter: blur(3px);
-  transition: transform 500ms var(--easing-premium), box-shadow 500ms var(--easing-premium);
+  inset: 0;
 }
 
-.panel strong {
+.hero-visual-canvas canvas {
+  width: 100%;
+  height: 100%;
   display: block;
-  font-family: "Syne", sans-serif;
-  font-size: 1.55rem;
-  margin: 0.3rem 0;
 }
 
-.panel p {
-  margin: 0;
-  color: var(--muted);
-  font-size: 0.95rem;
-}
-
-.panel-a {
-  inset: 0 auto auto 0;
-  width: min(21rem, 72%);
-}
-
-.panel-b {
-  inset: 31% 0 auto auto;
-  width: min(18rem, 64%);
-}
-
-.panel-c {
-  inset: auto auto 0 9%;
-  width: min(20rem, 72%);
+.hero-visual-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(135deg, rgba(13, 15, 21, 0.42), transparent 45%),
+    radial-gradient(circle at 80% 14%, rgba(143, 150, 180, 0.18), transparent 48%),
+    radial-gradient(circle at 14% 88%, rgba(42, 54, 82, 0.28), transparent 52%);
 }
 
 .section {
@@ -631,22 +618,7 @@ h1 span {
   }
 
   .hero-visual {
-    min-height: 22rem;
-  }
-
-  .panel-a {
-    width: 83%;
-  }
-
-  .panel-b {
-    top: 33%;
-    width: 74%;
-  }
-
-  .panel-c {
-    left: auto;
-    right: 0;
-    width: 83%;
+    min-height: 24rem;
   }
 
   .services-grid {
