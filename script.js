@@ -11,8 +11,8 @@ const parallaxElements = document.querySelectorAll('.hero-visual, .case-media, .
 const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 const splitWords = (element) => {
-  if (!element) return;
-  if (element.dataset.split === 'true') return;
+  if (!element || element.dataset.split === 'true') return;
+
   const text = element.textContent?.trim() ?? '';
   if (!text) return;
 
@@ -50,10 +50,9 @@ setRevealSequence();
 const observer = new IntersectionObserver(
   (entries) => {
     entries.forEach((entry) => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('is-visible');
-        observer.unobserve(entry.target);
-      }
+      if (!entry.isIntersecting) return;
+      entry.target.classList.add('is-visible');
+      observer.unobserve(entry.target);
     });
   },
   {
