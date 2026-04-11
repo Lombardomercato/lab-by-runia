@@ -5,7 +5,7 @@ const heroHeadline = document.querySelector('.hero h1');
 const heroLead = document.querySelector('.hero .lead');
 const heroActions = document.querySelector('.hero .hero-actions');
 const heroEyebrow = document.querySelector('.hero .eyebrow');
-const parallaxElements = document.querySelectorAll('.hero-visual, .case-media, .cta-inner');
+const parallaxElements = document.querySelectorAll('.case-media, .cta-inner');
 
 const splitWords = (element) => {
   if (!element) return;
@@ -77,6 +77,9 @@ if (hero) {
 
 const menuToggle = document.querySelector('.menu-toggle');
 const navLinks = document.querySelector('.nav-links');
+const panels = document.querySelectorAll('.panel');
+const heroVisual = document.querySelector('.hero-visual');
+const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 
 if (menuToggle && navLinks) {
   menuToggle.addEventListener('click', () => {
@@ -92,16 +95,9 @@ if (menuToggle && navLinks) {
   });
 }
 
-const panels = document.querySelectorAll('.panel');
 window.addEventListener(
   'scroll',
   () => {
-    const offset = window.scrollY * 0.06;
-    panels.forEach((panel, index) => {
-      const depth = index + 1;
-      panel.style.transform = `translateY(${offset / depth}px)`;
-    });
-
     parallaxElements.forEach((element, index) => {
       const depth = (index + 2) * 0.015;
       const y = window.scrollY * depth;
@@ -110,3 +106,68 @@ window.addEventListener(
   },
   { passive: true },
 );
+
+if (heroVisual && panels.length > 0 && !prefersReducedMotion.matches) {
+  const pointer = { x: 0, y: 0, targetX: 0, targetY: 0 };
+  let animationFrameId = 0;
+
+  const floatConfigs = Array.from(panels).map((panel, index) => ({
+    node: panel,
+    intensity: Number(panel.dataset.intensity) || 0.65,
+    amplitude: 3 + index * 2,
+    duration: 7600 + index * 900,
+    phase: index * 1.6,
+  }));
+
+  const animatePanels = (time) => {
+    pointer.x += (pointer.targetX - pointer.x) * 0.08;
+    pointer.y += (pointer.targetY - pointer.y) * 0.08;
+
+    floatConfigs.forEach(({ node, intensity, amplitude, duration, phase }) => {
+      const cycle = ((time % duration) / duration) * Math.PI * 2;
+      const floatY = Math.sin(cycle + phase) * amplitude;
+      const moveX = pointer.x * (10 * intensity);
+      const moveY = pointer.y * (8 * intensity);
+      const rotateY = pointer.x * (1.8 * intensity);
+      const rotateX = pointer.y * (-1.6 * intensity);
+
+      node.style.setProperty('--float-y', `${floatY.toFixed(2)}px`);
+      node.style.setProperty('--mx', `${moveX.toFixed(2)}px`);
+      node.style.setProperty('--my', `${moveY.toFixed(2)}px`);
+      node.style.setProperty('--rx', `${rotateX.toFixed(2)}deg`);
+      node.style.setProperty('--ry', `${rotateY.toFixed(2)}deg`);
+    });
+
+    animationFrameId = requestAnimationFrame(animatePanels);
+  };
+
+  const onMouseMove = (event) => {
+    const bounds = heroVisual.getBoundingClientRect();
+    const normalizedX = (event.clientX - bounds.left) / bounds.width - 0.5;
+    const normalizedY = (event.clientY - bounds.top) / bounds.height - 0.5;
+    pointer.targetX = Math.max(-1, Math.min(1, normalizedX));
+    pointer.targetY = Math.max(-1, Math.min(1, normalizedY));
+  };
+
+  const onMouseLeave = () => {
+    pointer.targetX = 0;
+    pointer.targetY = 0;
+  };
+
+  heroVisual.addEventListener('mousemove', onMouseMove);
+  heroVisual.addEventListener('mouseleave', onMouseLeave);
+  animationFrameId = requestAnimationFrame(animatePanels);
+
+  prefersReducedMotion.addEventListener('change', (event) => {
+    if (event.matches && animationFrameId) {
+      cancelAnimationFrame(animationFrameId);
+      panels.forEach((panel) => {
+        panel.style.removeProperty('--float-y');
+        panel.style.removeProperty('--mx');
+        panel.style.removeProperty('--my');
+        panel.style.removeProperty('--rx');
+        panel.style.removeProperty('--ry');
+      });
+    }
+  });
+}
