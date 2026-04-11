@@ -36,6 +36,10 @@ class HeroTextureDebugScene {
       'assets/hero/hero-main.png',
       (texture) => {
         texture.colorSpace = THREE.SRGBColorSpace;
+        texture.wrapS = THREE.ClampToEdgeWrapping;
+        texture.wrapT = THREE.ClampToEdgeWrapping;
+        texture.repeat.set(1, 1);
+        texture.offset.set(0, 0);
 
         const imageWidth = texture.image?.width ?? 1;
         const imageHeight = texture.image?.height ?? 1;
@@ -44,10 +48,9 @@ class HeroTextureDebugScene {
         const planeHeight = 2;
         const planeWidth = planeHeight * aspectRatio;
 
-        const geometry = new THREE.PlaneGeometry(planeWidth, planeHeight, 1, 1);
+        const geometry = new THREE.PlaneGeometry(planeWidth, planeHeight);
         const material = new THREE.MeshBasicMaterial({
           map: texture,
-          transparent: true,
         });
 
         this.mesh = new THREE.Mesh(geometry, material);
