@@ -5,12 +5,11 @@ const heroHeadline = document.querySelector('.hero h1');
 const heroLead = document.querySelector('.hero .lead');
 const heroActions = document.querySelector('.hero .hero-actions');
 const heroEyebrow = document.querySelector('.hero .eyebrow');
-const heroVisual = document.querySelector('.hero-visual');
 const parallaxElements = document.querySelectorAll('.hero-visual, .case-media, .cta-inner');
 
 const splitWords = (element) => {
-  if (!element || element.dataset.split === 'true') return;
-
+  if (!element) return;
+  if (element.dataset.split === 'true') return;
   const text = element.textContent?.trim() ?? '';
   if (!text) return;
 
@@ -48,9 +47,10 @@ setRevealSequence();
 const observer = new IntersectionObserver(
   (entries) => {
     entries.forEach((entry) => {
-      if (!entry.isIntersecting) return;
-      entry.target.classList.add('is-visible');
-      observer.unobserve(entry.target);
+      if (entry.isIntersecting) {
+        entry.target.classList.add('is-visible');
+        observer.unobserve(entry.target);
+      }
     });
   },
   {
@@ -92,9 +92,16 @@ if (menuToggle && navLinks) {
   });
 }
 
+const panels = document.querySelectorAll('.panel');
 window.addEventListener(
   'scroll',
   () => {
+    const offset = window.scrollY * 0.06;
+    panels.forEach((panel, index) => {
+      const depth = index + 1;
+      panel.style.transform = `translateY(${offset / depth}px)`;
+    });
+
     parallaxElements.forEach((element, index) => {
       const depth = (index + 2) * 0.015;
       const y = window.scrollY * depth;
@@ -103,5 +110,3 @@ window.addEventListener(
   },
   { passive: true },
 );
-
-
