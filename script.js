@@ -77,7 +77,7 @@ if (hero) {
 
 const menuToggle = document.querySelector('.menu-toggle');
 const navLinks = document.querySelector('.nav-links');
-const panels = document.querySelectorAll('.panel');
+const heroCards = document.querySelectorAll('.hero-card');
 const heroVisual = document.querySelector('.hero-visual');
 const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 
@@ -107,146 +107,80 @@ window.addEventListener(
   { passive: true },
 );
 
-if (heroVisual && panels.length > 0) {
+if (heroVisual && heroCards.length > 0) {
   const pointer = { x: 0, y: 0, inside: false };
-  const dragState = {
-    card: null,
-    startPointerX: 0,
-    startPointerY: 0,
-    startDragX: 0,
-    startDragY: 0,
-  };
   let animationFrameId = 0;
 
-  const panelStates = Array.from(panels).map((panel, index) => ({
-    node: panel,
-    intensity: Number(panel.dataset.intensity) || 0.65,
-    amplitude: 3 + index * 2,
-    duration: 7600 + index * 900,
-    phase: index * 1.6,
-    dragX: 0,
-    dragY: 0,
+  const cardStates = Array.from(heroCards).map((card, index) => ({
+    node: card,
+    intensity: Number(card.dataset.intensity) || 0.65,
+    amplitude: Number(card.dataset.amplitude) || 4 + index,
+    duration: Number(card.dataset.duration) || 7000 + index * 1200,
+    phase: Number(card.dataset.phase) || index * 1.5,
     hoverX: 0,
     hoverY: 0,
     rotateX: 0,
     rotateY: 0,
   }));
 
-  const clampDrag = (state, nextX, nextY) => {
-    const heroBounds = heroVisual.getBoundingClientRect();
-    const cardBounds = state.node.getBoundingClientRect();
-    const baseLeft = state.node.offsetLeft;
-    const baseTop = state.node.offsetTop;
-    const minVisibleX = cardBounds.width * 0.35;
-    const minVisibleY = cardBounds.height * 0.35;
-
-    const minX = -baseLeft - cardBounds.width + minVisibleX;
-    const maxX = heroBounds.width - baseLeft - minVisibleX;
-    const minY = -baseTop - cardBounds.height + minVisibleY;
-    const maxY = heroBounds.height - baseTop - minVisibleY;
-
-    return {
-      x: Math.min(maxX, Math.max(minX, nextX)),
-      y: Math.min(maxY, Math.max(minY, nextY)),
-    };
-  };
-
-  const animatePanels = (time) => {
+  const animateCards = (time) => {
     const heroBounds = heroVisual.getBoundingClientRect();
 
-    panelStates.forEach((state) => {
-      const { node, intensity, amplitude, duration, phase, dragX, dragY } = state;
-      const cycle = ((time % duration) / duration) * Math.PI * 2;
-      const floatY = Math.sin(cycle + phase) * amplitude;
-      const cardBounds = node.getBoundingClientRect();
+    cardStates.forEach((state) => {
+      const cycle = ((time % state.duration) / state.duration) * Math.PI * 2;
+      const floatY = Math.sin(cycle + state.phase) * state.amplitude;
+      const cardBounds = state.node.getBoundingClientRect();
 
       let targetHoverX = 0;
       let targetHoverY = 0;
       if (pointer.inside) {
         const centerX = cardBounds.left + cardBounds.width / 2;
         const centerY = cardBounds.top + cardBounds.height / 2;
-        const relativeX = (pointer.x - centerX) / heroBounds.width;
-        const relativeY = (pointer.y - centerY) / heroBounds.height;
-        targetHoverX = Math.max(-1, Math.min(1, relativeX));
-        targetHoverY = Math.max(-1, Math.min(1, relativeY));
+        targetHoverX = Math.max(-1, Math.min(1, (pointer.x - centerX) / heroBounds.width));
+        targetHoverY = Math.max(-1, Math.min(1, (pointer.y - centerY) / heroBounds.height));
       }
 
       state.hoverX += (targetHoverX - state.hoverX) * 0.1;
       state.hoverY += (targetHoverY - state.hoverY) * 0.1;
-      state.rotateY += (state.hoverX * (1.4 * intensity) - state.rotateY) * 0.14;
-      state.rotateX += (state.hoverY * (-1.3 * intensity) - state.rotateX) * 0.14;
+      state.rotateY += (state.hoverX * (1.2 * state.intensity) - state.rotateY) * 0.14;
+      state.rotateX += (state.hoverY * (-1.1 * state.intensity) - state.rotateX) * 0.14;
 
-      const moveX = state.hoverX * (12 * intensity);
-      const moveY = state.hoverY * (9 * intensity);
+      const moveX = state.hoverX * (11 * state.intensity);
+      const moveY = state.hoverY * (8 * state.intensity);
 
-      node.style.setProperty('--float-y', `${floatY.toFixed(2)}px`);
-      node.style.setProperty('--drag-x', `${dragX.toFixed(2)}px`);
-      node.style.setProperty('--drag-y', `${dragY.toFixed(2)}px`);
-      node.style.setProperty('--mx', `${moveX.toFixed(2)}px`);
-      node.style.setProperty('--my', `${moveY.toFixed(2)}px`);
-      node.style.setProperty('--rx', `${state.rotateX.toFixed(2)}deg`);
-      node.style.setProperty('--ry', `${state.rotateY.toFixed(2)}deg`);
+      state.node.style.setProperty('--float-y', `${floatY.toFixed(2)}px`);
+      state.node.style.setProperty('--mx', `${moveX.toFixed(2)}px`);
+      state.node.style.setProperty('--my', `${moveY.toFixed(2)}px`);
+      state.node.style.setProperty('--rx', `${state.rotateX.toFixed(2)}deg`);
+      state.node.style.setProperty('--ry', `${state.rotateY.toFixed(2)}deg`);
     });
 
-    animationFrameId = requestAnimationFrame(animatePanels);
+    animationFrameId = requestAnimationFrame(animateCards);
   };
 
-  const onHeroMove = (event) => {
+  heroVisual.addEventListener('mousemove', (event) => {
     pointer.x = event.clientX;
     pointer.y = event.clientY;
     pointer.inside = true;
-  };
-
-  const onHeroLeave = () => {
-    pointer.inside = false;
-  };
-
-  const onPointerMove = (event) => {
-    if (!dragState.card) return;
-
-    const state = panelStates.find((item) => item.node === dragState.card);
-    if (!state) return;
-
-    const rawX = dragState.startDragX + (event.clientX - dragState.startPointerX);
-    const rawY = dragState.startDragY + (event.clientY - dragState.startPointerY);
-    const clamped = clampDrag(state, rawX, rawY);
-    state.dragX = clamped.x;
-    state.dragY = clamped.y;
-    state.node.style.setProperty('--drag-x', `${state.dragX.toFixed(2)}px`);
-    state.node.style.setProperty('--drag-y', `${state.dragY.toFixed(2)}px`);
-  };
-
-  const stopDragging = () => {
-    if (!dragState.card) return;
-    dragState.card.classList.remove('is-dragging');
-    dragState.card = null;
-  };
-
-  panelStates.forEach((state) => {
-    state.node.addEventListener('mousedown', (event) => {
-      event.preventDefault();
-      dragState.card = state.node;
-      dragState.startPointerX = event.clientX;
-      dragState.startPointerY = event.clientY;
-      dragState.startDragX = state.dragX;
-      dragState.startDragY = state.dragY;
-      state.node.classList.add('is-dragging');
-    });
   });
 
-  const clearPanelMotionVars = () => {
-    panels.forEach((panel) => {
-      panel.style.removeProperty('--float-y');
-      panel.style.removeProperty('--mx');
-      panel.style.removeProperty('--my');
-      panel.style.removeProperty('--rx');
-      panel.style.removeProperty('--ry');
+  heroVisual.addEventListener('mouseleave', () => {
+    pointer.inside = false;
+  });
+
+  const clearMotionVars = () => {
+    heroCards.forEach((card) => {
+      card.style.removeProperty('--float-y');
+      card.style.removeProperty('--mx');
+      card.style.removeProperty('--my');
+      card.style.removeProperty('--rx');
+      card.style.removeProperty('--ry');
     });
   };
 
   const startMotionLoop = () => {
     if (!animationFrameId && !prefersReducedMotion.matches) {
-      animationFrameId = requestAnimationFrame(animatePanels);
+      animationFrameId = requestAnimationFrame(animateCards);
     }
   };
 
@@ -255,13 +189,9 @@ if (heroVisual && panels.length > 0) {
       cancelAnimationFrame(animationFrameId);
       animationFrameId = 0;
     }
-    clearPanelMotionVars();
+    clearMotionVars();
   };
 
-  heroVisual.addEventListener('mousemove', onHeroMove);
-  heroVisual.addEventListener('mouseleave', onHeroLeave);
-  document.addEventListener('mousemove', onPointerMove);
-  document.addEventListener('mouseup', stopDragging);
   startMotionLoop();
 
   prefersReducedMotion.addEventListener('change', (event) => {
