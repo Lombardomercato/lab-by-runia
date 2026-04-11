@@ -259,19 +259,31 @@ h1 span {
 .hero-visual {
   position: relative;
   min-height: 28rem;
+  overflow: hidden;
+  border-radius: calc(var(--radius) + 0.45rem);
   transform-style: preserve-3d;
   perspective: 1200px;
   will-change: transform;
 }
 
-.panel {
+.hero-visual::before {
+  content: "";
   position: absolute;
-  background: linear-gradient(155deg, rgba(255, 255, 255, 0.82), rgba(246, 241, 233, 0.58));
-  border: 1px solid rgba(133, 114, 93, 0.2);
-  border-radius: var(--radius);
-  padding: 1.45rem;
-  box-shadow: 0 36px 72px -50px rgba(21, 16, 11, 0.32);
-  backdrop-filter: blur(3px);
+  inset: 6% 5% 8%;
+  border-radius: inherit;
+  background: radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.26), transparent 54%);
+  filter: blur(10px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.hero-card {
+  position: absolute;
+  border-radius: 1.15rem;
+  overflow: hidden;
+  border: 1px solid rgba(225, 216, 204, 0.56);
+  background: #ded3c3;
+  box-shadow: 0 34px 64px -44px rgba(20, 16, 12, 0.72);
   transform:
     translate3d(
       calc(var(--drag-x, 0px) + var(--mx, 0px)),
@@ -283,66 +295,69 @@ h1 span {
     scale(var(--scale, 1));
   transform-origin: center;
   will-change: transform;
-  transition: box-shadow 500ms var(--easing-premium), border-color 500ms var(--easing-premium);
-  cursor: grab;
-  user-select: none;
+  transition: box-shadow 500ms var(--easing-premium), filter 500ms var(--easing-premium);
 }
 
-.panel.is-dragging {
-  cursor: grabbing;
+.hero-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: saturate(0.92) contrast(1.03);
 }
 
-.panel strong {
-  display: block;
+.card-overlay {
+  position: absolute;
+  inset: auto 0 0;
+  padding: 1rem;
+  background: linear-gradient(to top, rgba(15, 13, 10, 0.62), rgba(15, 13, 10, 0));
+}
+
+.card-overlay span {
   font-family: "Syne", sans-serif;
-  font-size: 1.55rem;
-  margin: 0.3rem 0;
+  font-size: 0.85rem;
+  letter-spacing: 0.05em;
+  color: rgba(246, 243, 239, 0.95);
+  text-transform: uppercase;
 }
 
-.panel p {
-  margin: 0;
-  color: var(--muted);
-  font-size: 0.95rem;
+.card-1 {
+  inset: -4% auto auto -8%;
+  width: min(23rem, 75%);
+  height: 22rem;
 }
 
-.panel-a {
-  inset: 0 auto auto 0;
-  width: min(21rem, 72%);
-  --float-range: 7px;
-  --float-duration: 7.5s;
-  --float-delay: -0.8s;
+.card-2 {
+  inset: 18% -9% auto auto;
+  width: min(19rem, 64%);
+  height: 16.5rem;
 }
 
-.panel-b {
-  inset: 31% 0 auto auto;
-  width: min(18rem, 64%);
-  --float-range: 5px;
-  --float-duration: 9.2s;
-  --float-delay: -2.2s;
+.card-3 {
+  inset: auto auto -16% 12%;
+  width: min(18rem, 58%);
+  height: 14.5rem;
 }
 
-.panel-c {
-  inset: auto auto 0 9%;
-  width: min(20rem, 72%);
-  --float-range: 3px;
-  --float-duration: 8.4s;
-  --float-delay: -1.4s;
+.card-4 {
+  inset: 6% auto auto 36%;
+  width: min(15rem, 48%);
+  height: 12.2rem;
 }
 
-.panel-main {
+.card-front {
   --scale: 1;
 }
 
-.panel-mid {
+.card-mid {
   --scale: 0.95;
-  opacity: 0.94;
-  filter: blur(0.3px);
+  opacity: 0.92;
+  filter: blur(0.1px);
 }
 
-.panel-back {
+.card-back {
   --scale: 0.9;
-  opacity: 0.88;
-  filter: blur(0.7px);
+  opacity: 0.8;
+  filter: blur(0.45px);
 }
 
 .section {
@@ -677,19 +692,26 @@ h1 span {
     min-height: 22rem;
   }
 
-  .panel-a {
-    width: 83%;
+  .card-1 {
+    width: 84%;
+    left: -6%;
   }
 
-  .panel-b {
-    top: 33%;
-    width: 74%;
+  .card-2 {
+    top: 24%;
+    width: 70%;
+    right: -12%;
   }
 
-  .panel-c {
-    left: auto;
-    right: 0;
-    width: 83%;
+  .card-3 {
+    left: 0;
+    width: 78%;
+    bottom: -13%;
+  }
+
+  .card-4 {
+    width: 52%;
+    left: 43%;
   }
 
   .services-grid {
@@ -741,7 +763,7 @@ h1 span {
     transform: none;
   }
 
-  .panel {
+  .hero-card {
     transform: scale(var(--scale, 1));
     filter: none;
     opacity: 1;
