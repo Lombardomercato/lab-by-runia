@@ -5,10 +5,10 @@ class HeroScene {
     this.container = container;
     this.scene = new THREE.Scene();
 
-    this.camera = new THREE.PerspectiveCamera(30, 1, 0.1, 50);
-    this.camera.position.set(-0.35, 0.45, 8.1);
-    this.camera.rotation.set(THREE.MathUtils.degToRad(-2.8), THREE.MathUtils.degToRad(-4.8), THREE.MathUtils.degToRad(-0.7));
-    this.camera.lookAt(0.95, -0.38, -0.1);
+    this.camera = new THREE.PerspectiveCamera(32, 1, 0.1, 50);
+    this.camera.position.set(-0.65, 0.62, 8.5);
+    this.camera.up.set(-0.03, 1, 0);
+    this.camera.lookAt(1.18, -0.34, -1.2);
 
     this.renderer = new THREE.WebGLRenderer({
       alpha: true,
@@ -20,7 +20,6 @@ class HeroScene {
     this.container.append(this.renderer.domElement);
 
     this.textureLoader = new THREE.TextureLoader();
-    this.planes = [];
 
     this.setupLights();
     this.setupScene();
@@ -33,9 +32,9 @@ class HeroScene {
   }
 
   setupLights() {
-    const ambient = new THREE.AmbientLight(0xffffff, 1.08);
-    const key = new THREE.DirectionalLight(0xfff8ee, 0.62);
-    key.position.set(2.2, 1.4, 2.6);
+    const ambient = new THREE.AmbientLight(0xffffff, 1.05);
+    const key = new THREE.DirectionalLight(0xfff8ee, 0.58);
+    key.position.set(2.4, 1.6, 2.8);
 
     this.scene.add(ambient, key);
   }
@@ -77,28 +76,25 @@ class HeroScene {
 
       const panelConfig = [
         {
-          key: 'brand',
           texture: brandTexture,
-          height: 2.35,
-          position: [-2.7, 1.72, -1.25],
-          rotation: [0.07, 0.34, -0.34],
-          opacity: 0.94,
+          height: 2.95,
+          position: [-2.95, 1.95, -2.25],
+          rotation: [0.14, 0.52, -0.38],
+          opacity: 0.9,
         },
         {
-          key: 'main',
-          texture: mainTexture,
-          height: 4.55,
-          position: [0.92, -0.04, 0.58],
-          rotation: [0.09, -0.34, 0.04],
-          opacity: 1,
-        },
-        {
-          key: 'system',
           texture: systemTexture,
-          height: 2.62,
-          position: [1.06, -2.35, 0.95],
-          rotation: [0.08, 0.39, -0.28],
-          opacity: 0.97,
+          height: 2.05,
+          position: [0.32, -1.95, -1.05],
+          rotation: [0.2, 0.4, -0.26],
+          opacity: 0.95,
+        },
+        {
+          texture: mainTexture,
+          height: 3.65,
+          position: [1.95, -0.06, 0.85],
+          rotation: [0.08, -0.42, 0.03],
+          opacity: 1,
         },
       ];
 
@@ -120,7 +116,6 @@ class HeroScene {
         mesh.rotation.set(...config.rotation);
 
         this.scene.add(mesh);
-        this.planes.push(mesh);
       });
 
       this.handleResize();
