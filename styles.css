@@ -259,7 +259,8 @@ h1 span {
 .hero-visual {
   position: relative;
   min-height: 28rem;
-  transform: translate3d(0, var(--parallax-y, 0), 0);
+  transform-style: preserve-3d;
+  perspective: 1200px;
   will-change: transform;
 }
 
@@ -269,9 +270,26 @@ h1 span {
   border: 1px solid rgba(133, 114, 93, 0.2);
   border-radius: var(--radius);
   padding: 1.45rem;
-  box-shadow: var(--shadow);
+  box-shadow: 0 36px 72px -50px rgba(21, 16, 11, 0.32);
   backdrop-filter: blur(3px);
-  transition: transform 500ms var(--easing-premium), box-shadow 500ms var(--easing-premium);
+  transform:
+    translate3d(
+      calc(var(--drag-x, 0px) + var(--mx, 0px)),
+      calc(var(--drag-y, 0px) + var(--float-y, 0px) + var(--my, 0px)),
+      0
+    )
+    rotateX(var(--rx, 0deg))
+    rotateY(var(--ry, 0deg))
+    scale(var(--scale, 1));
+  transform-origin: center;
+  will-change: transform;
+  transition: box-shadow 500ms var(--easing-premium), border-color 500ms var(--easing-premium);
+  cursor: grab;
+  user-select: none;
+}
+
+.panel.is-dragging {
+  cursor: grabbing;
 }
 
 .panel strong {
@@ -290,16 +308,41 @@ h1 span {
 .panel-a {
   inset: 0 auto auto 0;
   width: min(21rem, 72%);
+  --float-range: 7px;
+  --float-duration: 7.5s;
+  --float-delay: -0.8s;
 }
 
 .panel-b {
   inset: 31% 0 auto auto;
   width: min(18rem, 64%);
+  --float-range: 5px;
+  --float-duration: 9.2s;
+  --float-delay: -2.2s;
 }
 
 .panel-c {
   inset: auto auto 0 9%;
   width: min(20rem, 72%);
+  --float-range: 3px;
+  --float-duration: 8.4s;
+  --float-delay: -1.4s;
+}
+
+.panel-main {
+  --scale: 1;
+}
+
+.panel-mid {
+  --scale: 0.95;
+  opacity: 0.94;
+  filter: blur(0.3px);
+}
+
+.panel-back {
+  --scale: 0.9;
+  opacity: 0.88;
+  filter: blur(0.7px);
 }
 
 .section {
@@ -696,5 +739,11 @@ h1 span {
   .reveal {
     opacity: 1;
     transform: none;
+  }
+
+  .panel {
+    transform: scale(var(--scale, 1));
+    filter: none;
+    opacity: 1;
   }
 }
