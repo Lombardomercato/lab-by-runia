@@ -166,6 +166,7 @@ img {
   padding: 5.5rem 0 3rem;
   position: relative;
   isolation: isolate;
+  min-height: 80vh;
 }
 
 .hero::before,
@@ -204,9 +205,13 @@ img {
 
 .hero-grid {
   display: grid;
-  grid-template-columns: 0.95fr 1.3fr;
-  gap: clamp(2.4rem, 5.5vw, 5.8rem);
-  align-items: end;
+  grid-template-columns: minmax(0, 0.84fr) minmax(0, 1.46fr);
+  gap: clamp(2rem, 4vw, 4.2rem);
+  align-items: center;
+}
+
+.hero-copy {
+  max-width: 35rem;
 }
 
 h1,
@@ -245,7 +250,7 @@ h1 span {
 
 .lead {
   margin: 1.6rem 0 2.2rem;
-  max-width: 56ch;
+  max-width: 46ch;
   font-size: clamp(1rem, 1.7vw, 1.25rem);
   color: color-mix(in srgb, var(--ink) 78%, var(--muted));
 }
@@ -258,15 +263,15 @@ h1 span {
 
 .hero-visual {
   position: relative;
-  min-height: clamp(27rem, 54vw, 43rem);
+  min-height: clamp(32rem, 60vw, 48rem);
   transform: translate3d(0, var(--parallax-y, 0), 0);
   will-change: transform;
   isolation: isolate;
-  margin-right: -4%;
+  margin-right: -7%;
   border-radius: clamp(1rem, 1.8vw, 1.8rem);
   overflow: hidden;
   border: 1px solid color-mix(in srgb, var(--line) 70%, transparent);
-  background: linear-gradient(145deg, rgba(254, 250, 243, 0.5), rgba(240, 232, 221, 0.35));
+  background: linear-gradient(145deg, rgba(254, 250, 243, 0.56), rgba(240, 232, 221, 0.4));
   box-shadow: 0 34px 60px -46px rgba(17, 14, 11, 0.8);
 }
 
@@ -658,7 +663,7 @@ h1 span {
   }
 
   .hero-visual {
-    min-height: 26rem;
+    min-height: 30rem;
     margin-right: 0;
   }
 
