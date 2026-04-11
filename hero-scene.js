@@ -5,9 +5,10 @@ class HeroScene {
     this.container = container;
     this.scene = new THREE.Scene();
 
-    this.camera = new THREE.PerspectiveCamera(28, 1, 0.1, 50);
-    this.camera.position.set(0.2, 0.08, 8.6);
-    this.camera.lookAt(0.25, -0.1, 0);
+    this.camera = new THREE.PerspectiveCamera(30, 1, 0.1, 50);
+    this.camera.position.set(-0.35, 0.45, 8.1);
+    this.camera.rotation.set(THREE.MathUtils.degToRad(-2.8), THREE.MathUtils.degToRad(-4.8), THREE.MathUtils.degToRad(-0.7));
+    this.camera.lookAt(0.95, -0.38, -0.1);
 
     this.renderer = new THREE.WebGLRenderer({
       alpha: true,
@@ -79,24 +80,24 @@ class HeroScene {
           key: 'brand',
           texture: brandTexture,
           height: 2.35,
-          position: [-2.5, 1.55, -0.8],
-          rotation: [0.03, 0.24, -0.28],
+          position: [-2.7, 1.72, -1.25],
+          rotation: [0.07, 0.34, -0.34],
           opacity: 0.94,
         },
         {
           key: 'main',
           texture: mainTexture,
           height: 4.55,
-          position: [0.74, 0.05, 0.3],
-          rotation: [0.03, -0.22, 0.02],
+          position: [0.92, -0.04, 0.58],
+          rotation: [0.09, -0.34, 0.04],
           opacity: 1,
         },
         {
           key: 'system',
           texture: systemTexture,
           height: 2.62,
-          position: [0.82, -2.22, 0.66],
-          rotation: [0.03, 0.28, -0.24],
+          position: [1.06, -2.35, 0.95],
+          rotation: [0.08, 0.39, -0.28],
           opacity: 0.97,
         },
       ];
