@@ -1,41 +1,40 @@
-const revealElements = document.querySelectorAll('.reveal');
+const revealItems = document.querySelectorAll('.reveal');
 const sections = document.querySelectorAll('main section');
-const parallaxMedia = document.querySelectorAll('.project-media, .cta-inner');
 const menuToggle = document.querySelector('.menu-toggle');
 const navLinks = document.querySelector('.nav-links');
+const heroLayers = document.querySelectorAll('.hero-bg [data-depth]');
 const heroVisual = document.querySelector('.hero-visual');
 const cards = document.querySelectorAll('.floating-card');
-const heroLayers = document.querySelectorAll('.hero-bg [data-depth]');
 const tiltCards = document.querySelectorAll('.tilt');
-const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+const parallaxItems = document.querySelectorAll('.project-media, .cta-inner');
+const cursorGlow = document.querySelector('.cursor-glow');
+const magneticElements = document.querySelectorAll('.magnetic');
+const mediaReduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+const isMobile = window.matchMedia('(max-width: 980px)').matches;
 
-const setRevealSequence = () => {
-  sections.forEach((section) => {
-    const sequence = section.querySelectorAll('.reveal');
-    sequence.forEach((item, index) => item.style.setProperty('--reveal-delay', `${index * 90}ms`));
+sections.forEach((section) => {
+  section.querySelectorAll('.reveal').forEach((item, index) => {
+    item.style.setProperty('--reveal-delay', `${index * 80}ms`);
   });
-};
+});
 
-setRevealSequence();
-
-const revealObserver = new IntersectionObserver(
+const observer = new IntersectionObserver(
   (entries) => {
     entries.forEach((entry) => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('is-visible');
-        revealObserver.unobserve(entry.target);
-      }
+      if (!entry.isIntersecting) return;
+      entry.target.classList.add('is-visible');
+      observer.unobserve(entry.target);
     });
   },
-  { threshold: 0.15, rootMargin: '0px 0px -30px 0px' },
+  { threshold: 0.16, rootMargin: '0px 0px -30px 0px' },
 );
 
-revealElements.forEach((item) => revealObserver.observe(item));
+revealItems.forEach((item) => observer.observe(item));
 
 if (menuToggle && navLinks) {
   menuToggle.addEventListener('click', () => {
-    const isOpen = navLinks.classList.toggle('is-open');
-    menuToggle.setAttribute('aria-expanded', String(isOpen));
+    const open = navLinks.classList.toggle('is-open');
+    menuToggle.setAttribute('aria-expanded', String(open));
   });
 
   navLinks.querySelectorAll('a').forEach((link) => {
@@ -49,170 +48,117 @@ if (menuToggle && navLinks) {
 window.addEventListener(
   'scroll',
   () => {
-    parallaxMedia.forEach((element, index) => {
-      const depth = (index + 2) * 0.013;
-      element.style.setProperty('--parallax-y', `${window.scrollY * depth}px`);
+    parallaxItems.forEach((item, index) => {
+      const strength = isMobile ? 0.005 : 0.012;
+      item.style.setProperty('--parallax-y', `${window.scrollY * strength * (index + 1)}px`);
     });
   },
   { passive: true },
 );
 
-if (!prefersReducedMotion.matches) {
+if (!mediaReduce.matches) {
   window.addEventListener(
     'mousemove',
     (event) => {
       const x = event.clientX / window.innerWidth - 0.5;
       const y = event.clientY / window.innerHeight - 0.5;
+      const layerStrength = isMobile ? 24 : 52;
 
       heroLayers.forEach((layer) => {
-        const depth = Number(layer.dataset.depth) || 0.1;
-        layer.style.setProperty('--tx', `${x * depth * 56}px`);
-        layer.style.setProperty('--ty', `${y * depth * 42}px`);
+        const depth = Number(layer.dataset.depth || 0.1);
+        layer.style.setProperty('--tx', `${x * depth * layerStrength}px`);
+        layer.style.setProperty('--ty', `${y * depth * (layerStrength * 0.7)}px`);
       });
+
+      if (cursorGlow) {
+        cursorGlow.style.opacity = '1';
+        cursorGlow.style.left = `${event.clientX}px`;
+        cursorGlow.style.top = `${event.clientY}px`;
+      }
 
       tiltCards.forEach((card) => {
         const rect = card.getBoundingClientRect();
-        const cx = rect.left + rect.width / 2;
-        const cy = rect.top + rect.height / 2;
-        const dx = (event.clientX - cx) / rect.width;
-        const dy = (event.clientY - cy) / rect.height;
-        card.style.transform = `translateY(-2px) rotateX(${(-dy * 3.5).toFixed(2)}deg) rotateY(${(dx * 4).toFixed(2)}deg)`;
+        const dx = (event.clientX - (rect.left + rect.width / 2)) / rect.width;
+        const dy = (event.clientY - (rect.top + rect.height / 2)) / rect.height;
+        const rotateX = -dy * (isMobile ? 2 : 4);
+        const rotateY = dx * (isMobile ? 2.4 : 5);
+        card.style.transform = `translateY(-2px) rotateX(${rotateX.toFixed(2)}deg) rotateY(${rotateY.toFixed(2)}deg)`;
+      });
+
+      magneticElements.forEach((element) => {
+        const rect = element.getBoundingClientRect();
+        const dx = (event.clientX - (rect.left + rect.width / 2)) / rect.width;
+        const dy = (event.clientY - (rect.top + rect.height / 2)) / rect.height;
+        const mx = Math.max(-1, Math.min(1, dx)) * 8;
+        const my = Math.max(-1, Math.min(1, dy)) * 6;
+        element.style.transform = `translate(${mx.toFixed(2)}px, ${my.toFixed(2)}px)`;
       });
     },
     { passive: true },
   );
 
   window.addEventListener('mouseleave', () => {
-    tiltCards.forEach((card) => {
-      card.style.transform = '';
-    });
+    cursorGlow?.style.setProperty('opacity', '0');
+    tiltCards.forEach((card) => (card.style.transform = ''));
+    magneticElements.forEach((element) => (element.style.transform = ''));
   });
 }
 
-if (heroVisual && cards.length > 0) {
-  const pointer = { x: 0, y: 0, inside: false };
-  const dragState = { card: null, startPointerX: 0, startPointerY: 0, startDragX: 0, startDragY: 0 };
-  let animationFrameId = 0;
-
-  const cardStates = Array.from(cards).map((card, index) => ({
-    node: card,
-    intensity: Number(card.dataset.intensity) || 0.7,
-    amplitude: 3 + index * 2,
-    duration: 7200 + index * 850,
-    phase: index * 1.5,
-    dragX: 0,
-    dragY: 0,
-    hoverX: 0,
-    hoverY: 0,
-    rotateX: 0,
-    rotateY: 0,
+if (heroVisual && cards.length) {
+  const pointer = { x: 0, y: 0, active: false };
+  const states = Array.from(cards).map((node, index) => ({
+    node,
+    amp: 2.5 + index * 1.6,
+    duration: 7000 + index * 900,
+    phase: index * 1.4,
+    mx: 0,
+    my: 0,
+    rx: 0,
+    ry: 0,
   }));
 
-  const clampDrag = (state, nextX, nextY) => {
-    const heroBounds = heroVisual.getBoundingClientRect();
-    const cardBounds = state.node.getBoundingClientRect();
-    const baseLeft = state.node.offsetLeft;
-    const baseTop = state.node.offsetTop;
-    const minVisibleX = cardBounds.width * 0.34;
-    const minVisibleY = cardBounds.height * 0.34;
+  const animate = (time) => {
+    const heroRect = heroVisual.getBoundingClientRect();
 
-    return {
-      x: Math.min(heroBounds.width - baseLeft - minVisibleX, Math.max(-baseLeft - cardBounds.width + minVisibleX, nextX)),
-      y: Math.min(heroBounds.height - baseTop - minVisibleY, Math.max(-baseTop - cardBounds.height + minVisibleY, nextY)),
-    };
-  };
-
-  const animateCards = (time) => {
-    const heroBounds = heroVisual.getBoundingClientRect();
-
-    cardStates.forEach((state) => {
+    states.forEach((state) => {
+      const rect = state.node.getBoundingClientRect();
       const cycle = ((time % state.duration) / state.duration) * Math.PI * 2;
-      const floatY = Math.sin(cycle + state.phase) * state.amplitude;
-      const cardBounds = state.node.getBoundingClientRect();
+      const floatY = Math.sin(cycle + state.phase) * state.amp;
 
-      let targetHoverX = 0;
-      let targetHoverY = 0;
-      if (pointer.inside) {
-        const centerX = cardBounds.left + cardBounds.width / 2;
-        const centerY = cardBounds.top + cardBounds.height / 2;
-        targetHoverX = Math.max(-1, Math.min(1, (pointer.x - centerX) / heroBounds.width));
-        targetHoverY = Math.max(-1, Math.min(1, (pointer.y - centerY) / heroBounds.height));
+      let targetX = 0;
+      let targetY = 0;
+
+      if (pointer.active) {
+        targetX = Math.max(-1, Math.min(1, (pointer.x - (rect.left + rect.width / 2)) / heroRect.width));
+        targetY = Math.max(-1, Math.min(1, (pointer.y - (rect.top + rect.height / 2)) / heroRect.height));
       }
 
-      state.hoverX += (targetHoverX - state.hoverX) * 0.1;
-      state.hoverY += (targetHoverY - state.hoverY) * 0.1;
-      state.rotateY += (state.hoverX * (1.3 * state.intensity) - state.rotateY) * 0.14;
-      state.rotateX += (state.hoverY * (-1.2 * state.intensity) - state.rotateX) * 0.14;
+      state.mx += (targetX * 9 - state.mx) * 0.12;
+      state.my += (targetY * 8 - state.my) * 0.12;
+      state.rx += (-targetY * 1.4 - state.rx) * 0.14;
+      state.ry += (targetX * 1.6 - state.ry) * 0.14;
 
       state.node.style.setProperty('--float-y', `${floatY.toFixed(2)}px`);
-      state.node.style.setProperty('--drag-x', `${state.dragX.toFixed(2)}px`);
-      state.node.style.setProperty('--drag-y', `${state.dragY.toFixed(2)}px`);
-      state.node.style.setProperty('--mx', `${(state.hoverX * (10 * state.intensity)).toFixed(2)}px`);
-      state.node.style.setProperty('--my', `${(state.hoverY * (8 * state.intensity)).toFixed(2)}px`);
-      state.node.style.setProperty('--rx', `${state.rotateX.toFixed(2)}deg`);
-      state.node.style.setProperty('--ry', `${state.rotateY.toFixed(2)}deg`);
+      state.node.style.setProperty('--mx', `${state.mx.toFixed(2)}px`);
+      state.node.style.setProperty('--my', `${state.my.toFixed(2)}px`);
+      state.node.style.setProperty('--rx', `${state.rx.toFixed(2)}deg`);
+      state.node.style.setProperty('--ry', `${state.ry.toFixed(2)}deg`);
     });
 
-    animationFrameId = requestAnimationFrame(animateCards);
+    requestAnimationFrame(animate);
   };
 
   heroVisual.addEventListener('mousemove', (event) => {
     pointer.x = event.clientX;
     pointer.y = event.clientY;
-    pointer.inside = true;
+    pointer.active = true;
   });
 
   heroVisual.addEventListener('mouseleave', () => {
-    pointer.inside = false;
+    pointer.active = false;
   });
 
-  document.addEventListener('mousemove', (event) => {
-    if (!dragState.card) return;
-
-    const state = cardStates.find((item) => item.node === dragState.card);
-    if (!state) return;
-
-    const nextX = dragState.startDragX + (event.clientX - dragState.startPointerX);
-    const nextY = dragState.startDragY + (event.clientY - dragState.startPointerY);
-    const clamped = clampDrag(state, nextX, nextY);
-    state.dragX = clamped.x;
-    state.dragY = clamped.y;
-  });
-
-  document.addEventListener('mouseup', () => {
-    if (!dragState.card) return;
-    dragState.card.classList.remove('is-dragging');
-    dragState.card = null;
-  });
-
-  cardStates.forEach((state) => {
-    state.node.addEventListener('mousedown', (event) => {
-      event.preventDefault();
-      dragState.card = state.node;
-      dragState.startPointerX = event.clientX;
-      dragState.startPointerY = event.clientY;
-      dragState.startDragX = state.dragX;
-      dragState.startDragY = state.dragY;
-      state.node.classList.add('is-dragging');
-    });
-  });
-
-  const stopMotionLoop = () => {
-    if (animationFrameId) {
-      cancelAnimationFrame(animationFrameId);
-      animationFrameId = 0;
-    }
-  };
-
-  if (!prefersReducedMotion.matches) {
-    animationFrameId = requestAnimationFrame(animateCards);
+  if (!mediaReduce.matches) {
+    requestAnimationFrame(animate);
   }
-
-  prefersReducedMotion.addEventListener('change', (event) => {
-    if (event.matches) {
-      stopMotionLoop();
-      return;
-    }
-    animationFrameId = requestAnimationFrame(animateCards);
-  });
 }
