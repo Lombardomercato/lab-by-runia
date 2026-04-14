@@ -140,6 +140,19 @@ const updatePointerMotion = () => {
       card.style.transform = `translateY(-1px) rotateX(${(-dy * 2.2).toFixed(2)}deg) rotateY(${(dx * 2.8).toFixed(2)}deg)`;
     }
   });
+
+  spotState.x += (spotState.tx - spotState.x) * 0.14;
+  spotState.y += (spotState.ty - spotState.y) * 0.14;
+  spotState.opacity += (spotState.targetOpacity - spotState.opacity) * 0.12;
+
+  document.body.style.setProperty('--spot-x', `${spotState.x.toFixed(2)}%`);
+  document.body.style.setProperty('--spot-y', `${spotState.y.toFixed(2)}%`);
+  document.body.style.setProperty('--spot-opacity', spotState.opacity.toFixed(3));
+  document.body.style.setProperty('--spot-soft', (spotState.opacity * 0.88).toFixed(3));
+
+  if (pointer.active || spotState.opacity > 0.02) {
+    requestPointerMotion();
+  }
 };
 
 const requestPointerMotion = () => {
@@ -328,8 +341,8 @@ const initParticleSystem = (field, amount = 16, strength = 1) => {
         }
       }
 
-      particle.vx *= 0.93;
-      particle.vy *= 0.93;
+      particle.vx *= 0.91;
+      particle.vy *= 0.91;
       particle.x += particle.vx * dt;
       particle.y += particle.vy * dt;
 
