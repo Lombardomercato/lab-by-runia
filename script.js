@@ -10,10 +10,13 @@ const hero = document.querySelector('.hero');
 const heroVisual = document.querySelector('.hero-visual');
 const floatCards = document.querySelectorAll('.float-card');
 const particleField = document.querySelector('.particle-field');
+const globalParticleField = document.querySelector('.global-particle-field');
 const heroMouseLight = document.querySelector('.hero-mouse-light');
-const interactiveCards = document.querySelectorAll('.tilt, .project');
+const interactiveCards = document.querySelectorAll('.tilt, .project, .interactive-surface');
 const magneticButtons = document.querySelectorAll('.magnetic');
 const heroLayers = document.querySelectorAll('.hero-bg [data-depth]');
+const spotReactive = document.querySelectorAll('.interactive-surface');
+const motionTitles = document.querySelectorAll('.motion-title');
 const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 
 const cursorGlow = document.createElement('div');
@@ -21,11 +24,47 @@ cursorGlow.className = 'cursor-glow';
 cursorGlow.setAttribute('aria-hidden', 'true');
 document.body.appendChild(cursorGlow);
 
+const spotState = {
+  x: 50,
+  y: 20,
+  tx: 50,
+  ty: 20,
+  opacity: 0,
+  targetOpacity: 0,
+};
+
+const splitTitles = () => {
+  motionTitles.forEach((title) => {
+    if (title.dataset.split === 'true') return;
+
+    const text = title.textContent || '';
+    const words = text.trim().split(/\s+/).filter(Boolean);
+    if (!words.length) return;
+
+    title.textContent = '';
+    words.forEach((word, index) => {
+      const span = document.createElement('span');
+      span.className = 'word';
+      span.style.setProperty('--word-delay', `${index * 38}ms`);
+      span.textContent = word;
+      title.appendChild(span);
+      if (index < words.length - 1) {
+        title.append(' ');
+      }
+    });
+
+    title.dataset.split = 'true';
+  });
+};
+
+splitTitles();
+
 const setRevealDelay = () => {
   sections.forEach((section) => {
     const items = section.querySelectorAll('.reveal');
     items.forEach((item, index) => {
-      item.style.setProperty('--reveal-delay', `${index * 85}ms`);
+      const variance = (index % 3) * 26;
+      item.style.setProperty('--reveal-delay', `${index * 72 + variance}ms`);
     });
   });
 };
@@ -41,7 +80,7 @@ const revealObserver = new IntersectionObserver(
       }
     });
   },
-  { threshold: 0.14, rootMargin: '0px 0px -35px 0px' },
+  { threshold: 0.14, rootMargin: '0px 0px -40px 0px' },
 );
 
 revealElements.forEach((node) => revealObserver.observe(node));
@@ -69,17 +108,24 @@ const applyScrollMotion = () => {
     const depth = (index + 2) * 0.012;
     element.style.setProperty('--parallax-y', `${(window.scrollY * depth).toFixed(2)}px`);
   });
+
+  sections.forEach((section, index) => {
+    const rect = section.getBoundingClientRect();
+    const windowH = window.innerHeight || 1;
+    const progress = (rect.top + rect.height * 0.5 - windowH * 0.5) / windowH;
+    section.style.setProperty('--section-shift', `${(progress * (2 + index * 0.5)).toFixed(2)}px`);
+  });
 };
 
 window.addEventListener('scroll', applyScrollMotion, { passive: true });
 applyScrollMotion();
 
 let pointerRaf = 0;
-const pointer = { x: 0, y: 0, active: false };
+const pointer = { x: window.innerWidth * 0.5, y: window.innerHeight * 0.3, active: false };
 
 const updatePointerMotion = () => {
   pointerRaf = 0;
-  if (!pointer.active || prefersReducedMotion.matches) return;
+  if (prefersReducedMotion.matches) return;
 
   const x = pointer.x / window.innerWidth - 0.5;
   const y = pointer.y / window.innerHeight - 0.5;
@@ -96,12 +142,27 @@ const updatePointerMotion = () => {
     const dy = (pointer.y - (rect.top + rect.height / 2)) / rect.height;
 
     if (Math.abs(dx) > 1.2 || Math.abs(dy) > 1.2) {
-      card.style.removeProperty('transform');
+      if (card.classList.contains('tilt')) card.style.removeProperty('transform');
       return;
     }
 
-    card.style.transform = `translateY(-1px) rotateX(${(-dy * 2.2).toFixed(2)}deg) rotateY(${(dx * 2.6).toFixed(2)}deg)`;
+    if (card.classList.contains('tilt')) {
+      card.style.transform = `translateY(-1px) rotateX(${(-dy * 2.2).toFixed(2)}deg) rotateY(${(dx * 2.8).toFixed(2)}deg)`;
+    }
   });
+
+  spotState.x += (spotState.tx - spotState.x) * 0.14;
+  spotState.y += (spotState.ty - spotState.y) * 0.14;
+  spotState.opacity += (spotState.targetOpacity - spotState.opacity) * 0.12;
+
+  document.body.style.setProperty('--spot-x', `${spotState.x.toFixed(2)}%`);
+  document.body.style.setProperty('--spot-y', `${spotState.y.toFixed(2)}%`);
+  document.body.style.setProperty('--spot-opacity', spotState.opacity.toFixed(3));
+  document.body.style.setProperty('--spot-soft', (spotState.opacity * 0.88).toFixed(3));
+
+  if (pointer.active || spotState.opacity > 0.02) {
+    requestPointerMotion();
+  }
 };
 
 const requestPointerMotion = () => {
@@ -113,13 +174,27 @@ window.addEventListener('mousemove', (event) => {
   pointer.y = event.clientY;
   pointer.active = true;
   requestPointerMotion();
+  spotState.tx = (event.clientX / window.innerWidth) * 100;
+  spotState.ty = (event.clientY / window.innerHeight) * 100;
+  spotState.targetOpacity = 1;
 }, { passive: true });
 
 window.addEventListener('mouseleave', () => {
   pointer.active = false;
+  spotState.targetOpacity = 0;
   interactiveCards.forEach((card) => {
-    card.style.removeProperty('transform');
+    if (card.classList.contains('tilt')) card.style.removeProperty('transform');
   });
+});
+
+spotReactive.forEach((surface) => {
+  surface.addEventListener('pointermove', (event) => {
+    const rect = surface.getBoundingClientRect();
+    const x = ((event.clientX - rect.left) / rect.width) * 100;
+    const y = ((event.clientY - rect.top) / rect.height) * 100;
+    surface.style.setProperty('--ix', `${x.toFixed(2)}%`);
+    surface.style.setProperty('--iy', `${y.toFixed(2)}%`);
+  }, { passive: true });
 });
 
 if (!prefersReducedMotion.matches) {
@@ -131,8 +206,7 @@ if (!prefersReducedMotion.matches) {
     visible: false,
   };
 
-  const glowLerp = 0.1;
-  let glowRaf = 0;
+  const glowLerp = 0.14;
 
   const renderGlow = () => {
     glowPointer.x += (glowPointer.targetX - glowPointer.x) * glowLerp;
@@ -141,7 +215,7 @@ if (!prefersReducedMotion.matches) {
     cursorGlow.style.transform = `translate3d(${glowPointer.x.toFixed(2)}px, ${glowPointer.y.toFixed(2)}px, 0) translate(-50%, -50%)`;
     cursorGlow.style.opacity = glowPointer.visible ? '1' : '0';
 
-    glowRaf = requestAnimationFrame(renderGlow);
+    requestAnimationFrame(renderGlow);
   };
 
   window.addEventListener('mousemove', (event) => {
@@ -154,21 +228,7 @@ if (!prefersReducedMotion.matches) {
     glowPointer.visible = false;
   });
 
-  glowRaf = requestAnimationFrame(renderGlow);
-
-  prefersReducedMotion.addEventListener('change', (event) => {
-    if (event.matches) {
-      if (glowRaf) cancelAnimationFrame(glowRaf);
-      glowRaf = 0;
-      cursorGlow.style.opacity = '0';
-      return;
-    }
-
-    if (!glowRaf) {
-      glowPointer.visible = true;
-      glowRaf = requestAnimationFrame(renderGlow);
-    }
-  });
+  requestAnimationFrame(renderGlow);
 }
 
 if (hero && heroMouseLight) {
@@ -214,28 +274,16 @@ if (hero && heroMouseLight) {
   if (!prefersReducedMotion.matches) {
     light.raf = requestAnimationFrame(renderHeroLight);
   }
-
-  prefersReducedMotion.addEventListener('change', (event) => {
-    if (event.matches) {
-      if (light.raf) cancelAnimationFrame(light.raf);
-      light.raf = 0;
-      heroMouseLight.style.setProperty('--light-opacity', '0');
-      return;
-    }
-
-    if (!light.raf) {
-      light.raf = requestAnimationFrame(renderHeroLight);
-    }
-  });
 }
 
-if (particleField) {
+const initParticleSystem = (field, amount = 16, strength = 1) => {
+  if (!field || prefersReducedMotion.matches) return;
+
   const particles = [];
-  const particleCount = 18;
-  const interactionRadius = 180;
+  const interactionRadius = 170 * strength;
   const pointerState = { x: 0, y: 0, inside: false, vx: 0, vy: 0 };
   let particleRaf = 0;
-  let fieldRect = particleField.getBoundingClientRect();
+  let fieldRect = field.getBoundingClientRect();
   let lastTick = performance.now();
 
   const randomBetween = (min, max) => min + Math.random() * (max - min);
@@ -243,13 +291,13 @@ if (particleField) {
   const createParticle = () => {
     const node = document.createElement('span');
     node.className = 'particle';
-    particleField.appendChild(node);
+    field.appendChild(node);
 
     const depth = randomBetween(0.6, 1.5);
-    const size = randomBetween(4, 13) * depth * 0.82;
+    const size = randomBetween(3.5, 12) * depth * 0.8;
     node.style.setProperty('--particle-size', `${size.toFixed(2)}px`);
-    node.style.setProperty('--particle-opacity', `${randomBetween(0.08, 0.26).toFixed(3)}`);
-    node.style.setProperty('--particle-blur', `${(1.4 - depth * 0.48).toFixed(2)}px`);
+    node.style.setProperty('--particle-opacity', `${randomBetween(0.06, 0.22).toFixed(3)}`);
+    node.style.setProperty('--particle-blur', `${(1.4 - depth * 0.45).toFixed(2)}px`);
 
     const homeX = Math.random() * fieldRect.width;
     const homeY = Math.random() * fieldRect.height;
@@ -273,11 +321,7 @@ if (particleField) {
   };
 
   const resetField = () => {
-    fieldRect = particleField.getBoundingClientRect();
-    particles.forEach((particle) => {
-      particle.homeX = (particle.homeX / Math.max(1, fieldRect.width)) * fieldRect.width;
-      particle.homeY = (particle.homeY / Math.max(1, fieldRect.height)) * fieldRect.height;
-    });
+    fieldRect = field.getBoundingClientRect();
   };
 
   const tickParticles = (time) => {
@@ -289,9 +333,8 @@ if (particleField) {
       const homeX = particle.homeX + Math.cos(t) * particle.orbitX;
       const homeY = particle.homeY + Math.sin(t) * particle.orbitY;
 
-      particle.vx += (homeX - particle.x) * 0.018;
-      particle.vy += (homeY - particle.y) * 0.018;
-
+      particle.vx += (homeX - particle.x) * 0.02;
+      particle.vy += (homeY - particle.y) * 0.02;
       particle.vx += particle.driftX * 0.008;
       particle.vy += particle.driftY * 0.008;
 
@@ -301,14 +344,14 @@ if (particleField) {
         const distance = Math.hypot(dx, dy) || 1;
 
         if (distance < interactionRadius) {
-          const power = (1 - distance / interactionRadius) * (0.82 + particle.depth * 0.28);
-          particle.vx += (dx / distance) * power + pointerState.vx * 0.05;
-          particle.vy += (dy / distance) * power + pointerState.vy * 0.05;
+          const power = (1 - distance / interactionRadius) * (0.95 + particle.depth * 0.32) * strength;
+          particle.vx += (dx / distance) * power + pointerState.vx * 0.07;
+          particle.vy += (dy / distance) * power + pointerState.vy * 0.07;
         }
       }
 
-      particle.vx *= 0.93;
-      particle.vy *= 0.93;
+      particle.vx *= 0.91;
+      particle.vy *= 0.91;
       particle.x += particle.vx * dt;
       particle.y += particle.vy * dt;
 
@@ -327,9 +370,7 @@ if (particleField) {
     particleRaf = requestAnimationFrame(tickParticles);
   };
 
-  for (let i = 0; i < particleCount; i += 1) {
-    createParticle();
-  }
+  for (let i = 0; i < amount; i += 1) createParticle();
 
   window.addEventListener('mousemove', (event) => {
     const localX = event.clientX - fieldRect.left;
@@ -347,24 +388,11 @@ if (particleField) {
   });
 
   window.addEventListener('resize', resetField, { passive: true });
+  particleRaf = requestAnimationFrame(tickParticles);
+};
 
-  if (!prefersReducedMotion.matches) {
-    particleRaf = requestAnimationFrame(tickParticles);
-  }
-
-  prefersReducedMotion.addEventListener('change', (event) => {
-    if (event.matches) {
-      if (particleRaf) cancelAnimationFrame(particleRaf);
-      particleRaf = 0;
-      return;
-    }
-
-    if (!particleRaf) {
-      lastTick = performance.now();
-      particleRaf = requestAnimationFrame(tickParticles);
-    }
-  });
-}
+initParticleSystem(particleField, 20, 1.22);
+initParticleSystem(globalParticleField, 26, 0.78);
 
 if (heroVisual && floatCards.length > 0) {
   const heroPointer = { x: 0, y: 0, inside: false };
@@ -387,8 +415,8 @@ if (heroVisual && floatCards.length > 0) {
     return {
       node: card,
       intensity: Number(card.dataset.intensity) || 0.7,
-      amplitude: 6 + index * 2.6,
-      duration: 6800 + index * 780,
+      amplitude: 7 + index * 2.8,
+      duration: 6700 + index * 740,
       phase: Math.random() * Math.PI * 2,
       depthFactor: 0.45 + index * 0.32,
       x: 0,
@@ -409,7 +437,7 @@ if (heroVisual && floatCards.length > 0) {
       floating: 0,
       isDragging: false,
       zIndex: zCounter + index,
-      radiusPad: 78,
+      radiusPad: 84,
     };
   });
 
@@ -467,7 +495,6 @@ if (heroVisual && floatCards.length > 0) {
         state.y += state.vy * (delta / 16.67);
         state.vx *= 0.9;
         state.vy *= 0.9;
-
         if (Math.abs(state.vx) < 0.02) state.vx = 0;
         if (Math.abs(state.vy) < 0.02) state.vy = 0;
       }
@@ -502,7 +529,7 @@ if (heroVisual && floatCards.length > 0) {
       state.parallaxX += (targetParallaxX - state.parallaxX) * 0.12;
       state.parallaxY += (targetParallaxY - state.parallaxY) * 0.12;
 
-      const maxRotate = 2.8 + state.depthFactor * 2.4;
+      const maxRotate = 3 + state.depthFactor * 2.4;
       state.rotateY += (state.hoverX * maxRotate - state.rotateY) * 0.14;
       state.rotateX += (state.hoverY * -maxRotate - state.rotateX) * 0.14;
 
@@ -607,12 +634,6 @@ if (heroVisual && floatCards.length > 0) {
     });
   });
 
-  const stopMotion = () => {
-    if (!motionRaf) return;
-    cancelAnimationFrame(motionRaf);
-    motionRaf = 0;
-  };
-
   const handleResize = () => {
     updateBounds();
     cardStates.forEach((state) => applySoftBounds(state));
@@ -624,18 +645,6 @@ if (heroVisual && floatCards.length > 0) {
   if (!prefersReducedMotion.matches) {
     motionRaf = requestAnimationFrame(animateCards);
   }
-
-  prefersReducedMotion.addEventListener('change', (event) => {
-    if (event.matches) {
-      stopMotion();
-      return;
-    }
-
-    if (!motionRaf) {
-      lastFrame = performance.now();
-      motionRaf = requestAnimationFrame(animateCards);
-    }
-  });
 }
 
 magneticButtons.forEach((button) => {
