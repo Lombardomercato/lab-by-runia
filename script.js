@@ -86,8 +86,8 @@ const updatePointerMotion = () => {
 
   heroLayers.forEach((layer) => {
     const depth = Number(layer.dataset.depth) || 0.1;
-    layer.style.setProperty('--tx', `${(x * depth * 58).toFixed(2)}px`);
-    layer.style.setProperty('--ty', `${(y * depth * 44).toFixed(2)}px`);
+    layer.style.setProperty('--tx', `${(x * depth * 38).toFixed(2)}px`);
+    layer.style.setProperty('--ty', `${(y * depth * 28).toFixed(2)}px`);
   });
 
   interactiveCards.forEach((card) => {
@@ -100,7 +100,7 @@ const updatePointerMotion = () => {
       return;
     }
 
-    card.style.transform = `translateY(-2px) rotateX(${(-dy * 2.5).toFixed(2)}deg) rotateY(${(dx * 3).toFixed(2)}deg)`;
+    card.style.transform = `translateY(-1px) rotateX(${(-dy * 1.9).toFixed(2)}deg) rotateY(${(dx * 2.2).toFixed(2)}deg)`;
   });
 };
 
