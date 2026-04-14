@@ -914,15 +914,24 @@ html.js .reveal.is-visible {
   }
 
   .hero-visual {
-    min-height: 20rem;
+    min-height: auto;
     width: 100%;
     margin-top: 1.8rem;
     margin-left: 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.7rem;
+    align-items: start;
   }
 
   .float-card {
+    position: relative;
+    inset: auto !important;
+    width: 100% !important;
     padding: 0.68rem;
     border-radius: 0.8rem;
+    cursor: default;
+    touch-action: auto;
   }
 
   .float-card strong {
@@ -938,10 +947,14 @@ html.js .reveal.is-visible {
     font-size: 0.52rem;
   }
 
-  .card-main { inset: 14% auto auto 1%; width: 42%; }
-  .card-mid { top: 42%; right: 2%; width: 38%; }
-  .card-back { right: auto; left: 7%; width: 40%; bottom: 5%; }
-  .card-edge { right: 2%; top: 72%; width: 30%; }
+  .card-main,
+  .card-mid,
+  .card-back,
+  .card-edge {
+    --scale: 1;
+    opacity: 1;
+    filter: none;
+  }
 
   .nav-wrap > .btn {
     margin-left: auto;
@@ -976,14 +989,9 @@ html.js .reveal.is-visible {
 
 @media (max-width: 520px) {
   .hero-visual {
-    min-height: 24rem;
     margin-top: 2.6rem;
+    grid-template-columns: 1fr;
   }
-
-  .card-main { inset: 22% auto auto 1%; }
-  .card-mid { top: 52%; }
-  .card-back { bottom: 8%; }
-  .card-edge { top: 80%; }
 }
 
 @media (max-width: 768px) {
