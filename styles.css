@@ -34,7 +34,6 @@ body {
   --spot-x: 50%;
   --spot-y: 20%;
   --spot-opacity: 0;
-  --spot-soft: 0;
 }
 
 body::before,
@@ -49,7 +48,7 @@ body::after {
 body::before {
   background:
     radial-gradient(42rem 42rem at var(--spot-x) var(--spot-y), rgba(221, 205, 178, calc(var(--spot-opacity) * 0.22)), transparent 70%),
-    radial-gradient(35rem 35rem at calc(var(--spot-x) - 22%) calc(var(--spot-y) + 12%), rgba(191, 177, 150, calc(var(--spot-soft) * 0.18)), transparent 72%);
+    radial-gradient(35rem 35rem at calc(var(--spot-x) - 22%) calc(var(--spot-y) + 12%), rgba(191, 177, 150, calc(var(--spot-opacity) * 0.14)), transparent 72%);
   transition: opacity 0.4s var(--easing-premium);
 }
 
@@ -114,37 +113,13 @@ body::after {
   border-radius: 50%;
   pointer-events: none;
   z-index: 90;
-  filter: blur(86px);
+  filter: blur(88px);
   opacity: 0;
-  background: radial-gradient(circle, rgba(240, 233, 220, 0.19), rgba(214, 196, 165, 0.12) 38%, transparent 72%);
+  background: radial-gradient(circle, rgba(240, 233, 220, 0.16), rgba(214, 196, 165, 0.1) 38%, transparent 72%);
   transform: translate(-50%, -50%);
   mix-blend-mode: soft-light;
   will-change: transform, opacity;
   transition: opacity 420ms var(--easing-premium);
-}
-
-.cursor-glow::before {
-  content: "";
-  position: absolute;
-  inset: 20%;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(250, 244, 232, 0.28), transparent 72%);
-}
-
-main {
-  position: relative;
-  isolation: isolate;
-}
-
-main::before {
-  content: "";
-  position: fixed;
-  inset: -12% 24% -12%;
-  pointer-events: none;
-  z-index: -1;
-  opacity: 0.18;
-  background: linear-gradient(180deg, transparent 0%, rgba(214, 196, 165, 0.08) 22%, rgba(214, 196, 165, 0.12) 50%, rgba(214, 196, 165, 0.08) 76%, transparent 100%);
-  filter: blur(60px);
 }
 
 .global-particle-field {
@@ -588,17 +563,6 @@ h1 span {
   isolation: isolate;
 }
 
-.section::after {
-  content: "";
-  position: absolute;
-  left: 8%;
-  right: 8%;
-  top: -4%;
-  height: 1px;
-  background: linear-gradient(90deg, transparent 0%, rgba(220, 206, 182, 0.15) 20%, rgba(220, 206, 182, 0.18) 50%, rgba(220, 206, 182, 0.15) 80%, transparent 100%);
-  opacity: 0.5;
-}
-
 .section::before {
   content: "";
   position: absolute;
@@ -675,28 +639,12 @@ h1 span {
   border-radius: inherit;
   opacity: 0;
   background: radial-gradient(circle at var(--ix, 50%) var(--iy, 50%), rgba(255, 245, 232, 0.18), transparent 54%);
-  transition: opacity 300ms var(--easing-premium);
-  pointer-events: none;
-}
-
-.interactive-surface::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  border: 1px solid rgba(255, 255, 255, 0.02);
-  background: linear-gradient(120deg, transparent 20%, rgba(255, 250, 238, 0.12) 48%, transparent 74%);
-  transform: translateX(-120%);
-  transition: transform 520ms var(--easing-premium);
+  transition: opacity 340ms var(--easing-premium);
   pointer-events: none;
 }
 
 .interactive-surface:hover::after {
-  opacity: 0.58;
-}
-
-.interactive-surface:hover::before {
-  transform: translateX(120%);
+  opacity: 0.5;
 }
 
 .service-card {
@@ -839,9 +787,9 @@ html.js .reveal {
   transform: translateY(var(--reveal-y, 20px)) scale(var(--reveal-scale, 0.986));
   filter: blur(var(--reveal-blur, 2px));
   transition:
-    transform var(--reveal-duration, 560ms) var(--easing-premium),
-    opacity var(--reveal-duration, 560ms) var(--easing-premium),
-    filter var(--reveal-duration, 560ms) var(--easing-premium);
+    transform var(--reveal-duration, 620ms) var(--easing-premium),
+    opacity var(--reveal-duration, 620ms) var(--easing-premium),
+    filter var(--reveal-duration, 620ms) var(--easing-premium);
   transition-delay: var(--reveal-delay, 0ms);
 }
 
@@ -853,7 +801,7 @@ html.js .reveal[data-reveal='soft'] {
 
 html.js .reveal[data-reveal='rise'] {
   --reveal-y: 26px;
-  --reveal-duration: 620ms;
+  --reveal-duration: 700ms;
 }
 
 html.js .reveal[data-reveal='left'] {
@@ -955,10 +903,6 @@ html.js .reveal.is-visible {
   .site-atmosphere span,
   .cursor-glow {
     opacity: 0.12;
-  }
-
-  .section::after {
-    opacity: 0.3;
   }
 }
 

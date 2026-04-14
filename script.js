@@ -24,15 +24,6 @@ cursorGlow.className = 'cursor-glow';
 cursorGlow.setAttribute('aria-hidden', 'true');
 document.body.appendChild(cursorGlow);
 
-const spotState = {
-  x: 50,
-  y: 20,
-  tx: 50,
-  ty: 20,
-  opacity: 0,
-  targetOpacity: 0,
-};
-
 const splitTitles = () => {
   motionTitles.forEach((title) => {
     if (title.dataset.split === 'true') return;
@@ -63,8 +54,7 @@ const setRevealDelay = () => {
   sections.forEach((section) => {
     const items = section.querySelectorAll('.reveal');
     items.forEach((item, index) => {
-      const variance = (index % 3) * 26;
-      item.style.setProperty('--reveal-delay', `${index * 72 + variance}ms`);
+      item.style.setProperty('--reveal-delay', `${index * 90}ms`);
     });
   });
 };
@@ -174,14 +164,15 @@ window.addEventListener('mousemove', (event) => {
   pointer.y = event.clientY;
   pointer.active = true;
   requestPointerMotion();
-  spotState.tx = (event.clientX / window.innerWidth) * 100;
-  spotState.ty = (event.clientY / window.innerHeight) * 100;
-  spotState.targetOpacity = 1;
+
+  document.body.style.setProperty('--spot-x', `${((event.clientX / window.innerWidth) * 100).toFixed(2)}%`);
+  document.body.style.setProperty('--spot-y', `${((event.clientY / window.innerHeight) * 100).toFixed(2)}%`);
+  document.body.style.setProperty('--spot-opacity', '1');
 }, { passive: true });
 
 window.addEventListener('mouseleave', () => {
   pointer.active = false;
-  spotState.targetOpacity = 0;
+  document.body.style.setProperty('--spot-opacity', '0');
   interactiveCards.forEach((card) => {
     if (card.classList.contains('tilt')) card.style.removeProperty('transform');
   });
@@ -206,7 +197,7 @@ if (!prefersReducedMotion.matches) {
     visible: false,
   };
 
-  const glowLerp = 0.14;
+  const glowLerp = 0.1;
 
   const renderGlow = () => {
     glowPointer.x += (glowPointer.targetX - glowPointer.x) * glowLerp;
@@ -333,8 +324,8 @@ const initParticleSystem = (field, amount = 16, strength = 1) => {
       const homeX = particle.homeX + Math.cos(t) * particle.orbitX;
       const homeY = particle.homeY + Math.sin(t) * particle.orbitY;
 
-      particle.vx += (homeX - particle.x) * 0.02;
-      particle.vy += (homeY - particle.y) * 0.02;
+      particle.vx += (homeX - particle.x) * 0.018;
+      particle.vy += (homeY - particle.y) * 0.018;
       particle.vx += particle.driftX * 0.008;
       particle.vy += particle.driftY * 0.008;
 
@@ -344,9 +335,9 @@ const initParticleSystem = (field, amount = 16, strength = 1) => {
         const distance = Math.hypot(dx, dy) || 1;
 
         if (distance < interactionRadius) {
-          const power = (1 - distance / interactionRadius) * (0.95 + particle.depth * 0.32) * strength;
-          particle.vx += (dx / distance) * power + pointerState.vx * 0.07;
-          particle.vy += (dy / distance) * power + pointerState.vy * 0.07;
+          const power = (1 - distance / interactionRadius) * (0.82 + particle.depth * 0.28) * strength;
+          particle.vx += (dx / distance) * power + pointerState.vx * 0.05;
+          particle.vy += (dy / distance) * power + pointerState.vy * 0.05;
         }
       }
 
@@ -391,8 +382,8 @@ const initParticleSystem = (field, amount = 16, strength = 1) => {
   particleRaf = requestAnimationFrame(tickParticles);
 };
 
-initParticleSystem(particleField, 20, 1.22);
-initParticleSystem(globalParticleField, 26, 0.78);
+initParticleSystem(particleField, 18, 1.1);
+initParticleSystem(globalParticleField, 22, 0.65);
 
 if (heroVisual && floatCards.length > 0) {
   const heroPointer = { x: 0, y: 0, inside: false };
