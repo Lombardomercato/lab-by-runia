@@ -1,4 +1,4 @@
-const revealElements = document.querySelectorAll('.reveal');
+const revealItems = document.querySelectorAll('.reveal');
 const sections = document.querySelectorAll('main section');
 const parallaxMedia = document.querySelectorAll('.project-media, .cta-inner');
 const navbar = document.querySelector('.navbar');
@@ -20,9 +20,7 @@ const setRevealSequence = () => {
       item.style.setProperty('--reveal-delay', `${index * 95}ms`);
     });
   });
-};
-
-setRevealSequence();
+});
 
 const revealObserver = new IntersectionObserver(
   (entries) => {
@@ -44,8 +42,8 @@ revealElements.forEach((item) => revealObserver.observe(item));
 
 if (menuToggle && navLinks) {
   menuToggle.addEventListener('click', () => {
-    const isOpen = navLinks.classList.toggle('is-open');
-    menuToggle.setAttribute('aria-expanded', String(isOpen));
+    const open = navLinks.classList.toggle('is-open');
+    menuToggle.setAttribute('aria-expanded', String(open));
   });
 
   navLinks.querySelectorAll('a').forEach((link) => {
@@ -263,4 +261,8 @@ if (heroVisual && cards.length > 0) {
 
     animationFrameId = requestAnimationFrame(animateCards);
   });
+
+  if (!mediaReduce.matches) {
+    requestAnimationFrame(animate);
+  }
 }
