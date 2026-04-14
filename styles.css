@@ -973,6 +973,19 @@ html.js .reveal.is-visible {
 }
 
 
+
+@media (max-width: 520px) {
+  .hero-visual {
+    min-height: 24rem;
+    margin-top: 2.6rem;
+  }
+
+  .card-main { inset: 22% auto auto 1%; }
+  .card-mid { top: 52%; }
+  .card-back { bottom: 8%; }
+  .card-edge { top: 80%; }
+}
+
 @media (max-width: 768px) {
   .project-grid {
     grid-template-columns: 1fr;
