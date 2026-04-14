@@ -352,7 +352,7 @@ h1 span {
   color: #dfd2be;
 }
 
-.motion-title .word {
+.motion-title.reveal .word {
   display: inline-block;
   transform: translateY(1.08em);
   opacity: 0;
