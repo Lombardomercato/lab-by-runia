@@ -15,11 +15,6 @@ const spotReactive = document.querySelectorAll('.interactive-surface');
 const motionTitles = document.querySelectorAll('.motion-title');
 const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 
-const cursorGlow = document.createElement('div');
-cursorGlow.className = 'cursor-glow';
-cursorGlow.setAttribute('aria-hidden', 'true');
-document.body.appendChild(cursorGlow);
-
 const splitTitles = () => {
   motionTitles.forEach((title) => {
     if (title.dataset.split === 'true') return;
@@ -160,7 +155,7 @@ window.addEventListener('mousemove', (event) => {
   document.body.style.setProperty('--spot-y', `${((event.clientY / window.innerHeight) * 100).toFixed(2)}%`);
   spotState.tx = (event.clientX / window.innerWidth) * 100;
   spotState.ty = (event.clientY / window.innerHeight) * 100;
-  spotState.targetOpacity = 0.5;
+  spotState.targetOpacity = 0.24;
 }, { passive: true });
 
 window.addEventListener('mouseleave', () => {
@@ -181,40 +176,6 @@ spotReactive.forEach((surface) => {
   }, { passive: true });
 });
 
-if (!prefersReducedMotion.matches) {
-  const glowPointer = {
-    x: window.innerWidth * 0.5,
-    y: window.innerHeight * 0.35,
-    targetX: window.innerWidth * 0.5,
-    targetY: window.innerHeight * 0.35,
-    visible: false,
-  };
-
-  const glowLerp = 0.08;
-
-  const renderGlow = () => {
-    glowPointer.x += (glowPointer.targetX - glowPointer.x) * glowLerp;
-    glowPointer.y += (glowPointer.targetY - glowPointer.y) * glowLerp;
-
-    cursorGlow.style.transform = `translate3d(${glowPointer.x.toFixed(2)}px, ${glowPointer.y.toFixed(2)}px, 0) translate(-50%, -50%)`;
-    cursorGlow.style.opacity = glowPointer.visible ? '0.42' : '0';
-
-    requestAnimationFrame(renderGlow);
-  };
-
-  window.addEventListener('mousemove', (event) => {
-    glowPointer.targetX = event.clientX;
-    glowPointer.targetY = event.clientY;
-    glowPointer.visible = true;
-  }, { passive: true });
-
-  window.addEventListener('mouseleave', () => {
-    glowPointer.visible = false;
-  });
-
-  requestAnimationFrame(renderGlow);
-}
-
 const initParticleSystem = (field, amount = 16, strength = 1) => {
   if (!field || prefersReducedMotion.matches) return;
 
@@ -233,9 +194,9 @@ const initParticleSystem = (field, amount = 16, strength = 1) => {
     field.appendChild(node);
 
     const depth = randomBetween(0.7, 1.35);
-    const size = randomBetween(2.6, 7.8) * depth * 0.72;
+    const size = randomBetween(2.8, 9.6) * depth * 0.7;
     node.style.setProperty('--particle-size', `${size.toFixed(2)}px`);
-    node.style.setProperty('--particle-opacity', `${randomBetween(0.03, 0.11).toFixed(3)}`);
+    node.style.setProperty('--particle-opacity', `${randomBetween(0.08, 0.22).toFixed(3)}`);
     node.style.setProperty('--particle-blur', `${(1 - depth * 0.36).toFixed(2)}px`);
 
     const homeX = Math.random() * fieldRect.width;
@@ -283,9 +244,9 @@ const initParticleSystem = (field, amount = 16, strength = 1) => {
         const distance = Math.hypot(dx, dy) || 1;
 
         if (distance < interactionRadius) {
-          const power = (1 - distance / interactionRadius) * (0.82 + particle.depth * 0.28) * strength;
-          particle.vx += (dx / distance) * power + pointerState.vx * 0.05;
-          particle.vy += (dy / distance) * power + pointerState.vy * 0.05;
+          const power = (1 - distance / interactionRadius) * (0.94 + particle.depth * 0.36) * strength;
+          particle.vx += (dx / distance) * power + pointerState.vx * 0.08;
+          particle.vy += (dy / distance) * power + pointerState.vy * 0.08;
         }
       }
 
@@ -330,7 +291,7 @@ const initParticleSystem = (field, amount = 16, strength = 1) => {
   particleRaf = requestAnimationFrame(tickParticles);
 };
 
-initParticleSystem(globalParticleField, 10, 0.35);
+initParticleSystem(globalParticleField, 22, 0.62);
 
 if (heroVisual && floatCards.length > 0) {
   const heroPointer = { x: 0, y: 0, inside: false };
