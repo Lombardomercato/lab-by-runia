@@ -634,6 +634,12 @@ h1 span {
 }
 
 .reveal {
+  opacity: 1;
+  transform: none;
+  filter: none;
+}
+
+html.js .reveal {
   opacity: 0;
   transform: translateY(22px) scale(0.985);
   filter: blur(2px);
@@ -644,7 +650,7 @@ h1 span {
   transition-delay: var(--reveal-delay, 0ms);
 }
 
-.reveal.is-visible {
+html.js .reveal.is-visible {
   opacity: 1;
   transform: translateY(0) scale(1);
   filter: blur(0);

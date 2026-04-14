@@ -1,4 +1,6 @@
-const revealItems = document.querySelectorAll('.reveal');
+document.documentElement.classList.add('js');
+
+const revealElements = document.querySelectorAll('.reveal');
 const sections = document.querySelectorAll('main section');
 const parallaxMedia = document.querySelectorAll('.project-media, .cta-inner');
 const navbar = document.querySelector('.navbar');
@@ -21,6 +23,8 @@ const setRevealSequence = () => {
     });
   });
 });
+
+setRevealSequence();
 
 const revealObserver = new IntersectionObserver(
   (entries) => {
