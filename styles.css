@@ -914,9 +914,9 @@ html.js .reveal.is-visible {
   }
 
   .hero-visual {
-    min-height: 21rem;
+    min-height: 20rem;
     width: 100%;
-    margin-top: 1.9rem;
+    margin-top: 1.8rem;
     margin-left: 0;
   }
 
@@ -938,10 +938,10 @@ html.js .reveal.is-visible {
     font-size: 0.52rem;
   }
 
-  .card-main { inset: 16% auto auto 1%; width: 42%; }
-  .card-mid { top: 44%; right: 2%; width: 38%; }
-  .card-back { right: auto; left: 7%; width: 40%; bottom: 6%; }
-  .card-edge { right: 2%; top: 74%; width: 30%; }
+  .card-main { inset: 14% auto auto 1%; width: 42%; }
+  .card-mid { top: 42%; right: 2%; width: 38%; }
+  .card-back { right: auto; left: 7%; width: 40%; bottom: 5%; }
+  .card-edge { right: 2%; top: 72%; width: 30%; }
 
   .nav-wrap > .btn {
     margin-left: auto;
