@@ -2,7 +2,7 @@ document.documentElement.classList.add('js');
 
 const revealElements = document.querySelectorAll('.reveal');
 const sections = document.querySelectorAll('main section');
-const parallaxTargets = document.querySelectorAll('.project-media, .cta-inner');
+const parallaxTargets = document.querySelectorAll('.project-media, .cta-inner, .service-card, .project, .process-list li');
 const menuToggle = document.querySelector('.menu-toggle');
 const navLinks = document.querySelector('.nav-links');
 const navbar = document.querySelector('.navbar');
@@ -91,7 +91,7 @@ const applyScrollMotion = () => {
   }
 
   parallaxTargets.forEach((element, index) => {
-    const depth = (index + 2) * 0.006;
+    const depth = (index + 2) * 0.0038;
     element.style.setProperty('--parallax-y', `${(window.scrollY * depth).toFixed(2)}px`);
   });
 
@@ -128,7 +128,7 @@ const updatePointerMotion = () => {
     }
 
     if (card.classList.contains('tilt')) {
-      card.style.transform = `translateY(-1px) rotateX(${(-dy * 1.2).toFixed(2)}deg) rotateY(${(dx * 1.6).toFixed(2)}deg)`;
+      card.style.transform = `translateY(-1px) scale(1.01) rotateX(${(-dy * 1.0).toFixed(2)}deg) rotateY(${(dx * 1.2).toFixed(2)}deg)`;
     }
   });
 
@@ -197,7 +197,7 @@ if (!prefersReducedMotion.matches) {
     glowPointer.y += (glowPointer.targetY - glowPointer.y) * glowLerp;
 
     cursorGlow.style.transform = `translate3d(${glowPointer.x.toFixed(2)}px, ${glowPointer.y.toFixed(2)}px, 0) translate(-50%, -50%)`;
-    cursorGlow.style.opacity = glowPointer.visible ? '0.42' : '0';
+    cursorGlow.style.opacity = glowPointer.visible ? '0.22' : '0';
 
     requestAnimationFrame(renderGlow);
   };
@@ -330,7 +330,7 @@ const initParticleSystem = (field, amount = 16, strength = 1) => {
   particleRaf = requestAnimationFrame(tickParticles);
 };
 
-initParticleSystem(globalParticleField, 10, 0.35);
+initParticleSystem(globalParticleField, 8, 0.22);
 
 if (heroVisual && floatCards.length > 0) {
   const heroPointer = { x: 0, y: 0, inside: false };
