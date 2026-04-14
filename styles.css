@@ -467,6 +467,14 @@ h1 span {
   --scale: 0.9;
 }
 
+.card-edge {
+  inset: 58% -8% auto auto;
+  width: min(14.4rem, 52%);
+  --scale: 0.82;
+  --depth-blur: 0.2px;
+  opacity: 0.9;
+}
+
 .section {
   position: relative;
   padding: 6rem 0;
@@ -730,6 +738,11 @@ html.js .reveal.is-visible {
   .card-main { inset: -1% auto auto 1%; width: 82%; }
   .card-mid { top: 28%; right: 2%; width: 72%; }
   .card-back { right: auto; left: 7%; width: 78%; bottom: 3%; }
+
+  .card-main { inset: -1% auto auto 1%; width: 82%; }
+  .card-mid { top: 28%; right: 2%; width: 72%; }
+  .card-back { right: auto; left: 7%; width: 78%; bottom: 3%; }
+  .card-edge { right: -1%; top: 56%; width: 56%; }
 
   .nav-wrap > .btn {
     margin-left: auto;
