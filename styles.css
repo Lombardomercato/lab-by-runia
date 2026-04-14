@@ -9,6 +9,11 @@
   --radius: 1.25rem;
   --max: 1180px;
   --easing-premium: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --space-1: 0.5rem;   /* 8px */
+  --space-2: 0.75rem;  /* 12px */
+  --space-3: 1rem;     /* 16px */
+  --space-4: 1.5rem;   /* 24px */
+  --space-5: 2rem;     /* 32px */
 }
 
 *,
@@ -647,8 +652,8 @@ h1 span {
 
 .section-head {
   display: grid;
-  gap: 1rem;
-  margin-bottom: 2.1rem;
+  gap: var(--space-3);
+  margin-bottom: var(--space-5);
 }
 
 .section-head h2 {
@@ -664,6 +669,8 @@ h1 span {
 
 .services-grid {
   grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-auto-rows: 1fr;
+  align-items: stretch;
 }
 
 .service-card,
@@ -697,7 +704,11 @@ h1 span {
 }
 
 .service-card {
-  padding: 1.7rem;
+  height: 100%;
+  padding: var(--space-4);
+  display: grid;
+  grid-template-rows: auto 1fr;
+  align-content: start;
 }
 
 .service-card:hover {
@@ -711,7 +722,7 @@ h1 span {
 }
 
 .service-card p {
-  margin: 0.82rem 0 0;
+  margin: var(--space-2) 0 0;
   color: var(--muted);
 }
 
@@ -745,11 +756,14 @@ h1 span {
 .gradient-3 { background: radial-gradient(circle at 18% 22%, #eadfce 0%, #80715e 54%, #1f1d1b 100%); }
 
 .project-body {
-  padding: 1.34rem;
+  padding: var(--space-4);
+  display: grid;
+  grid-template-rows: auto 1fr;
+  align-content: start;
 }
 
 .project h3 {
-  margin-top: 0.68rem;
+  margin-top: var(--space-2);
   font-size: clamp(1.06rem, 1.8vw, 1.38rem);
 }
 
@@ -762,10 +776,11 @@ h1 span {
 }
 
 .process-list li {
-  padding: 1.15rem 1.28rem;
+  padding: var(--space-4);
   display: grid;
-  grid-template-columns: 12.8rem 1fr;
-  gap: 0.9rem;
+  grid-template-columns: 13rem 1fr;
+  gap: var(--space-3);
+  align-items: start;
 }
 
 .process-list li:hover {
@@ -790,12 +805,12 @@ h1 span {
 
 .cta-inner h2 {
   max-width: 16ch;
-  margin: 0.68rem 0 0.84rem;
+  margin: var(--space-2) 0 var(--space-2);
   font-size: clamp(1.78rem, 4vw, 3.3rem);
 }
 
 .cta-inner p {
-  margin: 0 0 1.6rem;
+  margin: 0 0 var(--space-4);
   max-width: 57ch;
   color: var(--muted);
 }
@@ -930,6 +945,10 @@ html.js .reveal.is-visible {
   .project-grid,
   .services-grid {
     grid-template-columns: 1fr;
+  }
+
+  .services-grid {
+    grid-auto-rows: auto;
   }
 
   .hero {
