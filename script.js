@@ -567,6 +567,95 @@ if (heroVisual && floatCards.length > 0) {
   }
 }
 
+
+const showcaseSlider = document.querySelector('[data-showcase-slider]');
+
+if (showcaseSlider) {
+  const slides = Array.from(showcaseSlider.querySelectorAll('[data-showcase-slide]'));
+  const reduced = prefersReducedMotion.matches;
+  const cycleMs = 5200;
+  const pointerState = { x: 0.5, y: 0.5, inside: false };
+  let activeIndex = slides.findIndex((slide) => slide.classList.contains('is-active'));
+  let autoplayId = null;
+  let showcaseRaf = 0;
+  let startTime = performance.now();
+
+  if (activeIndex < 0) activeIndex = 0;
+
+  const applyLayerState = (slide, progress) => {
+    const media = slide.querySelector('.showcase-media');
+    const glow = slide.querySelector('.showcase-glow');
+    const content = slide.querySelector('.showcase-content');
+    if (!media || !glow || !content) return;
+
+    const nx = (pointerState.x - 0.5) * 2;
+    const ny = (pointerState.y - 0.5) * 2;
+    const influence = pointerState.inside ? 1 : 0.36;
+
+    const parallaxX = nx * 7.5 * influence;
+    const parallaxY = ny * 6.5 * influence;
+    const contentY = ny * 2.1 * influence;
+    const glowX = 50 + nx * 18;
+    const glowY = 46 + ny * 14;
+    const livingZoom = 1 + Math.sin(progress * Math.PI * 2) * 0.008 + 0.018;
+
+    media.style.setProperty('--parallax-x', `${parallaxX.toFixed(2)}px`);
+    media.style.setProperty('--parallax-y', `${parallaxY.toFixed(2)}px`);
+    media.style.setProperty('--zoom', livingZoom.toFixed(4));
+    glow.style.setProperty('--glow-x', `${glowX.toFixed(2)}%`);
+    glow.style.setProperty('--glow-y', `${glowY.toFixed(2)}%`);
+    glow.style.setProperty('--glow-alpha', (pointerState.inside ? 0.23 : 0.16).toFixed(3));
+    content.style.setProperty('--content-y', `${contentY.toFixed(2)}px`);
+  };
+
+  const setActiveSlide = (nextIndex) => {
+    slides.forEach((slide, index) => {
+      slide.classList.toggle('is-active', index === nextIndex);
+    });
+    activeIndex = nextIndex;
+    startTime = performance.now();
+  };
+
+  const goNext = () => {
+    setActiveSlide((activeIndex + 1) % slides.length);
+  };
+
+  const resetAutoplay = () => {
+    if (autoplayId) window.clearInterval(autoplayId);
+    if (!reduced) {
+      autoplayId = window.setInterval(goNext, cycleMs);
+    }
+  };
+
+  const tickShowcase = (time) => {
+    const progress = ((time - startTime) % cycleMs) / cycleMs;
+    applyLayerState(slides[activeIndex], progress);
+    showcaseRaf = requestAnimationFrame(tickShowcase);
+  };
+
+  showcaseSlider.addEventListener('pointermove', (event) => {
+    const rect = showcaseSlider.getBoundingClientRect();
+    pointerState.x = Math.min(1, Math.max(0, (event.clientX - rect.left) / rect.width));
+    pointerState.y = Math.min(1, Math.max(0, (event.clientY - rect.top) / rect.height));
+    pointerState.inside = true;
+  }, { passive: true });
+
+  showcaseSlider.addEventListener('pointerleave', () => {
+    pointerState.inside = false;
+    pointerState.x = 0.5;
+    pointerState.y = 0.5;
+  });
+
+  showcaseSlider.addEventListener('pointerenter', resetAutoplay, { passive: true });
+
+  if (slides.length > 1) resetAutoplay();
+  if (!reduced) {
+    showcaseRaf = requestAnimationFrame(tickShowcase);
+  } else {
+    applyLayerState(slides[activeIndex], 0.15);
+  }
+}
+
 magneticButtons.forEach((button) => {
   if (prefersReducedMotion.matches) return;
 

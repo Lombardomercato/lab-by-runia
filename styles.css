@@ -934,3 +934,23 @@ html.js .reveal.is-visible {
     animation: none;
   }
 }
+
+
+@media (prefers-reduced-motion: reduce) {
+  .showcase-slide,
+  .showcase-slide.is-active,
+  .showcase-content .meta,
+  .showcase-content .motion-title,
+  .showcase-content .section-intro {
+    transition-duration: 0.01ms !important;
+    transform: none !important;
+  }
+
+  .showcase-media {
+    transform: none !important;
+  }
+
+  .showcase-glow {
+    opacity: 0.14;
+  }
+}
