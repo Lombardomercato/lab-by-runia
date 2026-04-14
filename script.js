@@ -8,6 +8,7 @@ const navLinks = document.querySelector('.nav-links');
 const navbar = document.querySelector('.navbar');
 const heroVisual = document.querySelector('.hero-visual');
 const floatCards = document.querySelectorAll('.float-card');
+const particleField = document.querySelector('.particle-field');
 const interactiveCards = document.querySelectorAll('.tilt, .project');
 const heroLayers = document.querySelectorAll('.hero-bg [data-depth]');
 const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -171,6 +172,130 @@ if (!prefersReducedMotion.matches) {
     if (!glowRaf) {
       glowPointer.visible = true;
       glowRaf = requestAnimationFrame(renderGlow);
+    }
+  });
+}
+
+if (particleField) {
+  const particles = [];
+  const particleCount = 28;
+  const friction = 0.93;
+  const spring = 0.022;
+  const interactionRadius = 120;
+  const pointerState = { x: 0, y: 0, inside: false };
+  let particleRaf = 0;
+  let fieldRect = particleField.getBoundingClientRect();
+  let lastTick = performance.now();
+
+  const randomBetween = (min, max) => min + Math.random() * (max - min);
+
+  const createParticle = (index) => {
+    const node = document.createElement('span');
+    node.className = 'particle';
+    particleField.appendChild(node);
+
+    const depth = 0.7 + (index % 3) * 0.24;
+    const size = randomBetween(4, 12);
+    node.style.setProperty('--particle-size', `${size.toFixed(2)}px`);
+    node.style.setProperty('--particle-opacity', `${randomBetween(0.08, 0.2).toFixed(3)}`);
+
+    const baseX = Math.random() * fieldRect.width;
+    const baseY = Math.random() * fieldRect.height;
+
+    particles.push({
+      node,
+      depth,
+      baseX,
+      baseY,
+      x: baseX,
+      y: baseY,
+      vx: randomBetween(-0.2, 0.2),
+      vy: randomBetween(-0.2, 0.2),
+      orbitX: randomBetween(8, 28),
+      orbitY: randomBetween(6, 22),
+      phase: Math.random() * Math.PI * 2,
+      speed: randomBetween(0.25, 0.65),
+    });
+  };
+
+  const resetField = () => {
+    fieldRect = particleField.getBoundingClientRect();
+  };
+
+  const tickParticles = (time) => {
+    const dt = Math.min(34, time - lastTick) / 16.67;
+    lastTick = time;
+
+    particles.forEach((particle) => {
+      const cycle = time * 0.001 * particle.speed + particle.phase;
+      const targetX = particle.baseX + Math.cos(cycle) * particle.orbitX * particle.depth;
+      const targetY = particle.baseY + Math.sin(cycle) * particle.orbitY * particle.depth;
+
+      particle.vx += (targetX - particle.x) * spring;
+      particle.vy += (targetY - particle.y) * spring;
+
+      if (pointerState.inside) {
+        const dx = particle.x - pointerState.x;
+        const dy = particle.y - pointerState.y;
+        const distance = Math.hypot(dx, dy) || 1;
+
+        if (distance < interactionRadius) {
+          const force = (1 - distance / interactionRadius) * 0.75 * particle.depth;
+          particle.vx += (dx / distance) * force;
+          particle.vy += (dy / distance) * force;
+        }
+      }
+
+      particle.vx *= friction;
+      particle.vy *= friction;
+      particle.x += particle.vx * dt;
+      particle.y += particle.vy * dt;
+
+      if (particle.x < -18) particle.x = fieldRect.width + 18;
+      if (particle.x > fieldRect.width + 18) particle.x = -18;
+      if (particle.y < -18) particle.y = fieldRect.height + 18;
+      if (particle.y > fieldRect.height + 18) particle.y = -18;
+
+      particle.node.style.setProperty('--particle-x', `${particle.x.toFixed(2)}px`);
+      particle.node.style.setProperty('--particle-y', `${particle.y.toFixed(2)}px`);
+    });
+
+    particleRaf = requestAnimationFrame(tickParticles);
+  };
+
+  for (let i = 0; i < particleCount; i += 1) {
+    createParticle(i);
+  }
+
+  window.addEventListener(
+    'mousemove',
+    (event) => {
+      const localX = event.clientX - fieldRect.left;
+      const localY = event.clientY - fieldRect.top;
+      pointerState.x = localX;
+      pointerState.y = localY;
+      pointerState.inside = localX >= 0 && localX <= fieldRect.width && localY >= 0 && localY <= fieldRect.height;
+    },
+    { passive: true },
+  );
+
+  window.addEventListener('resize', resetField, { passive: true });
+  resetField();
+
+  if (!prefersReducedMotion.matches) {
+    particleRaf = requestAnimationFrame(tickParticles);
+  }
+
+  prefersReducedMotion.addEventListener('change', (event) => {
+    if (event.matches) {
+      if (particleRaf) cancelAnimationFrame(particleRaf);
+      particleRaf = 0;
+      return;
+    }
+
+    if (!particleRaf) {
+      lastTick = performance.now();
+      particleRaf = requestAnimationFrame(tickParticles);
     }
   });
 }

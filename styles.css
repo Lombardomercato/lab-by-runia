@@ -194,10 +194,29 @@ body {
 .layer-grid,
 .layer-code,
 .layer-glow,
-.layer-nodes {
+.layer-nodes,
+.particle-field {
   position: absolute;
   inset: 0;
   transform: translate3d(var(--tx, 0), var(--ty, 0), 0);
+}
+
+.particle-field {
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.particle {
+  position: absolute;
+  border-radius: 50%;
+  width: var(--particle-size, 8px);
+  height: var(--particle-size, 8px);
+  opacity: var(--particle-opacity, 0.16);
+  background: radial-gradient(circle at 28% 30%, rgba(243, 238, 228, 0.85), rgba(214, 201, 178, 0.2) 72%, transparent 100%);
+  filter: blur(0.1px);
+  transform: translate3d(var(--particle-x, 0px), var(--particle-y, 0px), 0);
+  will-change: transform;
 }
 
 .layer-grid {
