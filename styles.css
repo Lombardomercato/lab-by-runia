@@ -101,6 +101,20 @@ body::after {
   background: radial-gradient(circle at center, rgba(178, 163, 136, 0.2), transparent 74%);
 }
 
+.hero-scroll-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -4;
+  pointer-events: none;
+  background-image:
+    linear-gradient(100deg, rgba(8, 8, 8, 0.14), rgba(8, 8, 8, 0.44)),
+    url("./assets/hero/hero.webp");
+  background-size: cover;
+  background-position: center right;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+
 .container {
   width: min(100% - 3rem, var(--max));
   margin-inline: auto;
@@ -267,10 +281,7 @@ body::after {
   position: relative;
   padding: 5.6rem 0 3.2rem;
   isolation: isolate;
-  background-image: url('/lab-by-runia/assets/hero/hero.webp');
-  background-size: cover;
-  background-position: center right;
-  background-repeat: no-repeat;
+  background: transparent;
   opacity: 0;
   transform: translateY(16px);
   animation: hero-enter 900ms var(--easing-premium) 120ms forwards;
@@ -284,8 +295,8 @@ body::after {
   pointer-events: none;
   background: linear-gradient(
     to bottom,
-    rgba(0, 0, 0, 0.55),
-    rgba(0, 0, 0, 0.85)
+    rgba(0, 0, 0, 0.16),
+    rgba(0, 0, 0, 0.48)
   );
 }
 
@@ -313,15 +324,15 @@ body::after {
 
 .layer-atmosphere {
   background:
-    radial-gradient(circle at 16% 20%, rgba(33, 30, 24, 0.42), transparent 56%),
-    radial-gradient(circle at 82% 6%, rgba(47, 40, 29, 0.2), transparent 48%),
-    linear-gradient(160deg, rgba(8, 8, 8, 0.72), rgba(10, 10, 10, 0.64));
+    radial-gradient(circle at 16% 20%, rgba(33, 30, 24, 0.22), transparent 56%),
+    radial-gradient(circle at 82% 6%, rgba(47, 40, 29, 0.14), transparent 48%),
+    linear-gradient(160deg, rgba(8, 8, 8, 0.24), rgba(10, 10, 10, 0.34));
 }
 
 .layer-scene-image {
   inset: 2% 8% 8%;
   border-radius: 2rem;
-  opacity: 0.38;
+  opacity: 0.14;
   filter: blur(0.5px) saturate(0.95);
   transform: translate3d(var(--tx, 0), var(--ty, 0), 0) scale(1.15);
   background-image:
@@ -582,6 +593,17 @@ h1 span {
   position: relative;
   padding: 6.2rem 0;
   isolation: isolate;
+}
+
+#services,
+#process {
+  background: rgba(7, 7, 7, 0.78);
+  backdrop-filter: blur(1px);
+}
+
+#work,
+#contact {
+  background: transparent;
 }
 
 .section::before {
@@ -912,7 +934,6 @@ html.js .reveal.is-visible {
 
   .hero {
     padding-top: 2.6rem;
-    background-position: 70% center;
   }
 
   .hero-visual {
@@ -943,6 +964,11 @@ html.js .reveal.is-visible {
   .site-atmosphere span,
   .cursor-glow {
     opacity: 0.12;
+  }
+
+  .hero-scroll-bg {
+    background-attachment: scroll;
+    background-position: 70% center;
   }
 }
 
