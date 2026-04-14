@@ -116,6 +116,8 @@ body::after {
   background-position: center right;
   background-repeat: no-repeat;
   background-attachment: fixed;
+  filter: saturate(0.84) brightness(1.06) contrast(0.95);
+  opacity: 0.94;
 }
 
 .container {
@@ -290,6 +292,15 @@ body::after {
   animation: hero-enter 900ms var(--easing-premium) 120ms forwards;
 }
 
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(58rem 28rem at 72% 18%, rgba(245, 237, 224, 0.08), transparent 70%);
+}
+
 .particle {
   position: absolute;
   border-radius: 50%;
@@ -383,13 +394,13 @@ h1 span {
   position: absolute;
   --shadow-x: 0px;
   --shadow-y: 20px;
-  background: linear-gradient(150deg, rgba(35, 35, 35, 0.9), rgba(14, 14, 14, 0.8));
-  border: 1px solid rgba(212, 195, 169, 0.14);
+  background: linear-gradient(150deg, rgba(40, 36, 31, 0.78), rgba(18, 17, 15, 0.62));
+  border: 1px solid rgba(232, 218, 192, 0.22);
   border-radius: var(--radius);
   padding: 1.35rem;
   box-shadow:
-    var(--shadow-x) var(--shadow-y) 54px -38px rgba(0, 0, 0, 0.38),
-    0 24px 64px -48px rgba(0, 0, 0, 0.5);
+    var(--shadow-x) var(--shadow-y) 54px -38px rgba(0, 0, 0, 0.34),
+    0 24px 64px -48px rgba(0, 0, 0, 0.42);
   backdrop-filter: blur(10px);
   filter: blur(var(--depth-blur, 0px));
   transform:
