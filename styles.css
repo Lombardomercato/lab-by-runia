@@ -273,6 +273,15 @@ h3 {
   line-height: 1.04;
 }
 
+h1,
+h2,
+h3 {
+  font-family: 'Syne', sans-serif;
+  margin: 0;
+  letter-spacing: -0.015em;
+  line-height: 1.04;
+}
+
 .eyebrow,
 .section-tag,
 .meta {
