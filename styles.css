@@ -37,16 +37,18 @@ body {
 
 .cursor-glow {
   position: fixed;
-  width: 340px;
+  width: clamp(220px, 28vw, 380px);
   aspect-ratio: 1;
   border-radius: 50%;
   pointer-events: none;
-  z-index: 0;
-  filter: blur(55px);
+  z-index: 90;
+  filter: blur(64px);
   opacity: 0;
-  background: radial-gradient(circle, rgba(216, 200, 173, 0.16), transparent 64%);
+  background: radial-gradient(circle, rgba(230, 220, 200, 0.11), rgba(214, 196, 165, 0.06) 38%, transparent 72%);
   transform: translate(-50%, -50%);
-  transition: opacity 420ms var(--ease);
+  mix-blend-mode: soft-light;
+  will-change: transform, opacity;
+  transition: opacity 420ms var(--easing-premium);
 }
 
 .navbar {
@@ -192,10 +194,29 @@ body {
 .layer-grid,
 .layer-code,
 .layer-glow,
-.layer-nodes {
+.layer-nodes,
+.particle-field {
   position: absolute;
   inset: 0;
   transform: translate3d(var(--tx, 0), var(--ty, 0), 0);
+}
+
+.particle-field {
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.particle {
+  position: absolute;
+  border-radius: 50%;
+  width: var(--particle-size, 8px);
+  height: var(--particle-size, 8px);
+  opacity: var(--particle-opacity, 0.16);
+  background: radial-gradient(circle at 28% 30%, rgba(243, 238, 228, 0.85), rgba(214, 201, 178, 0.2) 72%, transparent 100%);
+  filter: blur(0.1px);
+  transform: translate3d(var(--particle-x, 0px), var(--particle-y, 0px), 0);
+  will-change: transform;
 }
 
 .layer-grid {
@@ -353,15 +374,20 @@ h1 span {
   min-height: 24rem;
   position: relative;
   perspective: 1100px;
+  overflow: hidden;
 }
 
 .float-card {
   position: absolute;
+  --shadow-x: 0px;
+  --shadow-y: 20px;
   background: linear-gradient(150deg, rgba(35, 35, 35, 0.88), rgba(14, 14, 14, 0.8));
   border: 1px solid rgba(212, 195, 169, 0.16);
   border-radius: var(--radius);
   padding: 1.35rem;
-  box-shadow: 0 34px 70px -45px rgba(0, 0, 0, 0.85);
+  box-shadow:
+    var(--shadow-x) var(--shadow-y) 64px -38px rgba(0, 0, 0, 0.38),
+    0 32px 84px -52px rgba(0, 0, 0, 0.52);
   backdrop-filter: blur(6px);
   transform:
     translate3d(calc(var(--drag-x, 0px) + var(--mx, 0px)), calc(var(--drag-y, 0px) + var(--float-y, 0px) + var(--my, 0px)), 0)
@@ -370,6 +396,9 @@ h1 span {
     scale(var(--scale, 1));
   transition: border-color 360ms var(--easing-premium);
   cursor: grab;
+  z-index: var(--z-card, 1);
+  will-change: transform;
+  user-select: none;
 }
 
 .float-card:hover {
@@ -378,6 +407,7 @@ h1 span {
 
 .float-card.is-dragging {
   cursor: grabbing;
+  transition: none;
 }
 
 .float-card strong {
