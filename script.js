@@ -10,6 +10,7 @@ const heroVisual = document.querySelector('.hero-visual');
 const floatCards = document.querySelectorAll('.float-card');
 const particleField = document.querySelector('.particle-field');
 const interactiveCards = document.querySelectorAll('.tilt, .project');
+const magneticButtons = document.querySelectorAll('.magnetic');
 const heroLayers = document.querySelectorAll('.hero-bg [data-depth]');
 const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 const cursorGlow = document.createElement('div');
