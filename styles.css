@@ -717,18 +717,9 @@ h1 span {
 }
 
 .project-media {
-  position: relative;
   height: 220px;
   overflow: hidden;
   border-radius: calc(var(--radius) - 1px) calc(var(--radius) - 1px) 0 0;
-}
-
-.project-media::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.6), transparent);
-  pointer-events: none;
 }
 
 .project-media img {
