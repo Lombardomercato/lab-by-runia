@@ -265,7 +265,7 @@ body::after {
 
 .hero {
   position: relative;
-  padding: 5.2rem 0 2.8rem;
+  padding: 5.6rem 0 3.2rem;
   isolation: isolate;
   background-image: url('/lab-by-runia/assets/hero/hero.webp');
   background-size: cover;
@@ -284,8 +284,8 @@ body::after {
   pointer-events: none;
   background: linear-gradient(
     to bottom,
-    rgba(0, 0, 0, 0.42),
-    rgba(0, 0, 0, 0.74)
+    rgba(0, 0, 0, 0.55),
+    rgba(0, 0, 0, 0.85)
   );
 }
 
@@ -386,7 +386,7 @@ body::after {
   border-radius: 50%;
   width: var(--particle-size, 8px);
   height: var(--particle-size, 8px);
-  opacity: var(--particle-opacity, 0.16);
+  opacity: var(--particle-opacity, 0.1);
   background: radial-gradient(circle at 28% 30%, rgba(243, 238, 228, 0.9), rgba(214, 201, 178, 0.26) 72%, transparent 100%);
   transform: translate3d(var(--particle-x, 0px), var(--particle-y, 0px), 0);
   filter: blur(var(--particle-blur, 0px));
@@ -442,7 +442,7 @@ body::after {
 .hero-grid {
   display: grid;
   grid-template-columns: 1.1fr 1fr;
-  gap: 2.4rem;
+  gap: 3.1rem;
   align-items: end;
   position: relative;
   z-index: 2;
@@ -510,7 +510,7 @@ h1 span {
   --shadow-x: 0px;
   --shadow-y: 20px;
   background: linear-gradient(150deg, rgba(35, 35, 35, 0.9), rgba(14, 14, 14, 0.8));
-  border: 1px solid rgba(212, 195, 169, 0.18);
+  border: 1px solid rgba(212, 195, 169, 0.14);
   border-radius: var(--radius);
   padding: 1.35rem;
   box-shadow:
@@ -580,7 +580,7 @@ h1 span {
 
 .section {
   position: relative;
-  padding: 6rem 0;
+  padding: 6.6rem 0;
   isolation: isolate;
 }
 
@@ -630,7 +630,7 @@ h1 span {
 .services-grid,
 .project-grid {
   display: grid;
-  gap: 1rem;
+  gap: 1.2rem;
 }
 
 .services-grid {
@@ -751,7 +751,7 @@ h1 span {
 }
 
 .cta {
-  padding-top: 2rem;
+  padding-top: 2.8rem;
 }
 
 .cta-inner {
@@ -916,8 +916,7 @@ html.js .reveal.is-visible {
 
   .layer-scene-image {
     inset: 8% 2% 14%;
-    opacity: 0.3;
-    background-position: 70% center;
+    opacity: 0.16;
     transform: translate3d(var(--tx, 0), var(--ty, 0), 0) scale(1.08);
   }
 

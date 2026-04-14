@@ -287,11 +287,11 @@ const initParticleSystem = (field, amount = 16, strength = 1) => {
     node.className = 'particle';
     field.appendChild(node);
 
-    const depth = randomBetween(0.6, 1.5);
-    const size = randomBetween(3.5, 12) * depth * 0.8;
+    const depth = randomBetween(0.7, 1.35);
+    const size = randomBetween(2.6, 7.8) * depth * 0.72;
     node.style.setProperty('--particle-size', `${size.toFixed(2)}px`);
-    node.style.setProperty('--particle-opacity', `${randomBetween(0.06, 0.22).toFixed(3)}`);
-    node.style.setProperty('--particle-blur', `${(1.4 - depth * 0.45).toFixed(2)}px`);
+    node.style.setProperty('--particle-opacity', `${randomBetween(0.03, 0.11).toFixed(3)}`);
+    node.style.setProperty('--particle-blur', `${(1 - depth * 0.36).toFixed(2)}px`);
 
     const homeX = Math.random() * fieldRect.width;
     const homeY = Math.random() * fieldRect.height;
