@@ -580,40 +580,47 @@ h1 span {
 
 .section {
   position: relative;
-  padding: 6.6rem 0;
+  padding: 6.2rem 0;
   isolation: isolate;
 }
 
 .section::before {
   content: "";
   position: absolute;
-  inset: 6% 2% 10%;
-  border-radius: clamp(1.4rem, 2.8vw, 2.8rem);
-  background: linear-gradient(160deg, rgba(24, 24, 24, 0.34), rgba(9, 9, 9, 0.18));
-  border: 1px solid rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(2px);
+  inset: 0;
+  border-radius: 0;
+  background:
+    radial-gradient(70rem 40rem at 8% 18%, rgba(205, 182, 143, 0.04), transparent 72%),
+    radial-gradient(56rem 36rem at 88% 74%, rgba(232, 219, 200, 0.035), transparent 72%);
+  border: 0;
+  backdrop-filter: none;
   z-index: -1;
   transform: translate3d(0, var(--section-shift, 0px), 0);
+  pointer-events: none;
 }
 
 #services::before {
-  inset: 8% 1% 9%;
-  background: radial-gradient(circle at 8% 30%, rgba(205, 182, 143, 0.04), transparent 50%), linear-gradient(165deg, rgba(27, 27, 27, 0.52), rgba(11, 11, 11, 0.25));
+  background:
+    radial-gradient(62rem 30rem at 8% 26%, rgba(205, 182, 143, 0.055), transparent 68%),
+    radial-gradient(40rem 28rem at 82% 74%, rgba(160, 141, 113, 0.03), transparent 70%);
 }
 
 #work::before {
-  inset: 8% 3% 8%;
-  background: radial-gradient(circle at 90% 8%, rgba(232, 219, 200, 0.04), transparent 46%), linear-gradient(160deg, rgba(26, 26, 26, 0.5), rgba(10, 10, 10, 0.24));
+  background:
+    radial-gradient(55rem 32rem at 88% 8%, rgba(232, 219, 200, 0.05), transparent 66%),
+    radial-gradient(38rem 24rem at 12% 72%, rgba(187, 169, 141, 0.028), transparent 70%);
 }
 
 #process::before {
-  inset: 8% 2% 9%;
-  background: radial-gradient(circle at 16% 90%, rgba(180, 162, 136, 0.05), transparent 44%), linear-gradient(150deg, rgba(24, 24, 24, 0.44), rgba(10, 10, 10, 0.26));
+  background:
+    radial-gradient(48rem 28rem at 16% 90%, rgba(180, 162, 136, 0.05), transparent 66%),
+    radial-gradient(38rem 22rem at 80% 18%, rgba(214, 196, 165, 0.022), transparent 68%);
 }
 
 .cta::before {
-  inset: 12% 0% 8%;
-  background: radial-gradient(circle at 70% 20%, rgba(214, 196, 165, 0.06), transparent 46%), linear-gradient(150deg, rgba(27, 27, 27, 0.56), rgba(9, 9, 9, 0.34));
+  background:
+    radial-gradient(56rem 34rem at 70% 24%, rgba(214, 196, 165, 0.06), transparent 68%),
+    radial-gradient(46rem 24rem at 12% 80%, rgba(189, 170, 143, 0.03), transparent 70%);
 }
 
 .section-head {
@@ -630,7 +637,7 @@ h1 span {
 .services-grid,
 .project-grid {
   display: grid;
-  gap: 1.2rem;
+  gap: 1.5rem;
 }
 
 .services-grid {
@@ -639,8 +646,7 @@ h1 span {
 
 .service-card,
 .project,
-.process-list li,
-.cta-inner {
+.process-list li {
   border: 1px solid var(--line);
   border-radius: var(--radius);
   background: linear-gradient(160deg, rgba(20, 20, 20, 0.88), rgba(10, 10, 10, 0.94));
@@ -730,7 +736,7 @@ h1 span {
   margin: 0;
   padding: 0;
   display: grid;
-  gap: 0.72rem;
+  gap: 1rem;
 }
 
 .process-list li {
@@ -751,11 +757,12 @@ h1 span {
 }
 
 .cta {
-  padding-top: 2.8rem;
+  padding-top: 3.2rem;
 }
 
 .cta-inner {
-  padding: clamp(2rem, 4.8vw, 3.8rem);
+  padding: clamp(0.25rem, 1vw, 0.5rem) 0;
+  max-width: 52rem;
   transform: translate3d(0, var(--parallax-y, 0), 0);
 }
 
