@@ -914,9 +914,9 @@ html.js .reveal.is-visible {
   }
 
   .hero-visual {
-    min-height: 18rem;
+    min-height: 21rem;
     width: 100%;
-    margin-top: 0.9rem;
+    margin-top: 1.9rem;
     margin-left: 0;
   }
 
@@ -938,10 +938,10 @@ html.js .reveal.is-visible {
     font-size: 0.52rem;
   }
 
-  .card-main { inset: 4% auto auto 1%; width: 42%; }
-  .card-mid { top: 32%; right: 2%; width: 38%; }
-  .card-back { right: auto; left: 7%; width: 40%; bottom: 4%; }
-  .card-edge { right: 2%; top: 62%; width: 30%; }
+  .card-main { inset: 16% auto auto 1%; width: 42%; }
+  .card-mid { top: 44%; right: 2%; width: 38%; }
+  .card-back { right: auto; left: 7%; width: 40%; bottom: 6%; }
+  .card-edge { right: 2%; top: 74%; width: 30%; }
 
   .nav-wrap > .btn {
     margin-left: auto;
@@ -972,6 +972,19 @@ html.js .reveal.is-visible {
   }
 }
 
+
+
+@media (max-width: 520px) {
+  .hero-visual {
+    min-height: 24rem;
+    margin-top: 2.6rem;
+  }
+
+  .card-main { inset: 22% auto auto 1%; }
+  .card-mid { top: 52%; }
+  .card-back { bottom: 8%; }
+  .card-edge { top: 80%; }
+}
 
 @media (max-width: 768px) {
   .project-grid {
