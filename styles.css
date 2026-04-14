@@ -125,29 +125,13 @@ body::after {
   margin-inline: auto;
 }
 
-.cursor-glow {
-  position: fixed;
-  width: clamp(140px, 16vw, 220px);
-  aspect-ratio: 1;
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: 90;
-  filter: blur(48px);
-  opacity: 0;
-  background: radial-gradient(circle, rgba(240, 233, 220, 0.1), rgba(214, 196, 165, 0.06) 40%, transparent 74%);
-  transform: translate(-50%, -50%);
-  mix-blend-mode: soft-light;
-  will-change: transform, opacity;
-  transition: opacity 420ms var(--easing-premium);
-}
-
 .global-particle-field {
   position: fixed;
   inset: 0;
   z-index: -1;
   pointer-events: none;
   overflow: hidden;
-  opacity: 0.3;
+  opacity: 0.4;
 }
 
 .navbar {
@@ -832,8 +816,7 @@ html.js .reveal.is-visible {
     margin-left: auto;
   }
 
-  .site-atmosphere span,
-  .cursor-glow {
+  .site-atmosphere span {
     opacity: 0.12;
   }
 
@@ -852,7 +835,6 @@ html.js .reveal.is-visible {
     transition-duration: 0.01ms !important;
   }
 
-  .cursor-glow,
   .global-particle-field,
   body::before {
     display: none !important;
