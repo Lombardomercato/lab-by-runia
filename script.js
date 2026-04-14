@@ -22,7 +22,7 @@ const setRevealSequence = () => {
       item.style.setProperty('--reveal-delay', `${index * 95}ms`);
     });
   });
-};
+});
 
 setRevealSequence();
 
@@ -46,8 +46,8 @@ revealElements.forEach((item) => revealObserver.observe(item));
 
 if (menuToggle && navLinks) {
   menuToggle.addEventListener('click', () => {
-    const isOpen = navLinks.classList.toggle('is-open');
-    menuToggle.setAttribute('aria-expanded', String(isOpen));
+    const open = navLinks.classList.toggle('is-open');
+    menuToggle.setAttribute('aria-expanded', String(open));
   });
 
   navLinks.querySelectorAll('a').forEach((link) => {
@@ -265,4 +265,8 @@ if (heroVisual && cards.length > 0) {
 
     animationFrameId = requestAnimationFrame(animateCards);
   });
+
+  if (!mediaReduce.matches) {
+    requestAnimationFrame(animate);
+  }
 }
