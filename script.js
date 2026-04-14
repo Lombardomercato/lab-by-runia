@@ -133,12 +133,14 @@ if (heroVisual && floatCards.length > 0) {
 
   const cardStates = Array.from(floatCards).map((card, index) => {
     const scale = Number(getComputedStyle(card).getPropertyValue('--scale')) || 1;
+    const depthFactor = 0.35 + index * 0.28;
     return {
       node: card,
       intensity: Number(card.dataset.intensity) || 0.7,
       amplitude: 2 + index * 2,
       duration: 7600 + index * 900,
       phase: index * 1.6,
+      depthFactor,
       x: 0,
       y: 0,
       vx: 0,
@@ -152,6 +154,8 @@ if (heroVisual && floatCards.length > 0) {
       hoverY: 0,
       rotateX: 0,
       rotateY: 0,
+      parallaxX: 0,
+      parallaxY: 0,
       floating: 0,
       isDragging: false,
       pointerOffsetX: 0,
@@ -270,25 +274,41 @@ if (heroVisual && floatCards.length > 0) {
 
       let targetX = 0;
       let targetY = 0;
+      let targetParallaxX = 0;
+      let targetParallaxY = 0;
       if (heroPointer.inside) {
         const centerX = state.baseLeft + state.x + state.width / 2;
         const centerY = state.baseTop + state.y + state.height / 2;
         targetX = Math.max(-1, Math.min(1, (heroPointer.x - centerX) / heroVisual.clientWidth));
         targetY = Math.max(-1, Math.min(1, (heroPointer.y - centerY) / heroVisual.clientHeight));
+
+        const heroX = Math.max(-1, Math.min(1, (heroPointer.x / heroVisual.clientWidth - 0.5) * 2));
+        const heroY = Math.max(-1, Math.min(1, (heroPointer.y / heroVisual.clientHeight - 0.5) * 2));
+        targetParallaxX = heroX * (7.5 * state.depthFactor);
+        targetParallaxY = heroY * (5.5 * state.depthFactor);
       }
 
       state.hoverX += (targetX - state.hoverX) * 0.1;
       state.hoverY += (targetY - state.hoverY) * 0.1;
-      state.rotateY += (state.hoverX * (1.25 * state.intensity) - state.rotateY) * 0.14;
-      state.rotateX += (state.hoverY * (-1.05 * state.intensity) - state.rotateX) * 0.14;
+      state.parallaxX += (targetParallaxX - state.parallaxX) * 0.09;
+      state.parallaxY += (targetParallaxY - state.parallaxY) * 0.09;
+
+      const maxRotate = 2.1 + state.depthFactor * 1.8;
+      state.rotateY += (state.hoverX * maxRotate - state.rotateY) * 0.13;
+      state.rotateX += (state.hoverY * -maxRotate - state.rotateX) * 0.13;
+
+      const shadowX = (-state.parallaxX * 1.55).toFixed(2);
+      const shadowY = (20 - state.parallaxY * 1.1).toFixed(2);
 
       state.node.style.setProperty('--drag-x', `${state.x.toFixed(2)}px`);
       state.node.style.setProperty('--drag-y', `${state.y.toFixed(2)}px`);
       state.node.style.setProperty('--float-y', `${state.floating.toFixed(2)}px`);
-      state.node.style.setProperty('--mx', `${(state.hoverX * (8 * state.intensity)).toFixed(2)}px`);
-      state.node.style.setProperty('--my', `${(state.hoverY * (7 * state.intensity)).toFixed(2)}px`);
+      state.node.style.setProperty('--mx', `${state.parallaxX.toFixed(2)}px`);
+      state.node.style.setProperty('--my', `${state.parallaxY.toFixed(2)}px`);
       state.node.style.setProperty('--rx', `${state.rotateX.toFixed(2)}deg`);
       state.node.style.setProperty('--ry', `${state.rotateY.toFixed(2)}deg`);
+      state.node.style.setProperty('--shadow-x', `${shadowX}px`);
+      state.node.style.setProperty('--shadow-y', `${shadowY}px`);
     });
 
     motionRaf = requestAnimationFrame(animateCards);
