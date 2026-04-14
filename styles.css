@@ -383,21 +383,22 @@ h1 span {
   position: absolute;
   --shadow-x: 0px;
   --shadow-y: 20px;
-  background: linear-gradient(150deg, rgba(35, 35, 35, 0.9), rgba(14, 14, 14, 0.8));
-  border: 1px solid rgba(212, 195, 169, 0.14);
+  background: linear-gradient(145deg, rgba(34, 34, 34, 0.72), rgba(14, 14, 14, 0.56));
+  border: 1px solid rgba(224, 211, 188, 0.2);
   border-radius: var(--radius);
   padding: 1.35rem;
   box-shadow:
-    var(--shadow-x) var(--shadow-y) 54px -38px rgba(0, 0, 0, 0.38),
-    0 24px 64px -48px rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(10px);
+    var(--shadow-x) var(--shadow-y) 48px -38px rgba(0, 0, 0, 0.32),
+    0 18px 46px -40px rgba(0, 0, 0, 0.46),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(14px) saturate(1.04);
   filter: blur(var(--depth-blur, 0px));
   transform:
     translate3d(calc(var(--drag-x, 0px) + var(--mx, 0px)), calc(var(--drag-y, 0px) + var(--float-y, 0px) + var(--my, 0px)), 0)
     rotateX(var(--rx, 0deg))
     rotateY(var(--ry, 0deg))
     scale(var(--scale, 1));
-  transition: border-color 360ms var(--easing-premium), box-shadow 360ms var(--easing-premium);
+  transition: border-color 360ms var(--easing-premium), box-shadow 360ms var(--easing-premium), background-color 360ms var(--easing-premium);
   cursor: grab;
   z-index: var(--z-card, 1);
   will-change: transform;
@@ -406,13 +407,17 @@ h1 span {
 }
 
 .float-card:hover {
-  border-color: rgba(212, 195, 169, 0.35);
+  border-color: rgba(226, 213, 191, 0.26);
+  box-shadow:
+    var(--shadow-x) var(--shadow-y) 50px -38px rgba(0, 0, 0, 0.34),
+    0 22px 50px -40px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
 }
 
 .float-card.is-dragging {
   cursor: grabbing;
   transition: none;
-  box-shadow: 0 30px 70px -34px rgba(0, 0, 0, 0.72);
+  box-shadow: 0 28px 62px -34px rgba(0, 0, 0, 0.64);
 }
 
 .float-card strong {
@@ -449,7 +454,7 @@ h1 span {
   width: min(14.4rem, 52%);
   --scale: 0.82;
   --depth-blur: 0.2px;
-  opacity: 0.48;
+  opacity: 0.42;
 }
 
 .section {
