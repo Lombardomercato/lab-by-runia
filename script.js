@@ -2,7 +2,7 @@ document.documentElement.classList.add('js');
 
 const revealElements = document.querySelectorAll('.reveal');
 const sections = document.querySelectorAll('main section');
-const parallaxTargets = document.querySelectorAll('.project-media, .cta-inner');
+const parallaxTargets = document.querySelectorAll('.project-media, .cta-inner, .service-card, .project, .process-list li');
 const menuToggle = document.querySelector('.menu-toggle');
 const navLinks = document.querySelector('.nav-links');
 const navbar = document.querySelector('.navbar');
@@ -50,7 +50,7 @@ const setRevealDelay = () => {
   sections.forEach((section) => {
     const items = section.querySelectorAll('.reveal');
     items.forEach((item, index) => {
-      item.style.setProperty('--reveal-delay', `${index * 70}ms`);
+      item.style.setProperty('--reveal-delay', `${index * 95}ms`);
     });
   });
 };
@@ -91,7 +91,7 @@ const applyScrollMotion = () => {
   }
 
   parallaxTargets.forEach((element, index) => {
-    const depth = (index + 2) * 0.006;
+    const depth = (index + 2) * 0.0029;
     element.style.setProperty('--parallax-y', `${(window.scrollY * depth).toFixed(2)}px`);
   });
 
@@ -108,7 +108,7 @@ applyScrollMotion();
 
 let pointerRaf = 0;
 const pointer = { x: window.innerWidth * 0.5, y: window.innerHeight * 0.3, active: false };
-const spotState = { x: 50, y: 20, tx: 50, ty: 20, opacity: 0, targetOpacity: 0 };
+const spotState = { x: 50, y: 20, tx: 50, ty: 20, opacity: 0, targetOpacity: 0, vx: 0, vy: 0 };
 
 const updatePointerMotion = () => {
   pointerRaf = 0;
@@ -128,13 +128,17 @@ const updatePointerMotion = () => {
     }
 
     if (card.classList.contains('tilt')) {
-      card.style.transform = `translateY(-1px) rotateX(${(-dy * 1.2).toFixed(2)}deg) rotateY(${(dx * 1.6).toFixed(2)}deg)`;
+      card.style.transform = `translateY(-1px) scale(1.008) rotateX(${(-dy * 0.85).toFixed(2)}deg) rotateY(${(dx * 1.0).toFixed(2)}deg)`;
     }
   });
 
-  spotState.x += (spotState.tx - spotState.x) * 0.1;
-  spotState.y += (spotState.ty - spotState.y) * 0.1;
-  spotState.opacity += (spotState.targetOpacity - spotState.opacity) * 0.1;
+  spotState.vx += (spotState.tx - spotState.x) * 0.015;
+  spotState.vy += (spotState.ty - spotState.y) * 0.015;
+  spotState.vx *= 0.82;
+  spotState.vy *= 0.82;
+  spotState.x += spotState.vx;
+  spotState.y += spotState.vy;
+  spotState.opacity += (spotState.targetOpacity - spotState.opacity) * 0.07;
 
   document.body.style.setProperty('--spot-x', `${spotState.x.toFixed(2)}%`);
   document.body.style.setProperty('--spot-y', `${spotState.y.toFixed(2)}%`);
@@ -160,7 +164,7 @@ window.addEventListener('mousemove', (event) => {
   document.body.style.setProperty('--spot-y', `${((event.clientY / window.innerHeight) * 100).toFixed(2)}%`);
   spotState.tx = (event.clientX / window.innerWidth) * 100;
   spotState.ty = (event.clientY / window.innerHeight) * 100;
-  spotState.targetOpacity = 0.5;
+  spotState.targetOpacity = 0.42;
 }, { passive: true });
 
 window.addEventListener('mouseleave', () => {
@@ -190,14 +194,14 @@ if (!prefersReducedMotion.matches) {
     visible: false,
   };
 
-  const glowLerp = 0.08;
+  const glowLerp = 0.06;
 
   const renderGlow = () => {
     glowPointer.x += (glowPointer.targetX - glowPointer.x) * glowLerp;
     glowPointer.y += (glowPointer.targetY - glowPointer.y) * glowLerp;
 
     cursorGlow.style.transform = `translate3d(${glowPointer.x.toFixed(2)}px, ${glowPointer.y.toFixed(2)}px, 0) translate(-50%, -50%)`;
-    cursorGlow.style.opacity = glowPointer.visible ? '0.42' : '0';
+    cursorGlow.style.opacity = glowPointer.visible ? '0.18' : '0';
 
     requestAnimationFrame(renderGlow);
   };
@@ -330,7 +334,7 @@ const initParticleSystem = (field, amount = 16, strength = 1) => {
   particleRaf = requestAnimationFrame(tickParticles);
 };
 
-initParticleSystem(globalParticleField, 10, 0.35);
+initParticleSystem(globalParticleField, 7, 0.18);
 
 if (heroVisual && floatCards.length > 0) {
   const heroPointer = { x: 0, y: 0, inside: false };
@@ -353,8 +357,8 @@ if (heroVisual && floatCards.length > 0) {
     return {
       node: card,
       intensity: Number(card.dataset.intensity) || 0.7,
-      amplitude: 3.4 + index * 1.6,
-      duration: 7600 + index * 850,
+      amplitude: 4.2 + index * 1.85,
+      duration: 9800 + index * 980,
       phase: Math.random() * Math.PI * 2,
       depthFactor: 0.45 + index * 0.32,
       x: 0,
@@ -462,12 +466,12 @@ if (heroVisual && floatCards.length > 0) {
         targetParallaxY = heroY * (4.6 * state.depthFactor) * state.intensity;
       }
 
-      state.hoverX += (targetX - state.hoverX) * 0.14;
-      state.hoverY += (targetY - state.hoverY) * 0.14;
-      state.parallaxX += (targetParallaxX - state.parallaxX) * 0.12;
-      state.parallaxY += (targetParallaxY - state.parallaxY) * 0.12;
+      state.hoverX += (targetX - state.hoverX) * 0.1;
+      state.hoverY += (targetY - state.hoverY) * 0.1;
+      state.parallaxX += (targetParallaxX - state.parallaxX) * 0.085;
+      state.parallaxY += (targetParallaxY - state.parallaxY) * 0.085;
 
-      const maxRotate = 1.8 + state.depthFactor * 1.4;
+      const maxRotate = 1.5 + state.depthFactor * 1.2;
       state.rotateY += (state.hoverX * maxRotate - state.rotateY) * 0.14;
       state.rotateX += (state.hoverY * -maxRotate - state.rotateX) * 0.14;
 
