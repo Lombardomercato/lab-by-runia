@@ -673,6 +673,7 @@ h1 span {
   min-height: 24rem;
   display: grid;
   grid-template-rows: 12rem 1fr;
+  overflow: hidden;
 }
 
 .project:hover {
@@ -682,12 +683,13 @@ h1 span {
 }
 
 .project-media {
+  min-height: 12rem;
   transition: transform 540ms var(--easing-premium);
-  transform: translate3d(0, var(--parallax-y, 0), 0);
+  transform: translate3d(0, 0, 0);
 }
 
 .project:hover .project-media {
-  transform: translate3d(0, var(--parallax-y, 0), 0) scale(1.015);
+  transform: translate3d(0, 0, 0) scale(1.015);
 }
 
 .gradient-1 { background: radial-gradient(circle at 20% 20%, #f1e5d4 0%, #89755f 54%, #2a2521 100%); }
@@ -699,6 +701,8 @@ h1 span {
   display: grid;
   grid-template-rows: auto 1fr;
   align-content: start;
+  position: relative;
+  z-index: 1;
 }
 
 .project h3 {
@@ -841,7 +845,7 @@ html.js .reveal.is-visible {
   }
 
   .menu-toggle {
-    display: inline-flex;
+    display: none !important;
     border: 1px solid var(--line);
     border-radius: 999px;
     background: rgba(255, 255, 255, 0.02);
@@ -850,15 +854,7 @@ html.js .reveal.is-visible {
     font: inherit;
   }
 
-  .nav-links {
-    display: none;
-    width: 100%;
-    flex-direction: column;
-    gap: 0.7rem;
-    padding-bottom: 0.8rem;
-  }
-
-  .nav-links.is-open { display: flex; }
+  .nav-links { display: none !important; }
 
   .hero-grid,
   .footer-wrap,
@@ -877,15 +873,33 @@ html.js .reveal.is-visible {
   }
 
   .hero-visual {
-    min-height: 21.5rem;
+    min-height: 15rem;
     width: 100%;
     margin-left: 0;
   }
 
-  .card-main { inset: -1% auto auto 1%; width: 82%; }
-  .card-mid { top: 28%; right: 2%; width: 72%; }
-  .card-back { right: auto; left: 7%; width: 78%; bottom: 3%; }
-  .card-edge { right: -1%; top: 56%; width: 56%; }
+  .float-card {
+    padding: 0.68rem;
+    border-radius: 0.8rem;
+  }
+
+  .float-card strong {
+    font-size: 0.78rem;
+    margin: 0.24rem 0;
+  }
+
+  .float-card p {
+    font-size: 0.63rem;
+  }
+
+  .float-card small {
+    font-size: 0.52rem;
+  }
+
+  .card-main { inset: -1% auto auto 1%; width: 42%; }
+  .card-mid { top: 28%; right: 2%; width: 38%; }
+  .card-back { right: auto; left: 7%; width: 40%; bottom: 3%; }
+  .card-edge { right: 2%; top: 56%; width: 30%; }
 
   .nav-wrap > .btn {
     margin-left: auto;

@@ -2,7 +2,7 @@ document.documentElement.classList.add('js');
 
 const revealElements = document.querySelectorAll('.reveal');
 const sections = document.querySelectorAll('main section');
-const parallaxTargets = document.querySelectorAll('.project-media, .cta-inner');
+const parallaxTargets = document.querySelectorAll('.cta-inner');
 const menuToggle = document.querySelector('.menu-toggle');
 const navLinks = document.querySelector('.nav-links');
 const navbar = document.querySelector('.navbar');
