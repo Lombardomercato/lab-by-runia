@@ -185,7 +185,7 @@ if (hero && heroMouseLight) {
   const renderHeroLight = () => {
     light.x += (light.tx - light.x) * 0.11;
     light.y += (light.ty - light.y) * 0.11;
-    light.alpha += (light.targetAlpha - light.alpha) * 0.14;
+    light.alpha += (light.targetAlpha - light.alpha) * 0.12;
 
     heroMouseLight.style.setProperty('--light-x', `${light.x.toFixed(2)}%`);
     heroMouseLight.style.setProperty('--light-y', `${light.y.toFixed(2)}%`);
@@ -232,7 +232,7 @@ if (hero && heroMouseLight) {
 if (particleField) {
   const particles = [];
   const particleCount = 18;
-  const interactionRadius = 220;
+  const interactionRadius = 180;
   const pointerState = { x: 0, y: 0, inside: false, vx: 0, vy: 0 };
   let particleRaf = 0;
   let fieldRect = particleField.getBoundingClientRect();
@@ -301,14 +301,14 @@ if (particleField) {
         const distance = Math.hypot(dx, dy) || 1;
 
         if (distance < interactionRadius) {
-          const power = (1 - distance / interactionRadius) * (1.02 + particle.depth * 0.36);
-          particle.vx += (dx / distance) * power + pointerState.vx * 0.09;
-          particle.vy += (dy / distance) * power + pointerState.vy * 0.09;
+          const power = (1 - distance / interactionRadius) * (0.82 + particle.depth * 0.28);
+          particle.vx += (dx / distance) * power + pointerState.vx * 0.05;
+          particle.vy += (dy / distance) * power + pointerState.vy * 0.05;
         }
       }
 
-      particle.vx *= 0.92;
-      particle.vy *= 0.92;
+      particle.vx *= 0.93;
+      particle.vy *= 0.93;
       particle.x += particle.vx * dt;
       particle.y += particle.vy * dt;
 
@@ -321,8 +321,8 @@ if (particleField) {
       particle.node.style.setProperty('--particle-y', `${particle.y.toFixed(2)}px`);
     });
 
-    pointerState.vx *= 0.86;
-    pointerState.vy *= 0.86;
+    pointerState.vx *= 0.9;
+    pointerState.vy *= 0.9;
 
     particleRaf = requestAnimationFrame(tickParticles);
   };
@@ -373,8 +373,6 @@ if (heroVisual && floatCards.length > 0) {
     pointerId: null,
     pointerOffsetX: 0,
     pointerOffsetY: 0,
-    targetX: 0,
-    targetY: 0,
     lastX: 0,
     lastY: 0,
     lastTime: 0,
@@ -472,9 +470,6 @@ if (heroVisual && floatCards.length > 0) {
 
         if (Math.abs(state.vx) < 0.02) state.vx = 0;
         if (Math.abs(state.vy) < 0.02) state.vy = 0;
-      } else if (dragState.card === state.node) {
-        state.x += (dragState.targetX - state.x) * 0.42;
-        state.y += (dragState.targetY - state.y) * 0.42;
       }
 
       applySoftBounds(state);
@@ -502,10 +497,10 @@ if (heroVisual && floatCards.length > 0) {
         targetParallaxY = heroY * (8 * state.depthFactor) * state.intensity;
       }
 
-      state.hoverX += (targetX - state.hoverX) * 0.16;
-      state.hoverY += (targetY - state.hoverY) * 0.16;
-      state.parallaxX += (targetParallaxX - state.parallaxX) * 0.14;
-      state.parallaxY += (targetParallaxY - state.parallaxY) * 0.14;
+      state.hoverX += (targetX - state.hoverX) * 0.14;
+      state.hoverY += (targetY - state.hoverY) * 0.14;
+      state.parallaxX += (targetParallaxX - state.parallaxX) * 0.12;
+      state.parallaxY += (targetParallaxY - state.parallaxY) * 0.12;
 
       const maxRotate = 2.8 + state.depthFactor * 2.4;
       state.rotateY += (state.hoverX * maxRotate - state.rotateY) * 0.14;
@@ -541,8 +536,6 @@ if (heroVisual && floatCards.length > 0) {
     dragState.lastX = event.clientX;
     dragState.lastY = event.clientY;
     dragState.lastTime = performance.now();
-    dragState.targetX = state.x;
-    dragState.targetY = state.y;
 
     state.vx = 0;
     state.vy = 0;
@@ -559,13 +552,13 @@ if (heroVisual && floatCards.length > 0) {
     if (!state) return;
 
     const heroRect = heroVisual.getBoundingClientRect();
-    dragState.targetX = event.clientX - heroRect.left - state.baseLeft - dragState.pointerOffsetX;
-    dragState.targetY = event.clientY - heroRect.top - state.baseTop - dragState.pointerOffsetY;
+    state.x = event.clientX - heroRect.left - state.baseLeft - dragState.pointerOffsetX;
+    state.y = event.clientY - heroRect.top - state.baseTop - dragState.pointerOffsetY;
 
     const now = performance.now();
     const dt = Math.max(8, now - dragState.lastTime);
-    state.vx = ((event.clientX - dragState.lastX) / dt) * 18;
-    state.vy = ((event.clientY - dragState.lastY) / dt) * 18;
+    state.vx = ((event.clientX - dragState.lastX) / dt) * 15;
+    state.vy = ((event.clientY - dragState.lastY) / dt) * 15;
 
     dragState.lastX = event.clientX;
     dragState.lastY = event.clientY;
@@ -580,8 +573,8 @@ if (heroVisual && floatCards.length > 0) {
     const state = getStateByNode(dragState.card);
     if (state) {
       state.isDragging = false;
-      state.vx *= 1.45;
-      state.vy *= 1.45;
+      state.vx *= 1.35;
+      state.vy *= 1.35;
       state.node.classList.remove('is-dragging');
       state.node.releasePointerCapture(event.pointerId);
     }
