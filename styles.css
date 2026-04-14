@@ -138,6 +138,7 @@ body {
 
 .btn:hover {
   transform: translateY(-2px);
+  box-shadow: 0 14px 26px -18px rgba(216, 200, 173, 0.45);
 }
 
 .btn-solid {
@@ -162,8 +163,15 @@ body {
 
 .hero {
   position: relative;
-  padding: 5rem 0 2.5rem;
+  padding: 3.4rem 0 1.8rem;
   isolation: isolate;
+}
+
+.hero-shell {
+  display: grid;
+  grid-template-columns: 1.08fr 1fr;
+  gap: 2.2rem;
+  align-items: center;
 }
 
 .hero-bg {
@@ -256,11 +264,13 @@ body {
 .nodes-layer span:nth-child(5) { top: 47%; left: 50%; animation-delay: -4.5s; }
 .nodes-layer span:nth-child(6) { top: 14%; left: 63%; animation-delay: -5.2s; }
 
-.hero-grid {
-  display: grid;
-  grid-template-columns: 1.15fr 1fr;
-  gap: 2.6rem;
-  align-items: end;
+h1,
+h2,
+h3 {
+  font-family: 'Syne', sans-serif;
+  margin: 0;
+  letter-spacing: -0.015em;
+  line-height: 1.04;
 }
 
 h1,
@@ -284,8 +294,13 @@ h3 {
 
 h1 {
   margin-top: 0.85rem;
-  font-size: clamp(2.3rem, 5.5vw, 5.3rem);
-  max-width: 11ch;
+  font-size: clamp(2.25rem, 5vw, 4.75rem);
+  max-width: 11.5ch;
+}
+
+.hero-title span {
+  display: block;
+  margin-top: 0.3rem;
 }
 
 h1 span {
@@ -293,8 +308,8 @@ h1 span {
 }
 
 .lead {
-  margin: 1.55rem 0 2.1rem;
-  max-width: 58ch;
+  margin: 1.35rem 0 1.85rem;
+  max-width: 56ch;
   color: color-mix(in srgb, var(--text) 74%, var(--muted));
 }
 
@@ -323,7 +338,7 @@ h1 span {
 }
 
 .hero-visual {
-  min-height: 24rem;
+  min-height: 21.5rem;
   position: relative;
   perspective: 1200px;
 }
@@ -359,9 +374,9 @@ h1 span {
   font-size: 0.95rem;
 }
 
-.card-main { inset: 2% auto auto 2%; width: min(20rem, 72%); }
-.card-mid { inset: 28% 2% auto auto; width: min(17rem, 60%); --scale: 0.95; }
-.card-back { inset: auto auto 5% 10%; width: min(18rem, 62%); --scale: 0.9; }
+.card-main { inset: 0 auto auto 4%; width: min(19rem, 70%); }
+.card-mid { inset: 26% 3% auto auto; width: min(16.2rem, 58%); --scale: 0.95; }
+.card-back { inset: auto auto 3% 10%; width: min(17.5rem, 60%); --scale: 0.9; }
 
 .section {
   padding: 6rem 0;
@@ -554,7 +569,7 @@ h1 span {
 
   .nav-links.is-open { display: flex; }
 
-  .hero-grid,
+  .hero-shell,
   .project-grid,
   .services-grid,
   .footer-wrap,
@@ -562,9 +577,9 @@ h1 span {
     grid-template-columns: 1fr;
   }
 
-  .hero { padding-top: 2.6rem; }
+  .hero { padding-top: 2rem; }
 
-  .hero-visual { min-height: 21rem; }
+  .hero-visual { min-height: 19.4rem; }
 
   .card-main { width: 82%; }
   .card-mid { width: 74%; top: 31%; }
