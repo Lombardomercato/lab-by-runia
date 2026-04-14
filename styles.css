@@ -353,6 +353,7 @@ h1 span {
   min-height: 24rem;
   position: relative;
   perspective: 1100px;
+  overflow: hidden;
 }
 
 .float-card {
@@ -370,6 +371,9 @@ h1 span {
     scale(var(--scale, 1));
   transition: border-color 360ms var(--easing-premium);
   cursor: grab;
+  z-index: var(--z-card, 1);
+  will-change: transform;
+  user-select: none;
 }
 
 .float-card:hover {
@@ -378,6 +382,7 @@ h1 span {
 
 .float-card.is-dragging {
   cursor: grabbing;
+  transition: none;
 }
 
 .float-card strong {

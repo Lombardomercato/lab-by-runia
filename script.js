@@ -19,7 +19,7 @@ const setRevealDelay = () => {
       item.style.setProperty('--reveal-delay', `${index * 85}ms`);
     });
   });
-});
+};
 
 setRevealDelay();
 
@@ -122,64 +122,171 @@ window.addEventListener('mouseleave', () => {
 
 if (heroVisual && floatCards.length > 0) {
   const heroPointer = { x: 0, y: 0, inside: false };
-  const dragState = { card: null, startX: 0, startY: 0, dragX: 0, dragY: 0 };
+  const dragState = { card: null, startX: 0, startY: 0 };
+
+  const friction = 0.94;
+  const maxVelocity = 46;
+  const minVelocity = 0.03;
+  let zCounter = floatCards.length + 1;
   let motionRaf = 0;
+  let lastFrame = performance.now();
 
-  const cardStates = Array.from(floatCards).map((card, index) => ({
-    node: card,
-    intensity: Number(card.dataset.intensity) || 0.7,
-    amplitude: 3 + index * 2,
-    duration: 7400 + index * 900,
-    phase: index * 1.5,
-    dragX: 0,
-    dragY: 0,
-    hoverX: 0,
-    hoverY: 0,
-    rotateX: 0,
-    rotateY: 0,
-  }));
-
-  const clampDrag = (state, nextX, nextY) => {
-    const heroBounds = heroVisual.getBoundingClientRect();
-    const cardBounds = state.node.getBoundingClientRect();
-    const baseLeft = state.node.offsetLeft;
-    const baseTop = state.node.offsetTop;
-    const visibleX = cardBounds.width * 0.34;
-    const visibleY = cardBounds.height * 0.34;
-
+  const cardStates = Array.from(floatCards).map((card, index) => {
+    const scale = Number(getComputedStyle(card).getPropertyValue('--scale')) || 1;
     return {
-      x: Math.min(heroBounds.width - baseLeft - visibleX, Math.max(-baseLeft - cardBounds.width + visibleX, nextX)),
-      y: Math.min(heroBounds.height - baseTop - visibleY, Math.max(-baseTop - cardBounds.height + visibleY, nextY)),
+      node: card,
+      intensity: Number(card.dataset.intensity) || 0.7,
+      amplitude: 2 + index * 2,
+      duration: 7600 + index * 900,
+      phase: index * 1.6,
+      x: 0,
+      y: 0,
+      vx: 0,
+      vy: 0,
+      width: 0,
+      height: 0,
+      baseLeft: card.offsetLeft,
+      baseTop: card.offsetTop,
+      scale,
+      hoverX: 0,
+      hoverY: 0,
+      rotateX: 0,
+      rotateY: 0,
+      floating: 0,
+      isDragging: false,
+      pointerOffsetX: 0,
+      pointerOffsetY: 0,
+      zIndex: zCounter + index,
     };
+  });
+
+  const getStateByNode = (node) => cardStates.find((item) => item.node === node);
+
+  const updateBounds = () => {
+    cardStates.forEach((state) => {
+      state.width = state.node.offsetWidth * state.scale;
+      state.height = state.node.offsetHeight * state.scale;
+      state.baseLeft = state.node.offsetLeft;
+      state.baseTop = state.node.offsetTop;
+    });
+  };
+
+  const clampToHero = (state) => {
+    const maxX = heroVisual.clientWidth - state.baseLeft - state.width;
+    const minX = -state.baseLeft;
+    const maxY = heroVisual.clientHeight - state.baseTop - state.height;
+    const minY = -state.baseTop;
+
+    if (state.x > maxX) {
+      state.x = maxX;
+      state.vx *= 0.35;
+    } else if (state.x < minX) {
+      state.x = minX;
+      state.vx *= 0.35;
+    }
+
+    if (state.y > maxY) {
+      state.y = maxY;
+      state.vy *= 0.35;
+    } else if (state.y < minY) {
+      state.y = minY;
+      state.vy *= 0.35;
+    }
+  };
+
+  const resolveCollisions = () => {
+    for (let i = 0; i < cardStates.length; i += 1) {
+      for (let j = i + 1; j < cardStates.length; j += 1) {
+        const a = cardStates[i];
+        const b = cardStates[j];
+
+        const ax = a.baseLeft + a.x;
+        const ay = a.baseTop + a.y;
+        const bx = b.baseLeft + b.x;
+        const by = b.baseTop + b.y;
+
+        const overlapX = Math.min(ax + a.width, bx + b.width) - Math.max(ax, bx);
+        const overlapY = Math.min(ay + a.height, by + b.height) - Math.max(ay, by);
+
+        if (overlapX <= 0 || overlapY <= 0) continue;
+
+        const useX = overlapX < overlapY;
+        const separation = (useX ? overlapX : overlapY) * 0.55 + 0.4;
+        const fromAtoB = useX ? bx - ax : by - ay;
+        const direction = fromAtoB >= 0 ? 1 : -1;
+
+        const shiftA = a.isDragging ? 0.25 : 0.5;
+        const shiftB = b.isDragging ? 0.25 : 0.5;
+
+        if (useX) {
+          a.x -= direction * separation * shiftA;
+          b.x += direction * separation * shiftB;
+          a.vx -= direction * 0.34;
+          b.vx += direction * 0.34;
+        } else {
+          a.y -= direction * separation * shiftA;
+          b.y += direction * separation * shiftB;
+          a.vy -= direction * 0.34;
+          b.vy += direction * 0.34;
+        }
+
+        clampToHero(a);
+        clampToHero(b);
+      }
+    }
+  };
+
+  const elevateCard = (state) => {
+    zCounter += 1;
+    state.zIndex = zCounter;
+    state.node.style.setProperty('--z-card', String(state.zIndex));
   };
 
   const animateCards = (time) => {
-    const heroBounds = heroVisual.getBoundingClientRect();
+    const delta = Math.min(34, time - lastFrame);
+    lastFrame = time;
+
+    cardStates.forEach((state) => {
+      if (!state.isDragging) {
+        state.x += state.vx * (delta / 16.67);
+        state.y += state.vy * (delta / 16.67);
+
+        state.vx *= friction;
+        state.vy *= friction;
+
+        if (Math.abs(state.vx) < minVelocity) state.vx = 0;
+        if (Math.abs(state.vy) < minVelocity) state.vy = 0;
+      }
+
+      clampToHero(state);
+    });
+
+    resolveCollisions();
 
     cardStates.forEach((state) => {
       const cycle = ((time % state.duration) / state.duration) * Math.PI * 2;
-      const floatY = Math.sin(cycle + state.phase) * state.amplitude;
-      const cardBounds = state.node.getBoundingClientRect();
+      const floatY = state.isDragging ? 0 : Math.sin(cycle + state.phase) * state.amplitude;
+      state.floating += (floatY - state.floating) * 0.18;
 
       let targetX = 0;
       let targetY = 0;
       if (heroPointer.inside) {
-        const centerX = cardBounds.left + cardBounds.width / 2;
-        const centerY = cardBounds.top + cardBounds.height / 2;
-        targetX = Math.max(-1, Math.min(1, (heroPointer.x - centerX) / heroBounds.width));
-        targetY = Math.max(-1, Math.min(1, (heroPointer.y - centerY) / heroBounds.height));
+        const centerX = state.baseLeft + state.x + state.width / 2;
+        const centerY = state.baseTop + state.y + state.height / 2;
+        targetX = Math.max(-1, Math.min(1, (heroPointer.x - centerX) / heroVisual.clientWidth));
+        targetY = Math.max(-1, Math.min(1, (heroPointer.y - centerY) / heroVisual.clientHeight));
       }
 
       state.hoverX += (targetX - state.hoverX) * 0.1;
       state.hoverY += (targetY - state.hoverY) * 0.1;
-      state.rotateY += (state.hoverX * (1.3 * state.intensity) - state.rotateY) * 0.14;
-      state.rotateX += (state.hoverY * (-1.2 * state.intensity) - state.rotateX) * 0.14;
+      state.rotateY += (state.hoverX * (1.25 * state.intensity) - state.rotateY) * 0.14;
+      state.rotateX += (state.hoverY * (-1.05 * state.intensity) - state.rotateX) * 0.14;
 
-      state.node.style.setProperty('--float-y', `${floatY.toFixed(2)}px`);
-      state.node.style.setProperty('--drag-x', `${state.dragX.toFixed(2)}px`);
-      state.node.style.setProperty('--drag-y', `${state.dragY.toFixed(2)}px`);
-      state.node.style.setProperty('--mx', `${(state.hoverX * (10 * state.intensity)).toFixed(2)}px`);
-      state.node.style.setProperty('--my', `${(state.hoverY * (8 * state.intensity)).toFixed(2)}px`);
+      state.node.style.setProperty('--drag-x', `${state.x.toFixed(2)}px`);
+      state.node.style.setProperty('--drag-y', `${state.y.toFixed(2)}px`);
+      state.node.style.setProperty('--float-y', `${state.floating.toFixed(2)}px`);
+      state.node.style.setProperty('--mx', `${(state.hoverX * (8 * state.intensity)).toFixed(2)}px`);
+      state.node.style.setProperty('--my', `${(state.hoverY * (7 * state.intensity)).toFixed(2)}px`);
       state.node.style.setProperty('--rx', `${state.rotateX.toFixed(2)}deg`);
       state.node.style.setProperty('--ry', `${state.rotateY.toFixed(2)}deg`);
     });
@@ -187,9 +294,39 @@ if (heroVisual && floatCards.length > 0) {
     motionRaf = requestAnimationFrame(animateCards);
   };
 
+  const onDocumentMouseMove = (event) => {
+    if (!dragState.card) return;
+
+    const state = getStateByNode(dragState.card);
+    if (!state) return;
+
+    const nextX = event.clientX - dragState.startX - state.pointerOffsetX;
+    const nextY = event.clientY - dragState.startY - state.pointerOffsetY;
+
+    state.vx = Math.max(-maxVelocity, Math.min(maxVelocity, nextX - state.x));
+    state.vy = Math.max(-maxVelocity, Math.min(maxVelocity, nextY - state.y));
+
+    state.x = nextX;
+    state.y = nextY;
+    clampToHero(state);
+  };
+
+  const onDocumentMouseUp = () => {
+    if (!dragState.card) return;
+
+    const state = getStateByNode(dragState.card);
+    if (state) {
+      state.isDragging = false;
+      state.node.classList.remove('is-dragging');
+    }
+
+    dragState.card = null;
+  };
+
   heroVisual.addEventListener('mousemove', (event) => {
-    heroPointer.x = event.clientX;
-    heroPointer.y = event.clientY;
+    const rect = heroVisual.getBoundingClientRect();
+    heroPointer.x = event.clientX - rect.left;
+    heroPointer.y = event.clientY - rect.top;
     heroPointer.inside = true;
   });
 
@@ -197,36 +334,23 @@ if (heroVisual && floatCards.length > 0) {
     heroPointer.inside = false;
   });
 
-  document.addEventListener('mousemove', (event) => {
-    if (!dragState.card) return;
-
-    const state = cardStates.find((item) => item.node === dragState.card);
-    if (!state) return;
-
-    const nextX = dragState.dragX + (event.clientX - dragState.startX);
-    const nextY = dragState.dragY + (event.clientY - dragState.startY);
-    const clamped = clampDrag(state, nextX, nextY);
-    state.dragX = clamped.x;
-    state.dragY = clamped.y;
-
-    dragState.startX = event.clientX;
-    dragState.startY = event.clientY;
-  });
-
-  document.addEventListener('mouseup', () => {
-    if (!dragState.card) return;
-    dragState.card.classList.remove('is-dragging');
-    dragState.card = null;
-  });
+  document.addEventListener('mousemove', onDocumentMouseMove);
+  document.addEventListener('mouseup', onDocumentMouseUp);
 
   cardStates.forEach((state) => {
+    state.node.style.setProperty('--z-card', String(state.zIndex));
+
     state.node.addEventListener('mousedown', (event) => {
       event.preventDefault();
+
+      state.isDragging = true;
       dragState.card = state.node;
       dragState.startX = event.clientX;
       dragState.startY = event.clientY;
-      dragState.dragX = state.dragX;
-      dragState.dragY = state.dragY;
+      state.pointerOffsetX = event.clientX - (heroVisual.getBoundingClientRect().left + state.baseLeft + state.x);
+      state.pointerOffsetY = event.clientY - (heroVisual.getBoundingClientRect().top + state.baseTop + state.y);
+
+      elevateCard(state);
       state.node.classList.add('is-dragging');
     });
   });
@@ -236,6 +360,14 @@ if (heroVisual && floatCards.length > 0) {
     cancelAnimationFrame(motionRaf);
     motionRaf = 0;
   };
+
+  const handleResize = () => {
+    updateBounds();
+    cardStates.forEach((state) => clampToHero(state));
+  };
+
+  updateBounds();
+  window.addEventListener('resize', handleResize, { passive: true });
 
   if (!prefersReducedMotion.matches) {
     motionRaf = requestAnimationFrame(animateCards);
@@ -247,10 +379,9 @@ if (heroVisual && floatCards.length > 0) {
       return;
     }
 
-    if (!motionRaf) motionRaf = requestAnimationFrame(animateCards);
+    if (!motionRaf) {
+      lastFrame = performance.now();
+      motionRaf = requestAnimationFrame(animateCards);
+    }
   });
-
-  if (!mediaReduce.matches) {
-    requestAnimationFrame(animate);
-  }
 }
