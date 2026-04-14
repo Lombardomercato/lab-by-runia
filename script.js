@@ -6,15 +6,11 @@ const parallaxTargets = document.querySelectorAll('.project-media, .cta-inner');
 const menuToggle = document.querySelector('.menu-toggle');
 const navLinks = document.querySelector('.nav-links');
 const navbar = document.querySelector('.navbar');
-const hero = document.querySelector('.hero');
 const heroVisual = document.querySelector('.hero-visual');
 const floatCards = document.querySelectorAll('.float-card');
-const particleField = document.querySelector('.particle-field');
 const globalParticleField = document.querySelector('.global-particle-field');
-const heroMouseLight = document.querySelector('.hero-mouse-light');
 const interactiveCards = document.querySelectorAll('.tilt, .project, .interactive-surface');
 const magneticButtons = document.querySelectorAll('.magnetic');
-const heroLayers = document.querySelectorAll('.hero-bg [data-depth]');
 const spotReactive = document.querySelectorAll('.interactive-surface');
 const motionTitles = document.querySelectorAll('.motion-title');
 const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -121,12 +117,6 @@ const updatePointerMotion = () => {
   const x = pointer.x / window.innerWidth - 0.5;
   const y = pointer.y / window.innerHeight - 0.5;
 
-  heroLayers.forEach((layer) => {
-    const depth = Number(layer.dataset.depth) || 0.1;
-    layer.style.setProperty('--tx', `${(x * depth * 28).toFixed(2)}px`);
-    layer.style.setProperty('--ty', `${(y * depth * 22).toFixed(2)}px`);
-  });
-
   interactiveCards.forEach((card) => {
     const rect = card.getBoundingClientRect();
     const dx = (pointer.x - (rect.left + rect.width / 2)) / rect.width;
@@ -223,51 +213,6 @@ if (!prefersReducedMotion.matches) {
   });
 
   requestAnimationFrame(renderGlow);
-}
-
-if (hero && heroMouseLight) {
-  const light = {
-    x: 50,
-    y: 42,
-    tx: 50,
-    ty: 42,
-    alpha: 0,
-    targetAlpha: 0,
-    raf: 0,
-  };
-
-  const renderHeroLight = () => {
-    light.x += (light.tx - light.x) * 0.11;
-    light.y += (light.ty - light.y) * 0.11;
-    light.alpha += (light.targetAlpha - light.alpha) * 0.12;
-
-    heroMouseLight.style.setProperty('--light-x', `${light.x.toFixed(2)}%`);
-    heroMouseLight.style.setProperty('--light-y', `${light.y.toFixed(2)}%`);
-    heroMouseLight.style.setProperty('--light-opacity', light.alpha.toFixed(3));
-
-    light.raf = requestAnimationFrame(renderHeroLight);
-  };
-
-  hero.addEventListener('pointermove', (event) => {
-    if (prefersReducedMotion.matches) return;
-    const rect = hero.getBoundingClientRect();
-    light.tx = ((event.clientX - rect.left) / rect.width) * 100;
-    light.ty = ((event.clientY - rect.top) / rect.height) * 100;
-    light.targetAlpha = 0.55;
-  }, { passive: true });
-
-  hero.addEventListener('pointerenter', () => {
-    if (prefersReducedMotion.matches) return;
-    light.targetAlpha = 0.55;
-  });
-
-  hero.addEventListener('pointerleave', () => {
-    light.targetAlpha = 0;
-  });
-
-  if (!prefersReducedMotion.matches) {
-    light.raf = requestAnimationFrame(renderHeroLight);
-  }
 }
 
 const initParticleSystem = (field, amount = 16, strength = 1) => {
@@ -385,7 +330,6 @@ const initParticleSystem = (field, amount = 16, strength = 1) => {
   particleRaf = requestAnimationFrame(tickParticles);
 };
 
-initParticleSystem(particleField, 9, 0.6);
 initParticleSystem(globalParticleField, 10, 0.35);
 
 if (heroVisual && floatCards.length > 0) {

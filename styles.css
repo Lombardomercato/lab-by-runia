@@ -111,9 +111,7 @@ body::after {
   inset: 0;
   z-index: -4;
   pointer-events: none;
-  background-image:
-    linear-gradient(100deg, rgba(8, 8, 8, 0.14), rgba(8, 8, 8, 0.44)),
-    url("./assets/hero/hero.webp");
+  background-image: url("./assets/hero/hero.webp");
   background-size: cover;
   background-position: center right;
   background-repeat: no-repeat;
@@ -292,111 +290,6 @@ body::after {
   animation: hero-enter 900ms var(--easing-premium) 120ms forwards;
 }
 
-.hero::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  pointer-events: none;
-  background: linear-gradient(
-    to bottom,
-    rgba(0, 0, 0, 0.16),
-    rgba(0, 0, 0, 0.48)
-  );
-}
-
-.hero-bg {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  overflow: hidden;
-  pointer-events: none;
-}
-
-.layer-atmosphere,
-.layer-scene-image,
-.layer-far-panel,
-.layer-grid,
-.layer-code,
-.layer-glow,
-.layer-nodes,
-.particle-field,
-.hero-mouse-light {
-  position: absolute;
-  inset: 0;
-  transform: translate3d(var(--tx, 0), var(--ty, 0), 0);
-}
-
-.layer-atmosphere {
-  background:
-    radial-gradient(circle at 16% 20%, rgba(33, 30, 24, 0.22), transparent 56%),
-    radial-gradient(circle at 82% 6%, rgba(47, 40, 29, 0.14), transparent 48%),
-    linear-gradient(160deg, rgba(8, 8, 8, 0.24), rgba(10, 10, 10, 0.34));
-}
-
-.layer-scene-image {
-  inset: 2% 8% 8%;
-  border-radius: 2rem;
-  opacity: 0.14;
-  filter: blur(0.5px) saturate(0.95);
-  transform: translate3d(var(--tx, 0), var(--ty, 0), 0) scale(1.15);
-  background-image:
-    linear-gradient(118deg, rgba(9, 9, 9, 0.18), rgba(6, 6, 6, 0.5)),
-    url("./assets/hero/hero.webp");
-  background-size: cover;
-  background-position: center right;
-  box-shadow: 0 26px 90px -70px rgba(0, 0, 0, 0.9);
-}
-
-.layer-far-panel {
-  inset: 16% 14% 6% 38%;
-  border-radius: 1.8rem;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  background: linear-gradient(170deg, rgba(250, 244, 234, 0.08), rgba(34, 31, 26, 0.06));
-  backdrop-filter: blur(16px);
-  opacity: 0.46;
-  transform: translate3d(var(--tx, 0), var(--ty, 0), 0) rotate(-4deg);
-}
-
-.hero-mouse-light {
-  --light-x: 50%;
-  --light-y: 42%;
-  --light-opacity: 0;
-  background: radial-gradient(circle at var(--light-x) var(--light-y), rgba(250, 244, 232, 0.14), rgba(245, 234, 214, 0.05) 38%, transparent 72%);
-  filter: blur(28px);
-  opacity: var(--light-opacity);
-  transition: opacity 480ms var(--easing-premium);
-  z-index: 3;
-}
-
-.layer-grid {
-  background:
-    linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px) 0 0 / 42px 42px,
-    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px) 0 0 / 42px 42px;
-  mask-image: radial-gradient(circle at 46% 34%, black 24%, transparent 84%);
-  opacity: 0.2;
-  animation: drift 30s linear infinite;
-}
-
-.layer-code {
-  background:
-    repeating-linear-gradient(
-      180deg,
-      transparent 0,
-      transparent 15px,
-      rgba(210, 196, 169, 0.04) 15px,
-      rgba(210, 196, 169, 0.04) 16px
-    ),
-    linear-gradient(100deg, rgba(210, 196, 169, 0.07), transparent 60%);
-  opacity: 0.16;
-}
-
-.particle-field {
-  pointer-events: none;
-  overflow: hidden;
-  z-index: 4;
-}
-
 .particle {
   position: absolute;
   border-radius: 50%;
@@ -409,41 +302,6 @@ body::after {
   will-change: transform;
 }
 
-.layer-glow {
-  filter: blur(60px);
-  opacity: 0.22;
-}
-
-.glow-left {
-  inset: auto auto -18% -10%;
-  width: 46vw;
-  height: 40vw;
-  background: radial-gradient(circle at center, rgba(209, 191, 160, 0.12), transparent 72%);
-}
-
-.glow-right {
-  inset: -16% -10% auto auto;
-  width: 40vw;
-  height: 32vw;
-  background: radial-gradient(circle at center, rgba(239, 233, 222, 0.1), transparent 72%);
-}
-
-.layer-nodes span {
-  position: absolute;
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
-  border: 1px solid rgba(221, 205, 181, 0.32);
-  box-shadow: 0 0 14px -8px rgba(224, 210, 188, 0.52);
-  animation: pulse 9s ease-in-out infinite;
-}
-
-.layer-nodes span:nth-child(1) { top: 22%; left: 15%; }
-.layer-nodes span:nth-child(2) { top: 64%; left: 28%; animation-delay: -1.2s; }
-.layer-nodes span:nth-child(3) { top: 40%; left: 51%; animation-delay: -3.6s; }
-.layer-nodes span:nth-child(4) { top: 28%; right: 16%; animation-delay: -2.2s; }
-.layer-nodes span:nth-child(5) { top: 74%; right: 22%; animation-delay: -3.2s; }
-.layer-nodes span:nth-child(6) { top: 82%; left: 42%; animation-delay: -5s; }
 
 .eyebrow,
 .section-tag,
@@ -885,23 +743,6 @@ html.js .reveal.is-visible {
   filter: blur(0);
 }
 
-@keyframes drift {
-  from { transform: translate3d(0, 0, 0); }
-  to { transform: translate3d(-24px, -18px, 0); }
-}
-
-@keyframes pulse {
-  0%,
-  100% {
-    opacity: 0.2;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.48;
-    transform: scale(1.35);
-  }
-}
-
 @keyframes hero-enter {
   from {
     opacity: 0;
@@ -961,16 +802,6 @@ html.js .reveal.is-visible {
     margin-left: 0;
   }
 
-  .layer-scene-image {
-    inset: 8% 2% 14%;
-    opacity: 0.16;
-    transform: translate3d(var(--tx, 0), var(--ty, 0), 0) scale(1.08);
-  }
-
-  .layer-far-panel {
-    inset: 26% 8% 12% 28%;
-  }
-
   .card-main { inset: -1% auto auto 1%; width: 82%; }
   .card-mid { top: 28%; right: 2%; width: 72%; }
   .card-back { right: auto; left: 7%; width: 78%; bottom: 3%; }
@@ -1000,8 +831,6 @@ html.js .reveal.is-visible {
     transition-duration: 0.01ms !important;
   }
 
-  .layer-grid,
-  .hero-mouse-light,
   .cursor-glow,
   .global-particle-field,
   body::before {
