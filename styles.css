@@ -37,16 +37,18 @@ body {
 
 .cursor-glow {
   position: fixed;
-  width: 340px;
+  width: clamp(220px, 28vw, 380px);
   aspect-ratio: 1;
   border-radius: 50%;
   pointer-events: none;
-  z-index: 0;
-  filter: blur(55px);
+  z-index: 90;
+  filter: blur(64px);
   opacity: 0;
-  background: radial-gradient(circle, rgba(216, 200, 173, 0.16), transparent 64%);
+  background: radial-gradient(circle, rgba(230, 220, 200, 0.11), rgba(214, 196, 165, 0.06) 38%, transparent 72%);
   transform: translate(-50%, -50%);
-  transition: opacity 420ms var(--ease);
+  mix-blend-mode: soft-light;
+  will-change: transform, opacity;
+  transition: opacity 420ms var(--easing-premium);
 }
 
 .navbar {

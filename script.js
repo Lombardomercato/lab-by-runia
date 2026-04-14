@@ -11,6 +11,11 @@ const floatCards = document.querySelectorAll('.float-card');
 const interactiveCards = document.querySelectorAll('.tilt, .project');
 const heroLayers = document.querySelectorAll('.hero-bg [data-depth]');
 const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+const cursorGlow = document.createElement('div');
+
+cursorGlow.className = 'cursor-glow';
+cursorGlow.setAttribute('aria-hidden', 'true');
+document.body.appendChild(cursorGlow);
 
 const setRevealDelay = () => {
   sections.forEach((section) => {
@@ -119,6 +124,56 @@ window.addEventListener('mouseleave', () => {
     card.style.removeProperty('transform');
   });
 });
+
+if (!prefersReducedMotion.matches) {
+  const glowPointer = {
+    x: window.innerWidth * 0.5,
+    y: window.innerHeight * 0.35,
+    targetX: window.innerWidth * 0.5,
+    targetY: window.innerHeight * 0.35,
+    visible: false,
+  };
+  const glowLerp = 0.12;
+  let glowRaf = 0;
+
+  const renderGlow = () => {
+    glowPointer.x += (glowPointer.targetX - glowPointer.x) * glowLerp;
+    glowPointer.y += (glowPointer.targetY - glowPointer.y) * glowLerp;
+    cursorGlow.style.transform = `translate3d(${glowPointer.x.toFixed(2)}px, ${glowPointer.y.toFixed(2)}px, 0) translate(-50%, -50%)`;
+    cursorGlow.style.opacity = glowPointer.visible ? '1' : '0';
+    glowRaf = requestAnimationFrame(renderGlow);
+  };
+
+  window.addEventListener(
+    'mousemove',
+    (event) => {
+      glowPointer.targetX = event.clientX;
+      glowPointer.targetY = event.clientY;
+      glowPointer.visible = true;
+    },
+    { passive: true },
+  );
+
+  window.addEventListener('mouseleave', () => {
+    glowPointer.visible = false;
+  });
+
+  glowRaf = requestAnimationFrame(renderGlow);
+
+  prefersReducedMotion.addEventListener('change', (event) => {
+    if (event.matches) {
+      if (glowRaf) cancelAnimationFrame(glowRaf);
+      glowRaf = 0;
+      cursorGlow.style.opacity = '0';
+      return;
+    }
+
+    if (!glowRaf) {
+      glowPointer.visible = true;
+      glowRaf = requestAnimationFrame(renderGlow);
+    }
+  });
+}
 
 if (heroVisual && floatCards.length > 0) {
   const heroPointer = { x: 0, y: 0, inside: false };
