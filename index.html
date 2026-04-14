@@ -24,8 +24,30 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <div class="cursor-glow" aria-hidden="true"></div>
-
+    <noscript>
+      <style>
+        .reveal {
+          opacity: 1 !important;
+          transform: none !important;
+          filter: none !important;
+        }
+      </style>
+      <div
+        style="
+          position: sticky;
+          top: 0;
+          z-index: 9999;
+          padding: 0.75rem 1rem;
+          text-align: center;
+          font-family: Manrope, system-ui, sans-serif;
+          background: #d4c4aa;
+          color: #0a0a0a;
+          border-bottom: 1px solid rgba(10, 10, 10, 0.12);
+        "
+      >
+        Esta web funciona mejor con JavaScript activado. El contenido sigue disponible en modo estático.
+      </div>
+    </noscript>
     <header class="navbar" id="top">
       <nav class="container nav-wrap" aria-label="Principal">
         <a href="#top" class="brand" aria-label="LAB by Runia">LAB_<span>by Runia</span></a>

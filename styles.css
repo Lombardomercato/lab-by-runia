@@ -577,7 +577,9 @@ h1 span {
   border-color: rgba(212, 196, 170, 0.28);
 }
 
-.process-list span { color: var(--muted); }
+.process-list span {
+  color: var(--muted);
+}
 
 .cta {
   padding-top: 2rem;
