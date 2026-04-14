@@ -47,13 +47,13 @@ body::after {
 
 body::before {
   background:
-    radial-gradient(42rem 42rem at var(--spot-x) var(--spot-y), rgba(221, 205, 178, calc(var(--spot-opacity) * 0.22)), transparent 70%),
-    radial-gradient(35rem 35rem at calc(var(--spot-x) - 22%) calc(var(--spot-y) + 12%), rgba(191, 177, 150, calc(var(--spot-opacity) * 0.14)), transparent 72%);
+    radial-gradient(26rem 26rem at var(--spot-x) var(--spot-y), rgba(221, 205, 178, calc(var(--spot-opacity) * 0.12)), transparent 72%),
+    radial-gradient(20rem 20rem at calc(var(--spot-x) - 22%) calc(var(--spot-y) + 12%), rgba(191, 177, 150, calc(var(--spot-opacity) * 0.08)), transparent 74%);
   transition: opacity 0.4s var(--easing-premium);
 }
 
 body::after {
-  opacity: 0.5;
+  opacity: 0.28;
   mix-blend-mode: soft-light;
   background-image:
     radial-gradient(circle at 20% 18%, rgba(255, 255, 255, 0.16) 0.5px, transparent 0.8px),
@@ -72,8 +72,8 @@ body::after {
 .site-atmosphere span {
   position: absolute;
   border-radius: 999px;
-  filter: blur(70px);
-  opacity: 0.2;
+  filter: blur(64px);
+  opacity: 0.12;
   transform: translate3d(0, 0, 0);
 }
 
@@ -108,14 +108,14 @@ body::after {
 
 .cursor-glow {
   position: fixed;
-  width: clamp(300px, 38vw, 560px);
+  width: clamp(96px, 10vw, 150px);
   aspect-ratio: 1;
   border-radius: 50%;
   pointer-events: none;
   z-index: 90;
-  filter: blur(88px);
+  filter: blur(36px);
   opacity: 0;
-  background: radial-gradient(circle, rgba(240, 233, 220, 0.16), rgba(214, 196, 165, 0.1) 38%, transparent 72%);
+  background: radial-gradient(circle, rgba(240, 233, 220, 0.075), rgba(214, 196, 165, 0.04) 36%, transparent 72%);
   transform: translate(-50%, -50%);
   mix-blend-mode: soft-light;
   will-change: transform, opacity;
@@ -128,6 +128,7 @@ body::after {
   z-index: -1;
   pointer-events: none;
   overflow: hidden;
+  opacity: 0.18;
 }
 
 .navbar {
@@ -264,7 +265,7 @@ body::after {
 
 .hero {
   position: relative;
-  padding: 5.2rem 0 2.8rem;
+  padding: 5.6rem 0 3.2rem;
   isolation: isolate;
 }
 
@@ -292,16 +293,16 @@ body::after {
 
 .layer-atmosphere {
   background:
-    radial-gradient(circle at 16% 20%, rgba(33, 30, 24, 0.85), transparent 58%),
-    radial-gradient(circle at 82% 6%, rgba(47, 40, 29, 0.48), transparent 52%),
+    radial-gradient(circle at 16% 20%, rgba(33, 30, 24, 0.62), transparent 56%),
+    radial-gradient(circle at 82% 6%, rgba(47, 40, 29, 0.32), transparent 48%),
     linear-gradient(160deg, rgba(8, 8, 8, 0.94), rgba(10, 10, 10, 0.9));
 }
 
 .layer-scene-image {
   inset: 2% 8% 8%;
   border-radius: 2rem;
-  opacity: 0.56;
-  filter: blur(1.5px) saturate(1.1);
+  opacity: 0.16;
+  filter: blur(1px) saturate(1.02);
   transform: translate3d(var(--tx, 0), var(--ty, 0), 0) scale(1.15);
   background-image:
     linear-gradient(118deg, rgba(9, 9, 9, 0.28), rgba(6, 6, 6, 0.68)),
@@ -317,7 +318,7 @@ body::after {
   border: 1px solid rgba(255, 255, 255, 0.1);
   background: linear-gradient(170deg, rgba(250, 244, 234, 0.08), rgba(34, 31, 26, 0.06));
   backdrop-filter: blur(16px);
-  opacity: 0.7;
+  opacity: 0.34;
   transform: translate3d(var(--tx, 0), var(--ty, 0), 0) rotate(-4deg);
 }
 
@@ -325,8 +326,8 @@ body::after {
   --light-x: 50%;
   --light-y: 42%;
   --light-opacity: 0;
-  background: radial-gradient(circle at var(--light-x) var(--light-y), rgba(250, 244, 232, 0.2), rgba(245, 234, 214, 0.08) 40%, transparent 72%);
-  filter: blur(36px);
+  background: radial-gradient(circle at var(--light-x) var(--light-y), rgba(250, 244, 232, 0.1), rgba(245, 234, 214, 0.04) 34%, transparent 68%);
+  filter: blur(22px);
   opacity: var(--light-opacity);
   transition: opacity 480ms var(--easing-premium);
   z-index: 3;
@@ -337,8 +338,8 @@ body::after {
     linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px) 0 0 / 42px 42px,
     linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px) 0 0 / 42px 42px;
   mask-image: radial-gradient(circle at 46% 34%, black 24%, transparent 84%);
-  opacity: 0.42;
-  animation: drift 18s linear infinite;
+  opacity: 0.14;
+  animation: drift 30s linear infinite;
 }
 
 .layer-code {
@@ -351,7 +352,7 @@ body::after {
       rgba(210, 196, 169, 0.04) 16px
     ),
     linear-gradient(100deg, rgba(210, 196, 169, 0.07), transparent 60%);
-  opacity: 0.38;
+  opacity: 0.1;
 }
 
 .particle-field {
@@ -365,7 +366,7 @@ body::after {
   border-radius: 50%;
   width: var(--particle-size, 8px);
   height: var(--particle-size, 8px);
-  opacity: var(--particle-opacity, 0.16);
+  opacity: var(--particle-opacity, 0.1);
   background: radial-gradient(circle at 28% 30%, rgba(243, 238, 228, 0.9), rgba(214, 201, 178, 0.26) 72%, transparent 100%);
   transform: translate3d(var(--particle-x, 0px), var(--particle-y, 0px), 0);
   filter: blur(var(--particle-blur, 0px));
@@ -373,32 +374,33 @@ body::after {
 }
 
 .layer-glow {
-  filter: blur(72px);
-  opacity: 0.45;
+  filter: blur(60px);
+  opacity: 0.14;
 }
 
 .glow-left {
   inset: auto auto -18% -10%;
   width: 46vw;
   height: 40vw;
-  background: radial-gradient(circle at center, rgba(209, 191, 160, 0.2), transparent 72%);
+  background: radial-gradient(circle at center, rgba(209, 191, 160, 0.12), transparent 72%);
 }
 
 .glow-right {
   inset: -16% -10% auto auto;
   width: 40vw;
   height: 32vw;
-  background: radial-gradient(circle at center, rgba(239, 233, 222, 0.16), transparent 72%);
+  background: radial-gradient(circle at center, rgba(239, 233, 222, 0.1), transparent 72%);
 }
 
 .layer-nodes span {
   position: absolute;
-  width: 6px;
-  height: 6px;
+  width: 4px;
+  height: 4px;
   border-radius: 50%;
-  border: 1px solid rgba(221, 205, 181, 0.5);
-  box-shadow: 0 0 20px -8px rgba(224, 210, 188, 0.75);
-  animation: pulse 6s ease-in-out infinite;
+  border: 1px solid rgba(221, 205, 181, 0.32);
+  box-shadow: 0 0 14px -8px rgba(224, 210, 188, 0.52);
+  animation: pulse 11s ease-in-out infinite;
+  opacity: 0.45;
 }
 
 .layer-nodes span:nth-child(1) { top: 22%; left: 15%; }
@@ -421,7 +423,7 @@ body::after {
 .hero-grid {
   display: grid;
   grid-template-columns: 1.1fr 1fr;
-  gap: 2.4rem;
+  gap: 3.1rem;
   align-items: end;
   position: relative;
   z-index: 2;
@@ -475,7 +477,7 @@ h1 span {
 }
 
 .hero-visual {
-  min-height: clamp(25rem, 52vw, 39rem);
+  min-height: clamp(21.5rem, 42vw, 31rem);
   width: min(120%, 44rem);
   margin-left: max(-2.6rem, -5vw);
   position: relative;
@@ -489,12 +491,12 @@ h1 span {
   --shadow-x: 0px;
   --shadow-y: 20px;
   background: linear-gradient(150deg, rgba(35, 35, 35, 0.9), rgba(14, 14, 14, 0.8));
-  border: 1px solid rgba(212, 195, 169, 0.18);
+  border: 1px solid rgba(212, 195, 169, 0.14);
   border-radius: var(--radius);
   padding: 1.35rem;
   box-shadow:
-    var(--shadow-x) var(--shadow-y) 68px -36px rgba(0, 0, 0, 0.48),
-    0 32px 84px -48px rgba(0, 0, 0, 0.58);
+    var(--shadow-x) var(--shadow-y) 54px -38px rgba(0, 0, 0, 0.38),
+    0 24px 64px -48px rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(10px);
   filter: blur(var(--depth-blur, 0px));
   transform:
@@ -554,12 +556,12 @@ h1 span {
   width: min(14.4rem, 52%);
   --scale: 0.82;
   --depth-blur: 0.2px;
-  opacity: 0.9;
+  opacity: 0.34;
 }
 
 .section {
   position: relative;
-  padding: 6rem 0;
+  padding: 6.6rem 0;
   isolation: isolate;
 }
 
@@ -568,7 +570,7 @@ h1 span {
   position: absolute;
   inset: 6% 2% 10%;
   border-radius: clamp(1.4rem, 2.8vw, 2.8rem);
-  background: linear-gradient(160deg, rgba(24, 24, 24, 0.45), rgba(9, 9, 9, 0.22));
+  background: linear-gradient(160deg, rgba(24, 24, 24, 0.34), rgba(9, 9, 9, 0.18));
   border: 1px solid rgba(255, 255, 255, 0.03);
   backdrop-filter: blur(2px);
   z-index: -1;
@@ -577,22 +579,22 @@ h1 span {
 
 #services::before {
   inset: 8% 1% 9%;
-  background: radial-gradient(circle at 8% 30%, rgba(205, 182, 143, 0.08), transparent 50%), linear-gradient(165deg, rgba(27, 27, 27, 0.62), rgba(11, 11, 11, 0.3));
+  background: radial-gradient(circle at 8% 30%, rgba(205, 182, 143, 0.04), transparent 50%), linear-gradient(165deg, rgba(27, 27, 27, 0.52), rgba(11, 11, 11, 0.25));
 }
 
 #work::before {
   inset: 8% 3% 8%;
-  background: radial-gradient(circle at 90% 8%, rgba(232, 219, 200, 0.08), transparent 46%), linear-gradient(160deg, rgba(26, 26, 26, 0.58), rgba(10, 10, 10, 0.28));
+  background: radial-gradient(circle at 90% 8%, rgba(232, 219, 200, 0.04), transparent 46%), linear-gradient(160deg, rgba(26, 26, 26, 0.5), rgba(10, 10, 10, 0.24));
 }
 
 #process::before {
   inset: 8% 2% 9%;
-  background: radial-gradient(circle at 16% 90%, rgba(180, 162, 136, 0.09), transparent 44%), linear-gradient(150deg, rgba(24, 24, 24, 0.5), rgba(10, 10, 10, 0.3));
+  background: radial-gradient(circle at 16% 90%, rgba(180, 162, 136, 0.05), transparent 44%), linear-gradient(150deg, rgba(24, 24, 24, 0.44), rgba(10, 10, 10, 0.26));
 }
 
 .cta::before {
   inset: 12% 0% 8%;
-  background: radial-gradient(circle at 70% 20%, rgba(214, 196, 165, 0.1), transparent 46%), linear-gradient(150deg, rgba(27, 27, 27, 0.65), rgba(9, 9, 9, 0.4));
+  background: radial-gradient(circle at 70% 20%, rgba(214, 196, 165, 0.06), transparent 46%), linear-gradient(150deg, rgba(27, 27, 27, 0.56), rgba(9, 9, 9, 0.34));
 }
 
 .section-head {
@@ -609,7 +611,7 @@ h1 span {
 .services-grid,
 .project-grid {
   display: grid;
-  gap: 1rem;
+  gap: 1.2rem;
 }
 
 .services-grid {
@@ -638,13 +640,13 @@ h1 span {
   inset: -20%;
   border-radius: inherit;
   opacity: 0;
-  background: radial-gradient(circle at var(--ix, 50%) var(--iy, 50%), rgba(255, 245, 232, 0.18), transparent 54%);
+  background: radial-gradient(circle at var(--ix, 50%) var(--iy, 50%), rgba(255, 245, 232, 0.08), transparent 50%);
   transition: opacity 340ms var(--easing-premium);
   pointer-events: none;
 }
 
 .interactive-surface:hover::after {
-  opacity: 0.5;
+  opacity: 0.2;
 }
 
 .service-card {
@@ -652,9 +654,9 @@ h1 span {
 }
 
 .service-card:hover {
-  transform: translateY(-5px);
+  transform: translateY(-1px);
   border-color: rgba(212, 195, 169, 0.3);
-  box-shadow: 0 34px 56px -42px rgba(0, 0, 0, 0.88);
+  box-shadow: 0 22px 38px -36px rgba(0, 0, 0, 0.76);
 }
 
 .service-card h3 {
@@ -677,9 +679,9 @@ h1 span {
 }
 
 .project:hover {
-  transform: translateY(-4px);
+  transform: translateY(-1px);
   border-color: rgba(212, 195, 169, 0.3);
-  box-shadow: 0 30px 54px -44px rgba(0, 0, 0, 0.82);
+  box-shadow: 0 20px 34px -30px rgba(0, 0, 0, 0.7);
 }
 
 .project-media {
@@ -688,7 +690,7 @@ h1 span {
 }
 
 .project:hover .project-media {
-  transform: translate3d(0, var(--parallax-y, 0), 0) scale(1.04);
+  transform: translate3d(0, var(--parallax-y, 0), 0) scale(1.015);
 }
 
 .gradient-1 { background: radial-gradient(circle at 20% 20%, #f1e5d4 0%, #89755f 54%, #2a2521 100%); }
@@ -720,9 +722,9 @@ h1 span {
 }
 
 .process-list li:hover {
-  transform: translateY(-3px);
+  transform: translateY(-0.5px);
   border-color: rgba(212, 195, 169, 0.28);
-  box-shadow: 0 28px 50px -42px rgba(0, 0, 0, 0.85);
+  box-shadow: 0 16px 28px -24px rgba(0, 0, 0, 0.7);
 }
 
 .process-list span {
@@ -730,7 +732,7 @@ h1 span {
 }
 
 .cta {
-  padding-top: 2rem;
+  padding-top: 2.8rem;
 }
 
 .cta-inner {
@@ -800,18 +802,18 @@ html.js .reveal[data-reveal='soft'] {
 }
 
 html.js .reveal[data-reveal='rise'] {
-  --reveal-y: 26px;
-  --reveal-duration: 700ms;
+  --reveal-y: 16px;
+  --reveal-duration: 620ms;
 }
 
 html.js .reveal[data-reveal='left'] {
   --reveal-y: 0px;
-  transform: translateX(-24px) scale(0.992);
+  transform: translateX(-14px) scale(0.996);
 }
 
 html.js .reveal[data-reveal='right'] {
   --reveal-y: 0px;
-  transform: translateX(24px) scale(0.992);
+  transform: translateX(14px) scale(0.996);
 }
 
 html.js .reveal.is-visible {
@@ -828,12 +830,12 @@ html.js .reveal.is-visible {
 @keyframes pulse {
   0%,
   100% {
-    opacity: 0.34;
+    opacity: 0.2;
     transform: scale(1);
   }
   50% {
-    opacity: 0.9;
-    transform: scale(1.7);
+    opacity: 0.48;
+    transform: scale(1.35);
   }
 }
 
@@ -872,7 +874,7 @@ html.js .reveal.is-visible {
   }
 
   .hero {
-    padding-top: 2.6rem;
+    padding-top: 3rem;
   }
 
   .hero-visual {
@@ -883,7 +885,7 @@ html.js .reveal.is-visible {
 
   .layer-scene-image {
     inset: 8% 2% 14%;
-    opacity: 0.42;
+    opacity: 0.2;
     transform: translate3d(var(--tx, 0), var(--ty, 0), 0) scale(1.08);
   }
 

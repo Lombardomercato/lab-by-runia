@@ -54,7 +54,7 @@ const setRevealDelay = () => {
   sections.forEach((section) => {
     const items = section.querySelectorAll('.reveal');
     items.forEach((item, index) => {
-      item.style.setProperty('--reveal-delay', `${index * 90}ms`);
+      item.style.setProperty('--reveal-delay', `${index * 55}ms`);
     });
   });
 };
@@ -95,7 +95,7 @@ const applyScrollMotion = () => {
   }
 
   parallaxTargets.forEach((element, index) => {
-    const depth = (index + 2) * 0.012;
+    const depth = (index + 2) * 0.004;
     element.style.setProperty('--parallax-y', `${(window.scrollY * depth).toFixed(2)}px`);
   });
 
@@ -103,7 +103,7 @@ const applyScrollMotion = () => {
     const rect = section.getBoundingClientRect();
     const windowH = window.innerHeight || 1;
     const progress = (rect.top + rect.height * 0.5 - windowH * 0.5) / windowH;
-    section.style.setProperty('--section-shift', `${(progress * (2 + index * 0.5)).toFixed(2)}px`);
+    section.style.setProperty('--section-shift', `${(progress * (0.6 + index * 0.2)).toFixed(2)}px`);
   });
 };
 
@@ -112,6 +112,7 @@ applyScrollMotion();
 
 let pointerRaf = 0;
 const pointer = { x: window.innerWidth * 0.5, y: window.innerHeight * 0.3, active: false };
+const spotState = { x: 50, y: 20, tx: 50, ty: 20, opacity: 0, targetOpacity: 0 };
 
 const updatePointerMotion = () => {
   pointerRaf = 0;
@@ -122,8 +123,8 @@ const updatePointerMotion = () => {
 
   heroLayers.forEach((layer) => {
     const depth = Number(layer.dataset.depth) || 0.1;
-    layer.style.setProperty('--tx', `${(x * depth * 52).toFixed(2)}px`);
-    layer.style.setProperty('--ty', `${(y * depth * 40).toFixed(2)}px`);
+    layer.style.setProperty('--tx', `${(x * depth * 18).toFixed(2)}px`);
+    layer.style.setProperty('--ty', `${(y * depth * 14).toFixed(2)}px`);
   });
 
   interactiveCards.forEach((card) => {
@@ -137,13 +138,13 @@ const updatePointerMotion = () => {
     }
 
     if (card.classList.contains('tilt')) {
-      card.style.transform = `translateY(-1px) rotateX(${(-dy * 2.2).toFixed(2)}deg) rotateY(${(dx * 2.8).toFixed(2)}deg)`;
+      card.style.transform = `translateY(-0.5px) rotateX(${(-dy * 0.8).toFixed(2)}deg) rotateY(${(dx * 1.05).toFixed(2)}deg)`;
     }
   });
 
-  spotState.x += (spotState.tx - spotState.x) * 0.14;
-  spotState.y += (spotState.ty - spotState.y) * 0.14;
-  spotState.opacity += (spotState.targetOpacity - spotState.opacity) * 0.12;
+  spotState.x += (spotState.tx - spotState.x) * 0.08;
+  spotState.y += (spotState.ty - spotState.y) * 0.08;
+  spotState.opacity += (spotState.targetOpacity - spotState.opacity) * 0.08;
 
   document.body.style.setProperty('--spot-x', `${spotState.x.toFixed(2)}%`);
   document.body.style.setProperty('--spot-y', `${spotState.y.toFixed(2)}%`);
@@ -167,12 +168,14 @@ window.addEventListener('mousemove', (event) => {
 
   document.body.style.setProperty('--spot-x', `${((event.clientX / window.innerWidth) * 100).toFixed(2)}%`);
   document.body.style.setProperty('--spot-y', `${((event.clientY / window.innerHeight) * 100).toFixed(2)}%`);
-  document.body.style.setProperty('--spot-opacity', '1');
+  spotState.tx = (event.clientX / window.innerWidth) * 100;
+  spotState.ty = (event.clientY / window.innerHeight) * 100;
+  spotState.targetOpacity = 0.34;
 }, { passive: true });
 
 window.addEventListener('mouseleave', () => {
   pointer.active = false;
-  document.body.style.setProperty('--spot-opacity', '0');
+  spotState.targetOpacity = 0;
   interactiveCards.forEach((card) => {
     if (card.classList.contains('tilt')) card.style.removeProperty('transform');
   });
@@ -197,14 +200,14 @@ if (!prefersReducedMotion.matches) {
     visible: false,
   };
 
-  const glowLerp = 0.1;
+  const glowLerp = 0.075;
 
   const renderGlow = () => {
     glowPointer.x += (glowPointer.targetX - glowPointer.x) * glowLerp;
     glowPointer.y += (glowPointer.targetY - glowPointer.y) * glowLerp;
 
     cursorGlow.style.transform = `translate3d(${glowPointer.x.toFixed(2)}px, ${glowPointer.y.toFixed(2)}px, 0) translate(-50%, -50%)`;
-    cursorGlow.style.opacity = glowPointer.visible ? '1' : '0';
+    cursorGlow.style.opacity = glowPointer.visible ? '0.28' : '0';
 
     requestAnimationFrame(renderGlow);
   };
@@ -250,12 +253,12 @@ if (hero && heroMouseLight) {
     const rect = hero.getBoundingClientRect();
     light.tx = ((event.clientX - rect.left) / rect.width) * 100;
     light.ty = ((event.clientY - rect.top) / rect.height) * 100;
-    light.targetAlpha = 1;
+    light.targetAlpha = 0.4;
   }, { passive: true });
 
   hero.addEventListener('pointerenter', () => {
     if (prefersReducedMotion.matches) return;
-    light.targetAlpha = 1;
+    light.targetAlpha = 0.4;
   });
 
   hero.addEventListener('pointerleave', () => {
@@ -284,11 +287,11 @@ const initParticleSystem = (field, amount = 16, strength = 1) => {
     node.className = 'particle';
     field.appendChild(node);
 
-    const depth = randomBetween(0.6, 1.5);
-    const size = randomBetween(3.5, 12) * depth * 0.8;
+    const depth = randomBetween(0.7, 1.35);
+    const size = randomBetween(2.6, 7.8) * depth * 0.72;
     node.style.setProperty('--particle-size', `${size.toFixed(2)}px`);
-    node.style.setProperty('--particle-opacity', `${randomBetween(0.06, 0.22).toFixed(3)}`);
-    node.style.setProperty('--particle-blur', `${(1.4 - depth * 0.45).toFixed(2)}px`);
+    node.style.setProperty('--particle-opacity', `${randomBetween(0.03, 0.11).toFixed(3)}`);
+    node.style.setProperty('--particle-blur', `${(1 - depth * 0.36).toFixed(2)}px`);
 
     const homeX = Math.random() * fieldRect.width;
     const homeY = Math.random() * fieldRect.height;
@@ -382,8 +385,8 @@ const initParticleSystem = (field, amount = 16, strength = 1) => {
   particleRaf = requestAnimationFrame(tickParticles);
 };
 
-initParticleSystem(particleField, 18, 1.1);
-initParticleSystem(globalParticleField, 22, 0.65);
+initParticleSystem(particleField, 6, 0.4);
+initParticleSystem(globalParticleField, 6, 0.25);
 
 if (heroVisual && floatCards.length > 0) {
   const heroPointer = { x: 0, y: 0, inside: false };
@@ -406,8 +409,8 @@ if (heroVisual && floatCards.length > 0) {
     return {
       node: card,
       intensity: Number(card.dataset.intensity) || 0.7,
-      amplitude: 7 + index * 2.8,
-      duration: 6700 + index * 740,
+      amplitude: 2 + index * 1.1,
+      duration: 8400 + index * 920,
       phase: Math.random() * Math.PI * 2,
       depthFactor: 0.45 + index * 0.32,
       x: 0,
@@ -511,8 +514,8 @@ if (heroVisual && floatCards.length > 0) {
 
         const heroX = Math.max(-1, Math.min(1, (heroPointer.x / heroVisual.clientWidth - 0.5) * 2));
         const heroY = Math.max(-1, Math.min(1, (heroPointer.y / heroVisual.clientHeight - 0.5) * 2));
-        targetParallaxX = heroX * (11.5 * state.depthFactor) * state.intensity;
-        targetParallaxY = heroY * (8 * state.depthFactor) * state.intensity;
+        targetParallaxX = heroX * (3.8 * state.depthFactor) * state.intensity;
+        targetParallaxY = heroY * (2.8 * state.depthFactor) * state.intensity;
       }
 
       state.hoverX += (targetX - state.hoverX) * 0.14;
@@ -520,7 +523,7 @@ if (heroVisual && floatCards.length > 0) {
       state.parallaxX += (targetParallaxX - state.parallaxX) * 0.12;
       state.parallaxY += (targetParallaxY - state.parallaxY) * 0.12;
 
-      const maxRotate = 3 + state.depthFactor * 2.4;
+      const maxRotate = 1 + state.depthFactor * 0.85;
       state.rotateY += (state.hoverX * maxRotate - state.rotateY) * 0.14;
       state.rotateX += (state.hoverY * -maxRotate - state.rotateX) * 0.14;
 
@@ -646,7 +649,7 @@ magneticButtons.forEach((button) => {
     const x = event.clientX - rect.left - rect.width / 2;
     const y = event.clientY - rect.top - rect.height / 2;
 
-    button.style.transform = `translate3d(${(x * 0.12).toFixed(2)}px, ${(y * 0.12).toFixed(2)}px, 0)`;
+    button.style.transform = `translate3d(${(x * 0.04).toFixed(2)}px, ${(y * 0.04).toFixed(2)}px, 0)`;
   });
 
   button.addEventListener('mouseleave', () => {
