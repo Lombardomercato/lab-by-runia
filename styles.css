@@ -116,8 +116,8 @@ body::after {
   background-position: center right;
   background-repeat: no-repeat;
   background-attachment: fixed;
-  filter: saturate(0.84) brightness(1.06) contrast(0.95);
-  opacity: 0.94;
+  filter: saturate(0.72) brightness(0.62) contrast(1.04);
+  opacity: 0.78;
 }
 
 .container {
@@ -268,7 +268,7 @@ body::after {
 
 .hero {
   position: relative;
-  padding: 5.6rem 0 3.2rem;
+  padding: 5.6rem 0 4.2rem;
   isolation: isolate;
   background: transparent;
   opacity: 0;
@@ -282,7 +282,21 @@ body::after {
   inset: 0;
   z-index: -1;
   pointer-events: none;
-  background: radial-gradient(58rem 28rem at 72% 18%, rgba(245, 237, 224, 0.08), transparent 70%);
+  background:
+    linear-gradient(180deg, rgba(6, 6, 6, 0.72) 0%, rgba(6, 6, 6, 0.5) 44%, rgba(6, 6, 6, 0.78) 100%),
+    radial-gradient(58rem 28rem at 72% 18%, rgba(245, 237, 224, 0.05), transparent 70%);
+}
+
+.hero::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: clamp(3.5rem, 9vw, 7rem);
+  pointer-events: none;
+  z-index: 1;
+  background: linear-gradient(180deg, rgba(7, 7, 7, 0) 0%, rgba(7, 7, 7, 0.88) 70%, rgba(7, 7, 7, 1) 100%);
 }
 
 .particle {
@@ -457,10 +471,23 @@ h1 span {
   position: relative;
   width: 100vw;
   margin-left: calc(50% - 50vw);
-  height: 80vh;
-  min-height: 31rem;
+  margin-top: clamp(3.5rem, 10vw, 8.5rem);
+  height: 74vh;
+  min-height: 30rem;
   overflow: hidden;
   isolation: isolate;
+}
+
+.showcase::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: clamp(3rem, 8vw, 6rem);
+  z-index: 3;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(7, 7, 7, 0.92) 0%, rgba(7, 7, 7, 0) 100%);
 }
 
 .showcase-slider {
@@ -474,7 +501,7 @@ h1 span {
   inset: 0;
   display: grid;
   align-items: center;
-  padding-inline: clamp(1.5rem, 6vw, 7rem);
+  padding-inline: 0;
   opacity: 0;
   pointer-events: none;
   transform: translateX(6%);
@@ -499,7 +526,9 @@ h1 span {
 
 .showcase-slide::after {
   z-index: -1;
-  background: linear-gradient(90deg, rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.3));
+  background:
+    linear-gradient(90deg, rgba(0, 0, 0, 0.86) 0%, rgba(0, 0, 0, 0.54) 55%, rgba(0, 0, 0, 0.7) 100%),
+    linear-gradient(180deg, rgba(7, 7, 7, 0.22) 0%, rgba(7, 7, 7, 0.72) 100%);
 }
 
 .showcase-slide.is-active {
@@ -513,19 +542,24 @@ h1 span {
 }
 
 .showcase-content {
-  width: min(100%, 40rem);
-  transform: translateX(clamp(0rem, 1.4vw, 1rem));
+  width: min(100% - 3rem, var(--max));
+  margin-inline: auto;
+  transform: none;
+  padding-right: clamp(1rem, 3vw, 5rem);
 }
 
 .showcase-content h2 {
-  font-size: clamp(2rem, 4.7vw, 4.4rem);
-  line-height: 1.03;
+  max-width: 11ch;
+  font-size: clamp(1.9rem, 4vw, 3.65rem);
+  line-height: 1.06;
+  text-wrap: balance;
 }
 
 .showcase-content p {
   margin: 0.9rem 0 0;
-  font-size: clamp(1rem, 1.85vw, 1.35rem);
-  color: color-mix(in srgb, var(--text) 82%, #c8b9a4);
+  max-width: 30ch;
+  font-size: clamp(0.98rem, 1.6vw, 1.22rem);
+  color: color-mix(in srgb, var(--text) 85%, #c8b9a4);
 }
 
 #services,
@@ -901,16 +935,18 @@ html.js .reveal.is-visible {
   }
 
   .showcase {
+    margin-top: clamp(2.2rem, 8vw, 4.4rem);
     min-height: 27rem;
+    height: 64vh;
   }
 
   .showcase-slide {
-    padding-inline: 1.4rem;
     transform: translateX(0);
   }
 
   .showcase-content {
-    transform: none;
+    width: min(100% - 2.8rem, var(--max));
+    padding-right: 0;
   }
 }
 
