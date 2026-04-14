@@ -134,14 +134,14 @@ if (!prefersReducedMotion.matches) {
     targetY: window.innerHeight * 0.35,
     visible: false,
   };
-  const glowLerp = 0.085;
+  const glowLerp = 0.12;
   let glowRaf = 0;
 
   const renderGlow = () => {
     glowPointer.x += (glowPointer.targetX - glowPointer.x) * glowLerp;
     glowPointer.y += (glowPointer.targetY - glowPointer.y) * glowLerp;
     cursorGlow.style.transform = `translate3d(${glowPointer.x.toFixed(2)}px, ${glowPointer.y.toFixed(2)}px, 0) translate(-50%, -50%)`;
-    cursorGlow.style.opacity = glowPointer.visible ? '0.82' : '0';
+    cursorGlow.style.opacity = glowPointer.visible ? '1' : '0';
     glowRaf = requestAnimationFrame(renderGlow);
   };
 
@@ -179,9 +179,9 @@ if (!prefersReducedMotion.matches) {
 if (particleField) {
   const particles = [];
   const particleCount = 28;
-  const friction = 0.95;
-  const spring = 0.014;
-  const interactionRadius = 108;
+  const friction = 0.93;
+  const spring = 0.022;
+  const interactionRadius = 120;
   const pointerState = { x: 0, y: 0, inside: false };
   let particleRaf = 0;
   let fieldRect = particleField.getBoundingClientRect();
@@ -197,7 +197,7 @@ if (particleField) {
     const depth = 0.7 + (index % 3) * 0.24;
     const size = randomBetween(4, 12);
     node.style.setProperty('--particle-size', `${size.toFixed(2)}px`);
-    node.style.setProperty('--particle-opacity', `${randomBetween(0.06, 0.14).toFixed(3)}`);
+    node.style.setProperty('--particle-opacity', `${randomBetween(0.08, 0.2).toFixed(3)}`);
 
     const baseX = Math.random() * fieldRect.width;
     const baseY = Math.random() * fieldRect.height;
@@ -209,12 +209,12 @@ if (particleField) {
       baseY,
       x: baseX,
       y: baseY,
-      vx: randomBetween(-0.14, 0.14),
-      vy: randomBetween(-0.14, 0.14),
-      orbitX: randomBetween(6, 18),
-      orbitY: randomBetween(4, 14),
+      vx: randomBetween(-0.2, 0.2),
+      vy: randomBetween(-0.2, 0.2),
+      orbitX: randomBetween(8, 28),
+      orbitY: randomBetween(6, 22),
       phase: Math.random() * Math.PI * 2,
-      speed: randomBetween(0.2, 0.46),
+      speed: randomBetween(0.25, 0.65),
     });
   };
 
@@ -240,7 +240,7 @@ if (particleField) {
         const distance = Math.hypot(dx, dy) || 1;
 
         if (distance < interactionRadius) {
-          const force = (1 - distance / interactionRadius) * 0.34 * particle.depth;
+          const force = (1 - distance / interactionRadius) * 0.75 * particle.depth;
           particle.vx += (dx / distance) * force;
           particle.vy += (dy / distance) * force;
         }
@@ -304,8 +304,8 @@ if (heroVisual && floatCards.length > 0) {
   const heroPointer = { x: 0, y: 0, inside: false };
   const dragState = { card: null, startX: 0, startY: 0 };
 
-  const friction = 0.945;
-  const maxVelocity = 24;
+  const friction = 0.94;
+  const maxVelocity = 46;
   const minVelocity = 0.03;
   let zCounter = floatCards.length + 1;
   let motionRaf = 0;
@@ -317,8 +317,8 @@ if (heroVisual && floatCards.length > 0) {
     return {
       node: card,
       intensity: Number(card.dataset.intensity) || 0.7,
-      amplitude: 1.4 + index * 1.2,
-      duration: 9800 + index * 700,
+      amplitude: 2 + index * 2,
+      duration: 7600 + index * 900,
       phase: index * 1.6,
       depthFactor,
       x: 0,
@@ -395,7 +395,7 @@ if (heroVisual && floatCards.length > 0) {
         if (overlapX <= 0 || overlapY <= 0) continue;
 
         const useX = overlapX < overlapY;
-        const separation = (useX ? overlapX : overlapY) * 0.42 + 0.2;
+        const separation = (useX ? overlapX : overlapY) * 0.55 + 0.4;
         const fromAtoB = useX ? bx - ax : by - ay;
         const direction = fromAtoB >= 0 ? 1 : -1;
 
@@ -405,13 +405,13 @@ if (heroVisual && floatCards.length > 0) {
         if (useX) {
           a.x -= direction * separation * shiftA;
           b.x += direction * separation * shiftB;
-          a.vx -= direction * 0.16;
-          b.vx += direction * 0.16;
+          a.vx -= direction * 0.34;
+          b.vx += direction * 0.34;
         } else {
           a.y -= direction * separation * shiftA;
           b.y += direction * separation * shiftB;
-          a.vy -= direction * 0.16;
-          b.vy += direction * 0.16;
+          a.vy -= direction * 0.34;
+          b.vy += direction * 0.34;
         }
 
         clampToHero(a);
@@ -464,21 +464,21 @@ if (heroVisual && floatCards.length > 0) {
 
         const heroX = Math.max(-1, Math.min(1, (heroPointer.x / heroVisual.clientWidth - 0.5) * 2));
         const heroY = Math.max(-1, Math.min(1, (heroPointer.y / heroVisual.clientHeight - 0.5) * 2));
-        targetParallaxX = heroX * (4.8 * state.depthFactor);
-        targetParallaxY = heroY * (3.6 * state.depthFactor);
+        targetParallaxX = heroX * (7.5 * state.depthFactor);
+        targetParallaxY = heroY * (5.5 * state.depthFactor);
       }
 
-      state.hoverX += (targetX - state.hoverX) * 0.075;
-      state.hoverY += (targetY - state.hoverY) * 0.075;
-      state.parallaxX += (targetParallaxX - state.parallaxX) * 0.07;
-      state.parallaxY += (targetParallaxY - state.parallaxY) * 0.07;
+      state.hoverX += (targetX - state.hoverX) * 0.1;
+      state.hoverY += (targetY - state.hoverY) * 0.1;
+      state.parallaxX += (targetParallaxX - state.parallaxX) * 0.09;
+      state.parallaxY += (targetParallaxY - state.parallaxY) * 0.09;
 
-      const maxRotate = 1.85 + state.depthFactor * 1.2;
-      state.rotateY += (state.hoverX * maxRotate - state.rotateY) * 0.1;
-      state.rotateX += (state.hoverY * -maxRotate - state.rotateX) * 0.1;
+      const maxRotate = 2.1 + state.depthFactor * 1.8;
+      state.rotateY += (state.hoverX * maxRotate - state.rotateY) * 0.13;
+      state.rotateX += (state.hoverY * -maxRotate - state.rotateX) * 0.13;
 
       const shadowX = (-state.parallaxX * 1.55).toFixed(2);
-      const shadowY = (18 - state.parallaxY * 0.9).toFixed(2);
+      const shadowY = (20 - state.parallaxY * 1.1).toFixed(2);
 
       state.node.style.setProperty('--drag-x', `${state.x.toFixed(2)}px`);
       state.node.style.setProperty('--drag-y', `${state.y.toFixed(2)}px`);
