@@ -353,8 +353,8 @@ if (heroVisual && floatCards.length > 0) {
     return {
       node: card,
       intensity: Number(card.dataset.intensity) || 0.7,
-      amplitude: 3.4 + index * 1.6,
-      duration: 7600 + index * 850,
+      amplitude: 1.6 + index * 0.85,
+      duration: 9200 + index * 950,
       phase: Math.random() * Math.PI * 2,
       depthFactor: 0.45 + index * 0.32,
       x: 0,
@@ -375,7 +375,7 @@ if (heroVisual && floatCards.length > 0) {
       floating: 0,
       isDragging: false,
       zIndex: zCounter + index,
-      radiusPad: 84,
+      radiusPad: 72,
     };
   });
 
@@ -443,7 +443,7 @@ if (heroVisual && floatCards.length > 0) {
     cardStates.forEach((state) => {
       const cycle = ((time % state.duration) / state.duration) * Math.PI * 2;
       const floatY = state.isDragging ? 0 : Math.sin(cycle + state.phase) * state.amplitude;
-      state.floating += (floatY - state.floating) * 0.18;
+      state.floating += (floatY - state.floating) * 0.12;
 
       let targetX = 0;
       let targetY = 0;
@@ -458,18 +458,18 @@ if (heroVisual && floatCards.length > 0) {
 
         const heroX = Math.max(-1, Math.min(1, (heroPointer.x / heroVisual.clientWidth - 0.5) * 2));
         const heroY = Math.max(-1, Math.min(1, (heroPointer.y / heroVisual.clientHeight - 0.5) * 2));
-        targetParallaxX = heroX * (6.2 * state.depthFactor) * state.intensity;
-        targetParallaxY = heroY * (4.6 * state.depthFactor) * state.intensity;
+        targetParallaxX = heroX * (3.2 * state.depthFactor) * state.intensity;
+        targetParallaxY = heroY * (2.4 * state.depthFactor) * state.intensity;
       }
 
-      state.hoverX += (targetX - state.hoverX) * 0.14;
-      state.hoverY += (targetY - state.hoverY) * 0.14;
-      state.parallaxX += (targetParallaxX - state.parallaxX) * 0.12;
-      state.parallaxY += (targetParallaxY - state.parallaxY) * 0.12;
+      state.hoverX += (targetX - state.hoverX) * 0.1;
+      state.hoverY += (targetY - state.hoverY) * 0.1;
+      state.parallaxX += (targetParallaxX - state.parallaxX) * 0.1;
+      state.parallaxY += (targetParallaxY - state.parallaxY) * 0.1;
 
-      const maxRotate = 1.8 + state.depthFactor * 1.4;
-      state.rotateY += (state.hoverX * maxRotate - state.rotateY) * 0.14;
-      state.rotateX += (state.hoverY * -maxRotate - state.rotateX) * 0.14;
+      const maxRotate = 0.9 + state.depthFactor * 0.8;
+      state.rotateY += (state.hoverX * maxRotate - state.rotateY) * 0.1;
+      state.rotateX += (state.hoverY * -maxRotate - state.rotateX) * 0.1;
 
       const shadowX = (-state.parallaxX * 1.8).toFixed(2);
       const shadowY = (24 - state.parallaxY * 1.2).toFixed(2);
@@ -522,8 +522,8 @@ if (heroVisual && floatCards.length > 0) {
 
     const now = performance.now();
     const dt = Math.max(8, now - dragState.lastTime);
-    state.vx = ((event.clientX - dragState.lastX) / dt) * 15;
-    state.vy = ((event.clientY - dragState.lastY) / dt) * 15;
+    state.vx = ((event.clientX - dragState.lastX) / dt) * 11;
+    state.vy = ((event.clientY - dragState.lastY) / dt) * 11;
 
     dragState.lastX = event.clientX;
     dragState.lastY = event.clientY;
@@ -538,8 +538,8 @@ if (heroVisual && floatCards.length > 0) {
     const state = getStateByNode(dragState.card);
     if (state) {
       state.isDragging = false;
-      state.vx *= 1.35;
-      state.vy *= 1.35;
+      state.vx *= 1.12;
+      state.vy *= 1.12;
       state.node.classList.remove('is-dragging');
       state.node.releasePointerCapture(event.pointerId);
     }

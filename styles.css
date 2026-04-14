@@ -237,18 +237,59 @@ h1 span { color: #d1ddff; }
 .float-card {
   position: absolute;
   --shadow-x: 0px;
-  --shadow-y: 18px;
-  padding: 1.2rem;
+  --shadow-y: 20px;
+  background: linear-gradient(145deg, rgba(34, 34, 34, 0.72), rgba(14, 14, 14, 0.56));
+  border: 1px solid rgba(224, 211, 188, 0.2);
+  border-radius: var(--radius);
+  padding: 1.35rem;
+  box-shadow:
+    var(--shadow-x) var(--shadow-y) 48px -38px rgba(0, 0, 0, 0.32),
+    0 18px 46px -40px rgba(0, 0, 0, 0.46),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(14px) saturate(1.04);
+  filter: blur(var(--depth-blur, 0px));
   transform:
     translate3d(calc(var(--drag-x, 0px) + var(--mx, 0px)), calc(var(--drag-y, 0px) + var(--float-y, 0px) + var(--my, 0px)), 0)
     rotateX(var(--rx, 0deg))
     rotateY(var(--ry, 0deg))
     scale(var(--scale, 1));
-  filter: blur(var(--depth-blur, 0px));
-  transition: border-color 420ms var(--easing-premium), box-shadow 420ms var(--easing-premium);
+  transition: border-color 360ms var(--easing-premium), box-shadow 360ms var(--easing-premium), background-color 360ms var(--easing-premium);
+  cursor: grab;
   z-index: var(--z-card, 1);
   will-change: transform;
-  cursor: grab;
+  user-select: none;
+  touch-action: none;
+}
+
+.float-card:hover {
+  border-color: rgba(226, 213, 191, 0.26);
+  box-shadow:
+    var(--shadow-x) var(--shadow-y) 50px -38px rgba(0, 0, 0, 0.34),
+    0 22px 50px -40px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+.float-card.is-dragging {
+  cursor: grabbing;
+  transition: none;
+  box-shadow: 0 28px 62px -34px rgba(0, 0, 0, 0.64);
+}
+
+.float-card strong {
+  display: block;
+  margin: 0.32rem 0;
+  font-size: 1.25rem;
+}
+
+.float-card p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.94rem;
+}
+
+.card-main {
+  inset: -4% auto auto -6%;
+  width: min(22rem, 73%);
 }
 
 .float-card:hover { border-color: rgba(151, 178, 255, 0.44); }
@@ -256,10 +297,19 @@ h1 span { color: #d1ddff; }
 .float-card strong { display: block; margin: 0.35rem 0; font-size: 1.2rem; }
 .float-card p { margin: 0; color: var(--muted); font-size: 0.92rem; }
 
-.card-main { inset: 0 auto auto 0; width: min(22rem, 72%); }
-.card-mid { inset: 24% -2% auto auto; width: min(18rem, 62%); --scale: 0.96; }
-.card-back { inset: auto auto 2% 8%; width: min(18.5rem, 64%); --scale: 0.91; }
-.card-edge { inset: 57% -6% auto auto; width: min(13.4rem, 52%); --scale: 0.83; opacity: 0.54; }
+.card-back {
+  inset: auto auto 1% 8%;
+  width: min(19rem, 64%);
+  --scale: 0.9;
+}
+
+.card-edge {
+  inset: 58% -8% auto auto;
+  width: min(14.4rem, 52%);
+  --scale: 0.82;
+  --depth-blur: 0.2px;
+  opacity: 0.42;
+}
 
 .section {
   position: relative;
