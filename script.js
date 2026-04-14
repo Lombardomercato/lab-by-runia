@@ -50,7 +50,7 @@ const setRevealDelay = () => {
   sections.forEach((section) => {
     const items = section.querySelectorAll('.reveal');
     items.forEach((item, index) => {
-      item.style.setProperty('--reveal-delay', `${index * 70}ms`);
+      item.style.setProperty('--reveal-delay', `${index * 95}ms`);
     });
   });
 };
@@ -108,7 +108,7 @@ applyScrollMotion();
 
 let pointerRaf = 0;
 const pointer = { x: window.innerWidth * 0.5, y: window.innerHeight * 0.3, active: false };
-const spotState = { x: 50, y: 20, tx: 50, ty: 20, opacity: 0, targetOpacity: 0 };
+const spotState = { x: 50, y: 20, tx: 50, ty: 20, opacity: 0, targetOpacity: 0, vx: 0, vy: 0 };
 
 const updatePointerMotion = () => {
   pointerRaf = 0;
@@ -132,9 +132,13 @@ const updatePointerMotion = () => {
     }
   });
 
-  spotState.x += (spotState.tx - spotState.x) * 0.1;
-  spotState.y += (spotState.ty - spotState.y) * 0.1;
-  spotState.opacity += (spotState.targetOpacity - spotState.opacity) * 0.1;
+  spotState.vx += (spotState.tx - spotState.x) * 0.015;
+  spotState.vy += (spotState.ty - spotState.y) * 0.015;
+  spotState.vx *= 0.82;
+  spotState.vy *= 0.82;
+  spotState.x += spotState.vx;
+  spotState.y += spotState.vy;
+  spotState.opacity += (spotState.targetOpacity - spotState.opacity) * 0.07;
 
   document.body.style.setProperty('--spot-x', `${spotState.x.toFixed(2)}%`);
   document.body.style.setProperty('--spot-y', `${spotState.y.toFixed(2)}%`);
@@ -160,7 +164,7 @@ window.addEventListener('mousemove', (event) => {
   document.body.style.setProperty('--spot-y', `${((event.clientY / window.innerHeight) * 100).toFixed(2)}%`);
   spotState.tx = (event.clientX / window.innerWidth) * 100;
   spotState.ty = (event.clientY / window.innerHeight) * 100;
-  spotState.targetOpacity = 0.5;
+  spotState.targetOpacity = 0.42;
 }, { passive: true });
 
 window.addEventListener('mouseleave', () => {
@@ -190,7 +194,7 @@ if (!prefersReducedMotion.matches) {
     visible: false,
   };
 
-  const glowLerp = 0.08;
+  const glowLerp = 0.06;
 
   const renderGlow = () => {
     glowPointer.x += (glowPointer.targetX - glowPointer.x) * glowLerp;
