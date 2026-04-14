@@ -14,6 +14,7 @@ const magneticButtons = document.querySelectorAll('.magnetic');
 const spotReactive = document.querySelectorAll('.interactive-surface');
 const motionTitles = document.querySelectorAll('.motion-title');
 const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+const showcaseSlides = document.querySelectorAll('[data-showcase-slide]');
 
 const splitTitles = () => {
   motionTitles.forEach((title) => {
@@ -100,6 +101,26 @@ const applyScrollMotion = () => {
 
 window.addEventListener('scroll', applyScrollMotion, { passive: true });
 applyScrollMotion();
+
+if (showcaseSlides.length > 1) {
+  let activeSlide = 0;
+  const slideInterval = 5000;
+
+  const setActiveSlide = (index) => {
+    showcaseSlides.forEach((slide, slideIndex) => {
+      slide.classList.toggle('is-active', slideIndex === index);
+    });
+  };
+
+  setActiveSlide(activeSlide);
+
+  if (!prefersReducedMotion.matches) {
+    window.setInterval(() => {
+      activeSlide = (activeSlide + 1) % showcaseSlides.length;
+      setActiveSlide(activeSlide);
+    }, slideInterval);
+  }
+}
 
 let pointerRaf = 0;
 const pointer = { x: window.innerWidth * 0.5, y: window.innerHeight * 0.3, active: false };
