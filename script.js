@@ -571,16 +571,17 @@ if (heroVisual && floatCards.length > 0 && !mobileCardsMedia.matches) {
 if (heroVisual && mobileCardsMedia.matches) {
   const mobileFloatStates = Array.from(floatCards).map((card, index) => ({
     card,
-    amplitude: 4 + index * 1.4,
-    speed: 0.52 + index * 0.11,
+    amplitudeY: 8.5 + index * 2.2,
+    amplitudeX: 2.4 + index * 0.9,
+    speedY: 0.24 + index * 0.04,
+    speedX: 0.18 + index * 0.03,
     phase: Math.random() * Math.PI * 2,
+    phaseX: Math.random() * Math.PI * 2,
   }));
 
   floatCards.forEach((card) => {
     card.style.removeProperty('--drag-x');
     card.style.removeProperty('--drag-y');
-    card.style.removeProperty('--mx');
-    card.style.removeProperty('--my');
     card.style.removeProperty('--rx');
     card.style.removeProperty('--ry');
   });
@@ -588,7 +589,12 @@ if (heroVisual && mobileCardsMedia.matches) {
   if (!prefersReducedMotion.matches) {
     const animateMobileCards = (time) => {
       mobileFloatStates.forEach((state) => {
-        const y = Math.sin(time * 0.001 * state.speed + state.phase) * state.amplitude;
+        const y = Math.sin(time * 0.001 * state.speedY + state.phase) * state.amplitudeY;
+        const x = Math.cos(time * 0.001 * state.speedX + state.phaseX) * state.amplitudeX;
+        const depthShift = Math.sin(time * 0.00052 + state.phase * 0.5) * 1.2;
+
+        state.card.style.setProperty('--mx', `${(x + depthShift).toFixed(2)}px`);
+        state.card.style.setProperty('--my', `${(depthShift * 0.42).toFixed(2)}px`);
         state.card.style.setProperty('--float-y', `${y.toFixed(2)}px`);
       });
       requestAnimationFrame(animateMobileCards);
@@ -596,7 +602,11 @@ if (heroVisual && mobileCardsMedia.matches) {
 
     requestAnimationFrame(animateMobileCards);
   } else {
-    floatCards.forEach((card) => card.style.setProperty('--float-y', '0px'));
+    floatCards.forEach((card) => {
+      card.style.setProperty('--float-y', '0px');
+      card.style.setProperty('--mx', '0px');
+      card.style.setProperty('--my', '0px');
+    });
   }
 }
 
