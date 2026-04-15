@@ -14,6 +14,7 @@ const magneticButtons = document.querySelectorAll('.magnetic');
 const spotReactive = document.querySelectorAll('.interactive-surface');
 const motionTitles = document.querySelectorAll('.motion-title');
 const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+const mobileCardsMedia = window.matchMedia('(max-width: 980px), (pointer: coarse)');
 const showcaseSlides = document.querySelectorAll('[data-showcase-slide]');
 
 const splitTitles = () => {
@@ -314,7 +315,7 @@ const initParticleSystem = (field, amount = 16, strength = 1) => {
 
 initParticleSystem(globalParticleField, 22, 0.62);
 
-if (heroVisual && floatCards.length > 0) {
+if (heroVisual && floatCards.length > 0 && !mobileCardsMedia.matches) {
   const heroPointer = { x: 0, y: 0, inside: false };
   const dragState = {
     card: null,
@@ -565,6 +566,18 @@ if (heroVisual && floatCards.length > 0) {
   if (!prefersReducedMotion.matches) {
     motionRaf = requestAnimationFrame(animateCards);
   }
+}
+
+if (heroVisual && mobileCardsMedia.matches) {
+  floatCards.forEach((card) => {
+    card.style.removeProperty('--drag-x');
+    card.style.removeProperty('--drag-y');
+    card.style.removeProperty('--float-y');
+    card.style.removeProperty('--mx');
+    card.style.removeProperty('--my');
+    card.style.removeProperty('--rx');
+    card.style.removeProperty('--ry');
+  });
 }
 
 
