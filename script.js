@@ -569,15 +569,35 @@ if (heroVisual && floatCards.length > 0 && !mobileCardsMedia.matches) {
 }
 
 if (heroVisual && mobileCardsMedia.matches) {
+  const mobileFloatStates = Array.from(floatCards).map((card, index) => ({
+    card,
+    amplitude: 4 + index * 1.4,
+    speed: 0.52 + index * 0.11,
+    phase: Math.random() * Math.PI * 2,
+  }));
+
   floatCards.forEach((card) => {
     card.style.removeProperty('--drag-x');
     card.style.removeProperty('--drag-y');
-    card.style.removeProperty('--float-y');
     card.style.removeProperty('--mx');
     card.style.removeProperty('--my');
     card.style.removeProperty('--rx');
     card.style.removeProperty('--ry');
   });
+
+  if (!prefersReducedMotion.matches) {
+    const animateMobileCards = (time) => {
+      mobileFloatStates.forEach((state) => {
+        const y = Math.sin(time * 0.001 * state.speed + state.phase) * state.amplitude;
+        state.card.style.setProperty('--float-y', `${y.toFixed(2)}px`);
+      });
+      requestAnimationFrame(animateMobileCards);
+    };
+
+    requestAnimationFrame(animateMobileCards);
+  } else {
+    floatCards.forEach((card) => card.style.setProperty('--float-y', '0px'));
+  }
 }
 
 
