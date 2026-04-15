@@ -990,6 +990,7 @@ html.js .reveal.is-visible {
   .hero-visual {
     min-height: 34rem;
     margin-top: 2.6rem;
+    grid-template-columns: 1fr;
   }
 
   .card-main { top: 12%; left: 1%; width: 58%; }
