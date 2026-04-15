@@ -911,12 +911,13 @@ html.js .reveal.is-visible {
 
   .hero {
     padding-top: 2.6rem;
+    padding-bottom: 1.6rem;
   }
 
   .hero-visual {
-    min-height: 28rem;
+    min-height: 24rem;
     width: 100%;
-    margin-top: 1.8rem;
+    margin-top: 1rem;
     margin-left: 0;
     overflow: visible;
   }
@@ -950,10 +951,10 @@ html.js .reveal.is-visible {
     filter: none;
   }
 
-  .card-main { top: 10%; left: 2%; width: 44%; }
-  .card-mid { top: 42%; right: 3%; width: 40%; left: auto; }
-  .card-back { top: 62%; left: 8%; width: 43%; right: auto; bottom: auto; }
-  .card-edge { top: 79%; right: 3%; width: 31%; left: auto; opacity: 0.9; }
+  .card-main { top: 8%; left: 6%; width: 46%; }
+  .card-mid { top: 28%; right: 8%; width: 43%; left: auto; }
+  .card-back { top: 44%; left: 10%; width: 45%; right: auto; bottom: auto; }
+  .card-edge { top: 58%; right: 11%; width: 34%; left: auto; opacity: 0.92; }
 
   .nav-wrap > .btn {
     margin-left: auto;
@@ -988,15 +989,15 @@ html.js .reveal.is-visible {
 
 @media (max-width: 520px), (pointer: coarse) and (max-width: 640px) {
   .hero-visual {
-    min-height: 34rem;
-    margin-top: 2.6rem;
+    min-height: 28rem;
+    margin-top: 1.2rem;
     grid-template-columns: 1fr;
   }
 
-  .card-main { top: 12%; left: 1%; width: 58%; }
-  .card-mid { top: 43%; right: 2%; width: 54%; left: auto; }
-  .card-back { top: 67%; left: 3%; width: 56%; }
-  .card-edge { top: 84%; right: 3%; width: 42%; left: auto; }
+  .card-main { top: 10%; left: 5%; width: 60%; }
+  .card-mid { top: 29%; right: 7%; width: 56%; left: auto; }
+  .card-back { top: 47%; left: 8%; width: 58%; }
+  .card-edge { top: 61%; right: 12%; width: 44%; left: auto; }
 }
 
 @media (max-width: 768px) {

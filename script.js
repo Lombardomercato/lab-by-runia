@@ -315,7 +315,8 @@ const initParticleSystem = (field, amount = 16, strength = 1) => {
 
 initParticleSystem(globalParticleField, 22, 0.62);
 
-if (heroVisual && floatCards.length > 0 && !mobileCardsMedia.matches) {
+if (heroVisual && floatCards.length > 0) {
+  const isMobileLike = mobileCardsMedia.matches;
   const heroPointer = { x: 0, y: 0, inside: false };
   const dragState = {
     card: null,
@@ -336,10 +337,10 @@ if (heroVisual && floatCards.length > 0 && !mobileCardsMedia.matches) {
     return {
       node: card,
       intensity: Number(card.dataset.intensity) || 0.7,
-      amplitude: 3.4 + index * 1.6,
-      duration: 7600 + index * 850,
+      amplitude: (isMobileLike ? 7.4 : 3.4) + index * (isMobileLike ? 2 : 1.6),
+      duration: (isMobileLike ? 9800 : 7600) + index * (isMobileLike ? 1120 : 850),
       phase: Math.random() * Math.PI * 2,
-      depthFactor: 0.45 + index * 0.32,
+      depthFactor: (isMobileLike ? 0.32 : 0.45) + index * (isMobileLike ? 0.24 : 0.32),
       x: 0,
       y: 0,
       vx: 0,
@@ -538,6 +539,7 @@ if (heroVisual && floatCards.length > 0 && !mobileCardsMedia.matches) {
     heroPointer.inside = true;
     moveDrag(event);
   });
+  window.addEventListener('pointermove', moveDrag, { passive: true });
 
   heroVisual.addEventListener('pointerleave', () => {
     heroPointer.inside = false;
@@ -566,18 +568,6 @@ if (heroVisual && floatCards.length > 0 && !mobileCardsMedia.matches) {
   if (!prefersReducedMotion.matches) {
     motionRaf = requestAnimationFrame(animateCards);
   }
-}
-
-if (heroVisual && mobileCardsMedia.matches) {
-  floatCards.forEach((card) => {
-    card.style.removeProperty('--drag-x');
-    card.style.removeProperty('--drag-y');
-    card.style.removeProperty('--float-y');
-    card.style.removeProperty('--mx');
-    card.style.removeProperty('--my');
-    card.style.removeProperty('--rx');
-    card.style.removeProperty('--ry');
-  });
 }
 
 
