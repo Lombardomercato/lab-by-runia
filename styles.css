@@ -950,10 +950,10 @@ html.js .reveal.is-visible {
     filter: none;
   }
 
-  .card-main { top: 10%; left: 2%; width: 44%; }
-  .card-mid { top: 42%; right: 3%; width: 40%; left: auto; }
-  .card-back { top: 62%; left: 8%; width: 43%; right: auto; bottom: auto; }
-  .card-edge { top: 79%; right: 3%; width: 31%; left: auto; opacity: 0.9; }
+  .card-main { top: 11%; left: 6%; width: 46%; }
+  .card-mid { top: 34%; right: 8%; width: 43%; left: auto; }
+  .card-back { top: 54%; left: 10%; width: 45%; right: auto; bottom: auto; }
+  .card-edge { top: 67%; right: 11%; width: 34%; left: auto; opacity: 0.92; }
 
   .nav-wrap > .btn {
     margin-left: auto;
@@ -993,10 +993,10 @@ html.js .reveal.is-visible {
     grid-template-columns: 1fr;
   }
 
-  .card-main { top: 12%; left: 1%; width: 58%; }
-  .card-mid { top: 43%; right: 2%; width: 54%; left: auto; }
-  .card-back { top: 67%; left: 3%; width: 56%; }
-  .card-edge { top: 84%; right: 3%; width: 42%; left: auto; }
+  .card-main { top: 13%; left: 5%; width: 60%; }
+  .card-mid { top: 35%; right: 7%; width: 56%; left: auto; }
+  .card-back { top: 57%; left: 8%; width: 58%; }
+  .card-edge { top: 71%; right: 12%; width: 44%; left: auto; }
 }
 
 @media (max-width: 768px) {
