@@ -911,12 +911,13 @@ html.js .reveal.is-visible {
 
   .hero {
     padding-top: 2.6rem;
+    padding-bottom: 2.2rem;
   }
 
   .hero-visual {
-    min-height: 28rem;
+    min-height: 24rem;
     width: 100%;
-    margin-top: 1.8rem;
+    margin-top: 1rem;
     margin-left: 0;
     overflow: visible;
   }
@@ -988,15 +989,15 @@ html.js .reveal.is-visible {
 
 @media (max-width: 520px), (pointer: coarse) and (max-width: 640px) {
   .hero-visual {
-    min-height: 34rem;
-    margin-top: 2.6rem;
+    min-height: 22rem;
+    margin-top: 1.2rem;
     grid-template-columns: 1fr;
   }
 
-  .card-main { top: 13%; left: 5%; width: 60%; }
-  .card-mid { top: 35%; right: 7%; width: 56%; left: auto; }
-  .card-back { top: 57%; left: 8%; width: 58%; }
-  .card-edge { top: 71%; right: 12%; width: 44%; left: auto; }
+  .card-main { top: 4%; left: 5%; width: 60%; }
+  .card-mid { top: 25%; right: 7%; width: 56%; left: auto; }
+  .card-back { top: 45%; left: 8%; width: 58%; }
+  .card-edge { top: 60%; right: 12%; width: 44%; left: auto; }
 }
 
 @media (max-width: 768px) {
