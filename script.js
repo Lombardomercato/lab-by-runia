@@ -845,27 +845,27 @@ const valueLabels = {
 
 const packMeta = {
   'LANDING PRO': {
-    inversion: 'USD 500 – 1000',
+    inversion: { min: 400, max: 700 },
     mensaje: 'Una base clara, efectiva y profesional para presentar tu negocio con una inversión inicial más accesible.',
   },
   'WEB PRO': {
-    inversion: 'USD 1000 – 2000',
+    inversion: { min: 900, max: 1500 },
     mensaje: 'La opción más equilibrada para marcas que necesitan una presencia digital sólida, bien estructurada y pensada para crecer.',
   },
   'WEB PREMIUM': {
-    inversion: 'USD 2000+',
+    inversion: { min: 1500, max: 3000 },
     mensaje: 'La mejor opción para proyectos que buscan diferenciarse visualmente, elevar su percepción de marca y generar una experiencia de alto nivel.',
   },
   'BRANDING + WEB': {
-    inversion: 'USD 1200 – 2800',
+    inversion: { min: 1200, max: 3500 },
     mensaje: 'Recomendado para marcas que todavía necesitan una base visual coherente antes de construir una web realmente potente.',
   },
   'RUNIA SYSTEM': {
-    inversion: 'USD 2500+',
+    inversion: { min: 1800, max: 5000, plus: true },
     mensaje: 'Ideal para proyectos que necesitan interacción, automatización o una solución digital más avanzada que una web tradicional.',
   },
   'PACK A MEDIDA': {
-    inversion: 'A definir en diagnóstico',
+    inversion: { min: 900, max: 2200 },
     mensaje: 'Recomendación inicial pensada para tu contexto actual y con margen de ajuste según prioridades.',
   },
 };
@@ -879,6 +879,56 @@ const formatList = (field, value) => {
   const list = normalizeToArray(value);
   if (!list.length) return [];
   return list.map((item) => labelFromMap(field, item));
+};
+
+const formatUsd = (value) => `USD ${value}`;
+
+const formatEstimatedRange = (range) => {
+  if (!range) return 'USD a definir';
+  const maxText = range.plus ? `${range.max}+` : range.max;
+  return `${formatUsd(range.min)} – ${maxText}`;
+};
+
+const getInvestmentEstimate = (values, packSugerido) => {
+  const packData = packMeta[packSugerido] || packMeta['PACK A MEDIDA'];
+  const features = normalizeToArray(values.funcionalidades);
+  const manyFeatures = features.length >= 4;
+  const needsBranding = values.branding !== 'si';
+  const isPremium = values.tipo_web === 'premium' || values.nivel_diseno === 'premium';
+  const isUrgent = values.tiempos === 'urgente';
+  const lowContent = values.secciones === '1' && features.length <= 2;
+
+  const range = { ...packData.inversion };
+
+  if (manyFeatures) {
+    range.max += 600;
+  }
+
+  if (isPremium) {
+    range.min += 150;
+    range.max += 500;
+  }
+
+  if (lowContent) {
+    range.min = Math.max(350, range.min - 120);
+    range.max = Math.max(range.min + 150, range.max - 280);
+  }
+
+  const notes = [];
+
+  if (needsBranding) {
+    notes.push('Inversión adicional sugerida para branding: USD 300 – 900');
+  }
+
+  if (isUrgent) {
+    notes.push('Prioridad por tiempos: el trabajo urgente puede incluir adicional de coordinación.');
+  }
+
+  return {
+    range,
+    rangeText: formatEstimatedRange(range),
+    notes,
+  };
 };
 
 const getPackSuggestionFromValues = (values) => {
@@ -968,7 +1018,7 @@ Objetivo principal: ${objetivos}
 
 PACK:
 Sugerido: ${packSugerido}
-Rango: ${packMeta[packSugerido]?.inversion || 'A definir'}
+Rango: ${getInvestmentEstimate(values, packSugerido).rangeText}
 
 CONTENIDO:
 Secciones: ${labelFromMap('secciones', values.secciones)}
@@ -997,6 +1047,7 @@ if (projectWizard) {
   const resultWhy = document.querySelector('[data-result-why]');
   const resultExtras = document.querySelector('[data-result-extras]');
   const resultNextStep = document.querySelector('[data-result-next-step]');
+  const resultNote = document.querySelector('[data-result-note]');
   const whatsappCta = document.querySelector('[data-whatsapp-cta]');
   const copySummaryButton = document.querySelector('[data-copy-summary]');
 
@@ -1018,11 +1069,18 @@ if (projectWizard) {
 
     const extras = getDynamicExtras(values);
     const packData = packMeta[packSugerido] || packMeta['PACK A MEDIDA'];
+    const estimate = getInvestmentEstimate(values, packSugerido);
 
     if (resultPack) resultPack.textContent = packSugerido;
-    if (resultInvestment) resultInvestment.textContent = packData.inversion;
+    if (resultInvestment) {
+      const notes = estimate.notes.length ? ` · ${estimate.notes.join(' · ')}` : '';
+      resultInvestment.textContent = `Inversión estimada: ${estimate.rangeText}${notes}`;
+    }
     if (resultWhy) resultWhy.textContent = packData.mensaje;
     if (resultNextStep) resultNextStep.textContent = getNextStep(values);
+    if (resultNote) {
+      resultNote.textContent = 'Esta estimación funciona como referencia inicial. La propuesta final puede ajustarse según contenido, tiempos y alcance real del proyecto.';
+    }
 
     if (resultExtras) {
       resultExtras.innerHTML = '';
@@ -1038,6 +1096,7 @@ if (projectWizard) {
       const text = `Hola LAB_, completé el formulario y mi recomendación inicial fue ${packSugerido}. Quiero avanzar con el próximo paso.`;
       whatsappCta.href = `https://wa.me/?text=${encodeURIComponent(text)}`;
     }
+  };
 
     finalCard.hidden = false;
   };
@@ -1050,34 +1109,6 @@ if (projectWizard) {
     } catch (error) {
       // Error silencioso para no afectar UX
     }
-  };
-
-  const renderBrief = (briefText) => {
-    if (!briefOutput || !briefContainer) return;
-    briefOutput.textContent = briefText;
-    briefContainer.hidden = false;
-  };
-
-  const copyBriefToClipboard = async () => {
-    if (!briefOutput?.textContent || !navigator.clipboard?.writeText) return;
-
-    try {
-      await navigator.clipboard.writeText(briefOutput.textContent);
-    } catch (error) {
-      // Error silencioso para no afectar UX
-    }
-  };
-
-  const downloadBriefAsText = () => {
-    if (!briefOutput?.textContent) return;
-
-    const blob = new Blob([briefOutput.textContent], { type: 'text/plain;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `brief-${(new Date()).toISOString().slice(0, 10)}.txt`;
-    link.click();
-    URL.revokeObjectURL(url);
   };
 
   const validateObjectives = () => {
