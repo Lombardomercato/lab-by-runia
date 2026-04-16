@@ -675,6 +675,73 @@ magneticButtons.forEach((button) => {
   });
 });
 
+const createSupabaseClient = () => {
+  const supabaseUrl = window.LAB_SUPABASE_URL;
+  const supabaseAnonKey = window.LAB_SUPABASE_ANON_KEY;
+
+  if (!window.supabase || !supabaseUrl || !supabaseAnonKey) return null;
+
+  try {
+    return window.supabase.createClient(supabaseUrl, supabaseAnonKey);
+  } catch (error) {
+    return null;
+  }
+};
+
+const supabaseClient = createSupabaseClient();
+
+const normalizeToArray = (value) => {
+  if (Array.isArray(value)) return value;
+  if (typeof value === 'undefined' || value === null || value === '') return [];
+  return [value];
+};
+
+const getFormValues = (formElement) => {
+  const formData = new FormData(formElement);
+  const values = {};
+
+  for (const [key, value] of formData.entries()) {
+    if (Object.hasOwn(values, key)) {
+      const current = values[key];
+      values[key] = Array.isArray(current) ? [...current, value] : [current, value];
+      continue;
+    }
+
+    values[key] = value;
+  }
+
+  return values;
+};
+
+const saveLeadInSupabase = async (formElement, packSugerido) => {
+  if (!supabaseClient) return;
+
+  const values = getFormValues(formElement);
+
+  const payload = {
+    negocio: values.negocio ?? null,
+    rubro: values.rubro ?? null,
+    web_actual: values.web_actual ?? null,
+    branding: values.branding ?? null,
+    objetivo: normalizeToArray(values.objetivo),
+    tipo_web: values.tipo_web ?? null,
+    secciones: values.secciones ?? null,
+    nivel_diseno: values.nivel_diseno ?? null,
+    funcionalidades: normalizeToArray(values.funcionalidades),
+    presupuesto: values.presupuesto ?? null,
+    tiempos: values.tiempos ?? null,
+    pack_sugerido: packSugerido,
+    enviado_en: new Date().toISOString(),
+    payload: values,
+  };
+
+  try {
+    await supabaseClient.from('leads_lab_runia').insert(payload);
+  } catch (error) {
+    // Error silencioso para no afectar UX del formulario
+  }
+};
+
 const projectWizard = document.querySelector('[data-project-wizard]');
 
 if (projectWizard) {
@@ -770,13 +837,16 @@ if (projectWizard) {
     syncSuggestion();
   });
 
-  projectWizard.addEventListener('submit', (event) => {
+  projectWizard.addEventListener('submit', async (event) => {
     event.preventDefault();
 
     if (!validateCurrentStep()) {
       projectWizard.reportValidity();
       return;
     }
+
+    const packSugerido = getPackSuggestion();
+    await saveLeadInSupabase(projectWizard, packSugerido);
 
     syncSuggestion();
     projectWizard.hidden = true;
