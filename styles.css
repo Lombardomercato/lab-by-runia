@@ -1197,12 +1197,44 @@ html.js .reveal.is-visible {
   border: 1px solid rgba(213, 197, 171, 0.22);
   background: linear-gradient(120deg, rgba(33, 30, 26, 0.84), rgba(15, 14, 12, 0.8));
   padding: 1rem 1.1rem;
+  opacity: 0.64;
+  transform: translateY(5px);
+  transition: opacity 280ms var(--easing-premium), transform 280ms var(--easing-premium), border-color 280ms var(--easing-premium);
+}
+
+.suggestion-box.is-ready {
+  opacity: 1;
+  transform: translateY(0);
+  border-color: rgba(213, 197, 171, 0.38);
 }
 
 .suggestion-output {
   margin: 0.5rem 0 0;
   font-family: "Syne", sans-serif;
   font-size: clamp(1.15rem, 2.7vw, 1.6rem);
+}
+
+.suggestion-meta {
+  margin: 0.9rem 0 0;
+  display: grid;
+  gap: 0.65rem;
+}
+
+.suggestion-meta div {
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: 0.55rem;
+}
+
+.suggestion-meta dt {
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.suggestion-meta dd {
+  margin: 0.22rem 0 0;
+  color: color-mix(in srgb, var(--text) 92%, var(--muted));
 }
 
 .wizard-actions {

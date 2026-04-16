@@ -685,33 +685,80 @@ if (projectWizard) {
   const progressBar = document.querySelector('[data-progress-bar]');
   const stepLabel = document.querySelector('[data-step-label]');
   const packResult = document.querySelector('[data-pack-result]');
+  const packCard = document.querySelector('[data-pack-card]');
+  const packRange = document.querySelector('[data-pack-range]');
+  const packExtras = document.querySelector('[data-pack-extras]');
   const successMessage = document.querySelector('[data-success-message]');
 
   let currentStep = 0;
 
-  const getPackSuggestion = () => {
+  function calcularPackSugerido() {
     const websiteType = projectWizard.querySelector('input[name="tipo_web"]:checked')?.value;
+    const sections = projectWizard.querySelector('input[name="secciones"]:checked')?.value;
     const designLevel = projectWizard.querySelector('input[name="nivel_diseno"]:checked')?.value;
     const budget = projectWizard.querySelector('input[name="presupuesto"]:checked')?.value;
+    const branding = projectWizard.querySelector('input[name="branding"]:checked')?.value;
+    const selectedFeatures = Array.from(projectWizard.querySelectorAll('input[name="funcionalidades"]:checked')).map((input) => input.value);
+    const hasSystemFeatures = selectedFeatures.some((feature) =>
+      ['ia', 'automatizacion', 'interactivo'].includes(feature),
+    );
+    const needsBranding = branding === 'no' || branding === 'parcial';
 
-    if (websiteType === 'landing' && budget === 'bajo') {
-      return 'LANDING PRO';
+    let pack = 'PACK A MEDIDA';
+    let range = 'USD 900 – 1800';
+    const extras = [];
+
+    if (websiteType === 'landing' && sections === '1' && budget === 'bajo') {
+      pack = 'LANDING PRO';
+      range = 'USD 350 – 700';
+      extras.push('Copy de conversión');
     }
 
-    if (websiteType === 'completa' && (budget === 'medio-1' || budget === 'medio-2')) {
-      return 'WEB PRO';
+    if (websiteType === 'completa' && (sections === '2-4' || sections === '5+') && (budget === 'medio-1' || budget === 'medio-2')) {
+      pack = 'WEB PRO';
+      range = 'USD 900 – 2000';
+      extras.push('Estructura SEO inicial');
     }
 
-    if ((websiteType === 'premium' || designLevel === 'premium') && budget === 'alto') {
-      return 'WEB PREMIUM';
+    if (designLevel === 'premium' || budget === 'alto' || branding === 'no') {
+      pack = 'WEB PREMIUM';
+      range = 'USD 2000+';
+      extras.push('Dirección creativa premium');
     }
 
-    return 'PACK A MEDIDA';
-  };
+    if (needsBranding) {
+      pack = 'BRANDING + WEB';
+      range = 'USD 1500 – 2800';
+      extras.push('Sistema visual + lineamientos');
+    }
+
+    if (hasSystemFeatures) {
+      pack = 'RUNIA SYSTEM';
+      range = 'USD 2200+';
+      extras.push('Automatización / IA aplicada');
+    }
+
+    if (selectedFeatures.includes('whatsapp')) extras.push('Flujo de contacto por WhatsApp');
+    if (selectedFeatures.includes('tienda')) extras.push('Setup e-commerce base');
+
+    return {
+      pack,
+      range,
+      extras: [...new Set(extras)],
+      isReady: Boolean(websiteType || designLevel || budget || sections || selectedFeatures.length),
+    };
+  }
 
   const syncSuggestion = () => {
-    if (!packResult) return;
-    packResult.textContent = `Sugerencia: ${getPackSuggestion()}`;
+    const suggestion = calcularPackSugerido();
+    if (packResult) packResult.textContent = `Pack sugerido: ${suggestion.pack}`;
+    if (packRange) packRange.textContent = suggestion.range;
+    if (packExtras) {
+      packExtras.textContent = suggestion.extras.length
+        ? suggestion.extras.join(' · ')
+        : 'Sin extras sugeridos por ahora.';
+    }
+    if (packCard) packCard.classList.toggle('is-ready', suggestion.isReady);
   };
 
   const validateObjectives = () => {
