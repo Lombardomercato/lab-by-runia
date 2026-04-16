@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Propuesta LAB_</title>
+<style>
+:root {
+    --bg: #050505;
+    --bg-soft: rgba(255,255,255,0.03);
+    --border: rgba(255,255,255,0.12);
+    --text: #f5f5f5;
+    --muted: #a1a1a1;
+    --line: rgba(255,255,255,0.08);
+    --shadow: 0 24px 90px rgba(0,0,0,0.55);
+    --radius-xl: 28px;
+    --radius-lg: 22px;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    background:
+        radial-gradient(circle at top left, rgba(255,255,255,0.06), transparent 28%),
+        radial-gradient(circle at bottom right, rgba(255,255,255,0.04), transparent 24%),
+        var(--bg);
+    color: var(--text);
+    font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+body {
+    min-height: 100vh;
+    padding: 40px 20px;
+}
+
+.page {
+    max-width: 960px;
+    margin: 0 auto;
+}
+
+.proposal {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: 36px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+    box-shadow: var(--shadow);
+}
+
+.proposal::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(circle at 8% 10%, rgba(255,255,255,0.08), transparent 24%),
+        radial-gradient(circle at 92% 18%, rgba(255,255,255,0.04), transparent 22%),
+        radial-gradient(circle at 82% 88%, rgba(255,255,255,0.04), transparent 24%);
+    pointer-events: none;
+}
+
+.container {
+    position: relative;
+    z-index: 1;
+    padding: 56px;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 24px;
+    margin-bottom: 42px;
+}
+
+.brand-wrap {
+    max-width: 620px;
+}
+
+.logo-box {
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 24px;
+}
+
+.logo-box img {
+    height: 42px;
+    width: auto;
+    object-fit: contain;
+    display: block;
+}
+
+.logo-fallback {
+    font-size: 14px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: rgba(255,255,255,0.82);
+}
+
+.kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+    font-size: 12px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--muted);
+}
+
+.kicker::before {
+    content: "";
+    width: 24px;
+    height: 1px;
+    background: rgba(255,255,255,0.18);
+}
+
+h1 {
+    margin: 0 0 12px;
+    font-size: clamp(38px, 7vw, 68px);
+    line-height: 0.95;
+    letter-spacing: -0.06em;
+    font-weight: 700;
+}
+
+.subtitle {
+    margin: 0;
+    font-size: 16px;
+    line-height: 1.7;
+    color: var(--muted);
+    max-width: 48ch;
+}
+
+.meta {
+    min-width: 150px;
+    text-align: right;
+    font-size: 13px;
+    line-height: 1.8;
+    color: var(--muted);
+}
+
+.meta strong {
+    color: var(--text);
+    font-weight: 600;
+}
+
+.section-label {
+    margin: 0 0 18px;
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+}
+
+.cards-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+    margin-bottom: 24px;
+}
+
+.card {
+    border: 1px solid var(--line);
+    border-radius: var(--radius-xl);
+    padding: 28px;
+    background: rgba(255,255,255,0.025);
+    min-height: 270px;
+}
+
+.card h3 {
+    margin: 0 0 12px;
+    font-size: 30px;
+    line-height: 1;
+    letter-spacing: -0.05em;
+}
+
+.card p {
+    margin: 0 0 18px;
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--muted);
+    max-width: 30ch;
+}
+
+ul {
+    margin: 0;
+    padding-left: 22px;
+    display: grid;
+    gap: 10px;
+    color: #ededed;
+    line-height: 1.6;
+}
+
+.plan-price {
+    margin-top: 24px;
+    font-size: 18px;
+    color: rgba(255,255,255,0.72);
+    font-weight: 600;
+}
+
+.summary {
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    background: rgba(255,255,255,0.02);
+    padding: 26px 28px;
+    margin-top: 8px;
+    margin-bottom: 18px;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    font-size: 15px;
+}
+
+.summary-row:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.summary-row span {
+    color: var(--muted);
+}
+
+.summary-row strong {
+    color: var(--text);
+}
+
+.price-card {
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: var(--radius-xl);
+    padding: 30px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.015));
+}
+
+.old-price {
+    margin: 0 0 8px;
+    text-decoration: line-through;
+    color: rgba(255,255,255,0.35);
+    font-size: 32px;
+    letter-spacing: -0.03em;
+}
+
+.highlight {
+    margin: 0;
+    font-size: clamp(44px, 7vw, 72px);
+    line-height: 0.95;
+    letter-spacing: -0.06em;
+    font-weight: 700;
+}
+
+.discount {
+    margin: 12px 0 0;
+    font-size: 15px;
+    color: var(--muted);
+}
+
+.footer {
+    margin-top: 18px;
+    display: grid;
+    grid-template-columns: 1.3fr .7fr;
+    gap: 20px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    padding: 24px 28px;
+    background: rgba(255,255,255,0.02);
+}
+
+.footer-copy {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.75;
+    color: var(--muted);
+}
+
+.footer-meta {
+    text-align: right;
+    font-size: 14px;
+    line-height: 1.9;
+}
+
+.footer-meta span {
+    color: var(--muted);
+}
+
+.footer-meta strong {
+    color: var(--text);
+    font-weight: 600;
+}
+
+.logo-note {
+    margin-top: 12px;
+    font-size: 12px;
+    color: rgba(255,255,255,0.4);
+}
+
+@media (max-width: 760px) {
+    body {
+        padding: 12px;
+    }
+
+    .container {
+        padding: 24px;
+    }
+
+    .header,
+    .cards-grid,
+    .footer {
+        grid-template-columns: 1fr;
+        display: grid;
+    }
+
+    .header {
+        gap: 12px;
+    }
+
+    .meta,
+    .footer-meta {
+        text-align: left;
+    }
+
+    .card {
+        min-height: auto;
+    }
+}
+
+@media print {
+    body {
+        padding: 0;
+        background: #000;
+    }
+
+    .page {
+        max-width: none;
+    }
+
+    .proposal {
+        border: none;
+        border-radius: 0;
+        box-shadow: none;
+    }
+
+    .container {
+        padding: 34px;
+    }
+
+    @page {
+        size: A4;
+        margin: 10mm;
+    }
+}
+</style>
+</head>
+<body>
+
+<div class="page">
+    <article class="proposal">
+        <div class="container">
+
+            <header class="header">
+                <div class="brand-wrap">
+                    <div class="logo-box">
+                        <!-- Reemplazá logo-lab.png por la ruta real de tu logo -->
+                        <img src="logo-lab.png" alt="LAB_ by RUNIA" onerror="this.style.display='none'; document.getElementById('logoFallback').style.display='inline-block';">
+                        <div id="logoFallback" class="logo-fallback" style="display:none;">LAB_ by RUNIA</div>
+                    </div>
+
+                    <div class="kicker">Propuesta personalizada</div>
+                    <h1>Presencia premium para tu marca</h1>
+                    <p class="subtitle">Propuesta personalizada para <strong id="cliente">Cliente</strong>. Una solución clara, sólida y visualmente potente para que tu negocio se presente con una identidad profesional y una landing lista para convertir.</p>
+                    <div class="logo-note">Podés cambiar la ruta del logo en la línea del <code>img src</code> y después seguimos ajustando detalles finos.</div>
+                </div>
+
+                <div class="meta">
+                    <div>Fecha</div>
+                    <strong>16/04/2026</strong>
+                </div>
+            </header>
+
+            <section>
+                <p class="section-label">Solución incluida</p>
+
+                <div class="cards-grid">
+                    <div class="card">
+                        <h3>LANDING PRO</h3>
+                        <p>Una página única, clara y efectiva para presentar tu negocio con estética premium.</p>
+                        <ul>
+                            <li>Diseño premium</li>
+                            <li>Desarrollo completo</li>
+                            <li>Optimización mobile</li>
+                            <li>Animaciones sutiles</li>
+                        </ul>
+                        <div class="plan-price">Desde USD 400</div>
+                    </div>
+
+                    <div class="card">
+                        <h3>Branding Starter</h3>
+                        <p>La base visual necesaria para que tu marca tenga coherencia, presencia y recordación.</p>
+                        <ul>
+                            <li>Logo</li>
+                            <li>Paleta de colores</li>
+                            <li>Tipografía</li>
+                        </ul>
+                        <div class="plan-price">Desde USD 250</div>
+                    </div>
+                </div>
+            </section>
+
+            <section>
+                <p class="section-label">Inversión</p>
+
+                <div class="summary">
+                    <div class="summary-row">
+                        <span>Total base</span>
+                        <strong>USD 650</strong>
+                    </div>
+                    <div class="summary-row">
+                        <span>Conversión de referencia</span>
+                        <strong>$1.300 / USD</strong>
+                    </div>
+                    <div class="summary-row">
+                        <span>Valor de referencia</span>
+                        <strong>$845.000 ARS</strong>
+                    </div>
+                </div>
+
+                <div class="price-card">
+                    <p class="old-price" id="precio_real">$845.000 ARS</p>
+                    <p class="highlight" id="precio_final">$700.000 ARS</p>
+                    <p class="discount" id="descuento">Descuento aplicado: $145.000 ARS</p>
+                </div>
+            </section>
+
+            <section class="footer">
+                <p class="footer-copy">Una propuesta pensada para que tu negocio se vea profesional desde el primer vistazo, comunique valor real y tenga una base visual lista para crecer con criterio.</p>
+
+                <div class="footer-meta">
+                    <div><span>Inicio:</span> <strong>inmediato</strong></div>
+                    <div><span>Duración:</span> <strong>7 a 15 días</strong></div>
+                    <div><span>Condición:</span> <strong>50% inicial</strong></div>
+                </div>
+            </section>
+
+        </div>
+    </article>
+</div>
+
+</body>
+</html>
