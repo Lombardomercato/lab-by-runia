@@ -674,3 +674,115 @@ magneticButtons.forEach((button) => {
     button.style.transform = 'translate3d(0, 0, 0)';
   });
 });
+
+const projectWizard = document.querySelector('[data-project-wizard]');
+
+if (projectWizard) {
+  const wizardSteps = Array.from(projectWizard.querySelectorAll('.wizard-step'));
+  const prevButton = projectWizard.querySelector('[data-prev]');
+  const nextButton = projectWizard.querySelector('[data-next]');
+  const submitButton = projectWizard.querySelector('[data-submit]');
+  const progressBar = document.querySelector('[data-progress-bar]');
+  const stepLabel = document.querySelector('[data-step-label]');
+  const packResult = document.querySelector('[data-pack-result]');
+  const successMessage = document.querySelector('[data-success-message]');
+
+  let currentStep = 0;
+
+  const getPackSuggestion = () => {
+    const websiteType = projectWizard.querySelector('input[name="tipo_web"]:checked')?.value;
+    const designLevel = projectWizard.querySelector('input[name="nivel_diseno"]:checked')?.value;
+    const budget = projectWizard.querySelector('input[name="presupuesto"]:checked')?.value;
+
+    if (websiteType === 'landing' && budget === 'bajo') {
+      return 'LANDING PRO';
+    }
+
+    if (websiteType === 'completa' && (budget === 'medio-1' || budget === 'medio-2')) {
+      return 'WEB PRO';
+    }
+
+    if ((websiteType === 'premium' || designLevel === 'premium') && budget === 'alto') {
+      return 'WEB PREMIUM';
+    }
+
+    return 'PACK A MEDIDA';
+  };
+
+  const syncSuggestion = () => {
+    if (!packResult) return;
+    packResult.textContent = `Sugerencia: ${getPackSuggestion()}`;
+  };
+
+  const validateObjectives = () => {
+    const objectiveInputs = projectWizard.querySelectorAll('input[name="objetivo"]');
+    const hasAny = Array.from(objectiveInputs).some((input) => input.checked);
+    objectiveInputs.forEach((input) => {
+      input.setCustomValidity(hasAny ? '' : 'Seleccioná al menos un objetivo.');
+    });
+    return hasAny;
+  };
+
+  const showStep = (index) => {
+    wizardSteps.forEach((step, stepIndex) => {
+      step.classList.toggle('is-active', stepIndex === index);
+    });
+
+    currentStep = index;
+
+    const totalSteps = wizardSteps.length;
+    const progress = ((index + 1) / totalSteps) * 100;
+
+    if (progressBar) progressBar.style.width = `${progress}%`;
+    if (stepLabel) stepLabel.textContent = `Paso ${index + 1} de ${totalSteps}`;
+
+    if (prevButton) prevButton.hidden = index === 0;
+    if (nextButton) nextButton.hidden = index === totalSteps - 1;
+    if (submitButton) submitButton.hidden = index !== totalSteps - 1;
+  };
+
+  const validateCurrentStep = () => {
+    const activeStep = wizardSteps[currentStep];
+    if (!activeStep) return true;
+
+    if (activeStep.querySelector('input[name="objetivo"]')) {
+      validateObjectives();
+    }
+
+    const inputs = activeStep.querySelectorAll('input, select, textarea');
+    return Array.from(inputs).every((input) => input.checkValidity());
+  };
+
+  projectWizard.addEventListener('input', syncSuggestion);
+
+  nextButton?.addEventListener('click', () => {
+    if (!validateCurrentStep()) {
+      projectWizard.reportValidity();
+      return;
+    }
+
+    showStep(Math.min(currentStep + 1, wizardSteps.length - 1));
+    syncSuggestion();
+  });
+
+  prevButton?.addEventListener('click', () => {
+    showStep(Math.max(currentStep - 1, 0));
+    syncSuggestion();
+  });
+
+  projectWizard.addEventListener('submit', (event) => {
+    event.preventDefault();
+
+    if (!validateCurrentStep()) {
+      projectWizard.reportValidity();
+      return;
+    }
+
+    syncSuggestion();
+    projectWizard.hidden = true;
+    if (successMessage) successMessage.hidden = false;
+  });
+
+  showStep(0);
+  syncSuggestion();
+}
