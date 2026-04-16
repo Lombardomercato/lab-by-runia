@@ -4,11 +4,18 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Propuesta LAB_</title>
+
+<!-- html2pdf.js bundle oficial via cdnjs -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"
+        integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg=="
+        crossorigin="anonymous"
+        referrerpolicy="no-referrer"></script>
+
 <style>
 /*
   IMPORTANTE
   1) Reemplazá las rutas de logo y fuentes por las reales de LAB_
-  2) Si ya tenés las fonts en tu web, dejá estas rutas iguales a las tuyas
+  2) Si tus tipografías ya están en otra carpeta, cambiá solo esas rutas
 */
 
 @font-face {
@@ -28,22 +35,20 @@
 }
 
 :root {
-    /* Reemplazá estos colores por los exactos de LAB_ si querés clavar el branding al 100% */
     --bg: #050505;
-    --bg-2: #0a0a0a;
+    --bg-2: #0b0b0b;
     --panel: rgba(255,255,255,0.03);
     --panel-2: rgba(255,255,255,0.02);
     --border: rgba(255,255,255,0.12);
     --line: rgba(255,255,255,0.08);
     --text: #f5f5f5;
-    --muted: #9a9a9a;
-    --soft: rgba(255,255,255,0.72);
+    --muted: #9c9c9c;
+    --soft: rgba(255,255,255,0.76);
     --accent: #ffffff;
     --glow: rgba(255,255,255,0.08);
     --shadow: 0 26px 90px rgba(0,0,0,0.55);
     --radius-xl: 30px;
     --radius-lg: 24px;
-    --radius-md: 18px;
     --container: 980px;
 }
 
@@ -416,14 +421,9 @@ ul {
     font-weight: 600;
 }
 
-.helper-note {
-    margin-top: 12px;
-    font-size: 12px;
-    color: rgba(255,255,255,0.42);
-}
-
-.hide-print {
-    display: block;
+.downloading {
+    opacity: .75;
+    pointer-events: none;
 }
 
 @media (max-width: 760px) {
@@ -461,72 +461,40 @@ ul {
         min-height: auto;
     }
 }
-
-@media print {
-    body {
-        padding: 0;
-        background: #000;
-    }
-
-    .toolbar,
-    .hide-print {
-        display: none !important;
-    }
-
-    .page {
-        max-width: none;
-    }
-
-    .proposal {
-        border: none;
-        border-radius: 0;
-        box-shadow: none;
-    }
-
-    .container {
-        padding: 34px;
-    }
-
-    @page {
-        size: A4;
-        margin: 10mm;
-    }
-}
 </style>
 </head>
 <body>
 
 <div class="page">
-    <div class="toolbar hide-print">
+    <div class="toolbar" id="toolbar">
         <div class="toolbar-brand">
-            <!-- Reemplazá por la ruta REAL del logo de LAB_ -->
             <img src="./assets/logo/lab-logo-white.svg" alt="LAB_ by RUNIA" onerror="this.style.display='none'">
             <div class="toolbar-copy">
                 <strong>LAB_ by RUNIA</strong>
-                <span>Propuesta exportable en PDF</span>
+                <span>Presupuesto descargable</span>
             </div>
         </div>
 
         <div class="actions">
             <button class="btn-secondary" type="button" onclick="window.location.reload()">Restablecer</button>
-            <button class="btn-primary" type="button" onclick="window.print()">Exportar PDF</button>
+            <button class="btn-primary" id="downloadPdfBtn" type="button">Descargar PDF</button>
         </div>
     </div>
 
-    <article class="proposal">
+    <article class="proposal" id="proposal">
         <div class="container">
             <header class="header">
                 <div class="brand-wrap">
                     <div class="logo-box">
-                        <!-- Reemplazá por la ruta REAL del logo de LAB_ -->
                         <img src="./assets/logo/lab-logo-white.svg" alt="LAB_ by RUNIA" onerror="this.style.display='none'; document.getElementById('logoFallback').style.display='inline-block';">
                         <div id="logoFallback" class="logo-fallback" style="display:none;">LAB_ by RUNIA</div>
                     </div>
 
                     <div class="kicker">Propuesta personalizada</div>
                     <h1>Presencia premium para tu marca</h1>
-                    <p class="subtitle">Propuesta personalizada para <strong id="cliente">Cliente</strong>. Una solución clara, sólida y visualmente potente para que tu negocio se presente con una identidad profesional y una landing lista para convertir.</p>
-                    <div class="helper-note hide-print">Ya tiene botón de exportación. Solo te faltaría apuntar las rutas reales de las fuentes y del logo de LAB_.</div>
+                    <p class="subtitle">
+                        Propuesta personalizada para <strong id="cliente">Cliente</strong>. Una solución clara, sólida y visualmente potente para que tu negocio se presente con una identidad profesional y una landing lista para convertir.
+                    </p>
                 </div>
 
                 <div class="meta">
@@ -590,7 +558,9 @@ ul {
             </section>
 
             <section class="footer">
-                <p class="footer-copy">Una propuesta pensada para que tu negocio se vea profesional desde el primer vistazo, comunique valor real y tenga una base visual lista para crecer con criterio.</p>
+                <p class="footer-copy">
+                    Una propuesta pensada para que tu negocio se vea profesional desde el primer vistazo, comunique valor real y tenga una base visual lista para crecer con criterio.
+                </p>
 
                 <div class="footer-meta">
                     <div><span>Inicio:</span> <strong>inmediato</strong></div>
@@ -601,6 +571,52 @@ ul {
         </div>
     </article>
 </div>
+
+<script>
+const pdfButton = document.getElementById('downloadPdfBtn');
+const proposal = document.getElementById('proposal');
+const toolbar = document.getElementById('toolbar');
+
+async function downloadPDF() {
+    pdfButton.classList.add('downloading');
+    pdfButton.textContent = 'Generando PDF...';
+
+    // Ocultamos la toolbar para que no salga en el PDF
+    toolbar.style.display = 'none';
+
+    const opt = {
+        margin: [8, 8, 8, 8],
+        filename: 'LAB_presupuesto_cliente.pdf',
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: {
+            scale: 2,
+            useCORS: true,
+            backgroundColor: '#050505'
+        },
+        jsPDF: {
+            unit: 'mm',
+            format: 'a4',
+            orientation: 'portrait'
+        },
+        pagebreak: {
+            mode: ['avoid-all', 'css', 'legacy']
+        }
+    };
+
+    try {
+        await html2pdf().set(opt).from(proposal).save();
+    } catch (error) {
+        console.error('Error generando PDF:', error);
+        alert('Hubo un problema al generar el PDF.');
+    } finally {
+        toolbar.style.display = 'flex';
+        pdfButton.classList.remove('downloading');
+        pdfButton.textContent = 'Descargar PDF';
+    }
+}
+
+pdfButton.addEventListener('click', downloadPDF);
+</script>
 
 </body>
 </html>
