@@ -1226,6 +1226,53 @@ html.js .reveal.is-visible {
   font-size: clamp(1.35rem, 3vw, 2rem);
 }
 
+.final-result-card {
+  margin-top: 0.35rem;
+  display: grid;
+  gap: 1rem;
+}
+
+.final-result-title {
+  margin: 0;
+  font-family: "Syne", sans-serif;
+  font-size: 1.05rem;
+  color: color-mix(in srgb, var(--text) 92%, #e6dbc8);
+}
+
+.final-result-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.9rem;
+}
+
+.final-result-copy {
+  margin: 0.35rem 0 0;
+  color: color-mix(in srgb, var(--text) 90%, var(--muted));
+  font-size: 0.97rem;
+  line-height: 1.5;
+}
+
+.final-result-list {
+  margin: 0.45rem 0 0;
+  padding-left: 1.1rem;
+  display: grid;
+  gap: 0.4rem;
+  color: color-mix(in srgb, var(--text) 88%, var(--muted));
+  font-size: 0.96rem;
+}
+
+.final-result-note {
+  margin: 0;
+  padding-top: 0.1rem;
+  color: color-mix(in srgb, var(--text) 75%, var(--muted));
+  font-size: 0.9rem;
+}
+
+.final-result-actions {
+  justify-content: flex-start;
+  flex-wrap: wrap;
+}
+
 @media (max-width: 760px) {
   .field-grid {
     grid-template-columns: 1fr;
@@ -1238,5 +1285,13 @@ html.js .reveal.is-visible {
 
   .wizard-actions .btn {
     flex: 1;
+  }
+
+  .final-result-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .final-result-actions .btn {
+    flex: 1 1 100%;
   }
 }
