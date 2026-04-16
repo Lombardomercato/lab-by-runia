@@ -59,20 +59,33 @@ const initInteractiveHighlights = () => {
 
     if (prefersReducedMotion.matches) return;
 
+    const styles = getComputedStyle(highlight);
+    const followLerp = Number.parseFloat(styles.getPropertyValue('--highlight-follow')) || 0.16;
+    const fadeLerpIn = Number.parseFloat(styles.getPropertyValue('--highlight-fade-in')) || 0.105;
+    const fadeLerpOut = Number.parseFloat(styles.getPropertyValue('--highlight-fade-out')) || 0.075;
+    const maxAlpha = Number.parseFloat(styles.getPropertyValue('--highlight-max-alpha')) || 0.92;
+    const glowScale = Number.parseFloat(styles.getPropertyValue('--highlight-glow-scale')) || 0.72;
+    const settleThreshold = Number.parseFloat(styles.getPropertyValue('--highlight-settle-threshold')) || 0.14;
     const state = { x: 0, y: 0, tx: 0, ty: 0, alpha: 0, targetAlpha: 0, raf: 0, initialized: false };
 
     const render = () => {
       state.raf = 0;
-      state.x += (state.tx - state.x) * 0.24;
-      state.y += (state.ty - state.y) * 0.24;
-      state.alpha += (state.targetAlpha - state.alpha) * 0.14;
+      const dx = state.tx - state.x;
+      const dy = state.ty - state.y;
+      const distance = Math.hypot(dx, dy);
+      const adaptiveFollow = Math.min(0.24, followLerp + distance * 0.0012);
+      const fadeLerp = state.targetAlpha > state.alpha ? fadeLerpIn : fadeLerpOut;
+
+      state.x += dx * adaptiveFollow;
+      state.y += dy * adaptiveFollow;
+      state.alpha += (state.targetAlpha - state.alpha) * fadeLerp;
 
       highlight.style.setProperty('--highlight-x', `${state.x.toFixed(2)}px`);
       highlight.style.setProperty('--highlight-y', `${state.y.toFixed(2)}px`);
       highlight.style.setProperty('--highlight-alpha', state.alpha.toFixed(3));
-      highlight.style.setProperty('--highlight-glow-alpha', (state.alpha * 0.86).toFixed(3));
+      highlight.style.setProperty('--highlight-glow-alpha', (state.alpha * glowScale).toFixed(3));
 
-      if (Math.abs(state.tx - state.x) > 0.25 || Math.abs(state.ty - state.y) > 0.25 || state.alpha > 0.02) {
+      if (Math.abs(state.tx - state.x) > settleThreshold || Math.abs(state.ty - state.y) > settleThreshold || state.alpha > 0.015) {
         state.raf = requestAnimationFrame(render);
       }
     };
@@ -94,13 +107,13 @@ const initInteractiveHighlights = () => {
 
     highlight.addEventListener('pointerenter', (event) => {
       syncFromEvent(event);
-      state.targetAlpha = 1;
+      state.targetAlpha = maxAlpha;
       requestRender();
     });
 
     highlight.addEventListener('pointermove', (event) => {
       syncFromEvent(event);
-      state.targetAlpha = 1;
+      state.targetAlpha = maxAlpha;
       requestRender();
     });
 

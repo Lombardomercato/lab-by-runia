@@ -564,12 +564,18 @@ h1 span {
     --highlight-y: 50%;
     --highlight-alpha: 0;
     --highlight-glow-alpha: 0;
-    --highlight-radius: clamp(120px, 16vw, 200px);
-    --highlight-saturation: 1;
-    --highlight-glow-blur: 2px;
-    --highlight-glow-strength: 1;
+    --highlight-radius: clamp(74px, 9.5vw, 122px);
+    --highlight-saturation: 0.94;
+    --highlight-glow-blur: 1.5px;
+    --highlight-glow-strength: 0.84;
     --highlight-intensity: 1;
-    --highlight-gradient: linear-gradient(120deg, #00e5ff, #ff00a8, #ffd600, #0066ff, #00e5ff);
+    --highlight-follow: 0.16;
+    --highlight-fade-in: 0.105;
+    --highlight-fade-out: 0.075;
+    --highlight-max-alpha: 0.9;
+    --highlight-glow-scale: 0.62;
+    --highlight-settle-threshold: 0.14;
+    --highlight-gradient: linear-gradient(132deg, #45d6ff 0%, #7d8cff 29%, #d985f0 53%, #ff8eb7 72%, #f5bf86 100%);
   }
 
   .interactive-highlight::before,
@@ -580,24 +586,30 @@ h1 span {
     pointer-events: none;
     color: transparent;
     background-image: var(--highlight-gradient);
-    background-size: 220% 220%;
-    background-position: 0% 50%;
+    background-size: 184% 184%;
+    background-position: 18% 50%;
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
-    animation: cmyk-shift 5.4s linear infinite;
+    animation: cmyk-shift 12.4s ease-in-out infinite;
     will-change: opacity, background-position, transform, filter, mask-image, -webkit-mask-image;
     -webkit-mask-image: radial-gradient(
       circle var(--highlight-radius) at var(--highlight-x) var(--highlight-y),
       rgba(0, 0, 0, 1) 0%,
-      rgba(0, 0, 0, 0.88) 46%,
-      rgba(0, 0, 0, 0) 84%
+      rgba(0, 0, 0, 0.96) 30%,
+      rgba(0, 0, 0, 0.74) 50%,
+      rgba(0, 0, 0, 0.36) 66%,
+      rgba(0, 0, 0, 0.14) 78%,
+      rgba(0, 0, 0, 0) 92%
     );
     mask-image: radial-gradient(
       circle var(--highlight-radius) at var(--highlight-x) var(--highlight-y),
       rgba(0, 0, 0, 1) 0%,
-      rgba(0, 0, 0, 0.88) 46%,
-      rgba(0, 0, 0, 0) 84%
+      rgba(0, 0, 0, 0.96) 30%,
+      rgba(0, 0, 0, 0.74) 50%,
+      rgba(0, 0, 0, 0.36) 66%,
+      rgba(0, 0, 0, 0.14) 78%,
+      rgba(0, 0, 0, 0) 92%
     );
   }
 
@@ -613,38 +625,51 @@ h1 span {
   }
 
   .hero-highlight {
-    --highlight-radius: clamp(170px, 22vw, 250px);
-    --highlight-saturation: 1.36;
-    --highlight-glow-blur: 6px;
-    --highlight-glow-strength: 1;
+    --highlight-radius: clamp(112px, 13.8vw, 164px);
+    --highlight-saturation: 1.08;
+    --highlight-glow-blur: 3.8px;
+    --highlight-glow-strength: 0.78;
+    --highlight-intensity: 0.9;
+    --highlight-max-alpha: 0.9;
+    --highlight-follow: 0.16;
+    --highlight-fade-in: 0.11;
+    --highlight-fade-out: 0.078;
   }
 
   .section-highlight {
-    --highlight-radius: clamp(130px, 17vw, 200px);
-    --highlight-saturation: 0.92;
-    --highlight-glow-blur: 2px;
-    --highlight-glow-strength: 0.3;
-    --highlight-intensity: 0.62;
+    --highlight-radius: clamp(84px, 10.2vw, 128px);
+    --highlight-saturation: 0.82;
+    --highlight-glow-blur: 1px;
+    --highlight-glow-strength: 0.18;
+    --highlight-intensity: 0.46;
+    --highlight-max-alpha: 0.74;
+    --highlight-follow: 0.145;
+    --highlight-fade-in: 0.095;
+    --highlight-fade-out: 0.072;
   }
 
   .subtle-highlight {
-    --highlight-radius: clamp(95px, 12vw, 150px);
-    --highlight-saturation: 0.78;
+    --highlight-radius: clamp(62px, 7.4vw, 96px);
+    --highlight-saturation: 0.66;
     --highlight-glow-blur: 0px;
     --highlight-glow-strength: 0;
-    --highlight-intensity: 0.26;
+    --highlight-intensity: 0.16;
+    --highlight-max-alpha: 0.62;
+    --highlight-follow: 0.135;
+    --highlight-fade-in: 0.088;
+    --highlight-fade-out: 0.066;
   }
 }
 
 @keyframes cmyk-shift {
   0% {
-    background-position: 0% 50%;
+    background-position: 18% 50%;
   }
   50% {
-    background-position: 100% 50%;
+    background-position: 82% 50%;
   }
   100% {
-    background-position: 0% 50%;
+    background-position: 18% 50%;
   }
 }
 
