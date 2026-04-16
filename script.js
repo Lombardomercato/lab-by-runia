@@ -1004,6 +1004,25 @@ const getNextStep = (values) => {
   return 'Coordinemos una llamada de diagnóstico para confirmar alcance, contenido y roadmap de implementación.';
 };
 
+const getPrimaryObjective = (values) => {
+  const objectives = formatList('objetivo', values.objetivo);
+  return objectives[0] || 'mejorar mi presencia digital';
+};
+
+const buildWhatsappSummaryMessage = (values, packSugerido, rangeText) => {
+  const clientName = values.negocio || 'No indicado';
+  const brandName = values.negocio || 'No indicada';
+  const primaryObjective = getPrimaryObjective(values);
+
+  return `Hola! Completé el formulario de LAB_ by Runia.
+Mi nombre es ${clientName}.
+Mi marca es ${brandName}.
+El pack sugerido fue ${packSugerido}.
+La inversión estimada fue ${rangeText}.
+Estoy buscando ${primaryObjective}.
+Quisiera avanzar con la propuesta.`;
+};
+
 const generarBrief = (values, packSugerido) => {
   const objetivos = formatList('objetivo', values.objetivo).join(', ') || '-';
   const funcionalidades = formatList('funcionalidades', values.funcionalidades);
@@ -1093,8 +1112,8 @@ if (projectWizard) {
     }
 
     if (whatsappCta) {
-      const text = `Hola LAB_, completé el formulario y mi recomendación inicial fue ${packSugerido}. Quiero avanzar con el próximo paso.`;
-      whatsappCta.href = `https://wa.me/?text=${encodeURIComponent(text)}`;
+      const text = buildWhatsappSummaryMessage(values, packSugerido, estimate.rangeText);
+      whatsappCta.href = `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`;
     }
   };
 
