@@ -13,7 +13,7 @@ const interactiveCards = document.querySelectorAll('.tilt, .project, .interactiv
 const magneticButtons = document.querySelectorAll('.magnetic');
 const spotReactive = document.querySelectorAll('.interactive-surface');
 const motionTitles = document.querySelectorAll('.motion-title');
-const premiumSpotTitles = document.querySelectorAll('.hero h1, .section-head > h2, .showcase-content > h2, .cta h2');
+const premiumSpotTitles = document.querySelectorAll('.hero h1, .section-head > h2, .cta h2');
 const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 const mobileCardsMedia = window.matchMedia('(max-width: 980px), (pointer: coarse)');
 const showcaseSlides = document.querySelectorAll('[data-showcase-slide]');
@@ -43,6 +43,38 @@ const splitTitles = () => {
 };
 
 splitTitles();
+
+const initPremiumTitleInk = () => {
+  if (prefersReducedMotion.matches) return;
+
+  premiumSpotTitles.forEach((title) => {
+    if (title.dataset.inkReady === 'true') return;
+
+    const inkLayer = document.createElement('span');
+    inkLayer.className = 'title-ink-layer';
+    inkLayer.setAttribute('aria-hidden', 'true');
+    inkLayer.innerHTML = title.innerHTML;
+
+    title.classList.add('premium-title-ink');
+    title.appendChild(inkLayer);
+    title.style.setProperty('--ink-x', '50%');
+    title.style.setProperty('--ink-y', '50%');
+    title.dataset.inkReady = 'true';
+
+    const syncInkPosition = (event) => {
+      const rect = title.getBoundingClientRect();
+      const x = ((event.clientX - rect.left) / rect.width) * 100;
+      const y = ((event.clientY - rect.top) / rect.height) * 100;
+      title.style.setProperty('--ink-x', `${Math.max(0, Math.min(100, x)).toFixed(2)}%`);
+      title.style.setProperty('--ink-y', `${Math.max(0, Math.min(100, y)).toFixed(2)}%`);
+    };
+
+    title.addEventListener('pointerenter', syncInkPosition);
+    title.addEventListener('pointermove', syncInkPosition, { passive: true });
+  });
+};
+
+initPremiumTitleInk();
 
 const initInteractiveHighlights = () => {
   const highlights = document.querySelectorAll('.hero-highlight, .section-highlight, .subtle-highlight');
