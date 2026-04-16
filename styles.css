@@ -555,7 +555,52 @@ h1 span {
   text-wrap: balance;
 }
 
+.premium-title-ink {
+  position: relative;
+  --ink-x: 50%;
+  --ink-y: 50%;
+  --ink-radius: clamp(110px, 16vw, 190px);
+}
+
+.premium-title-ink .title-ink-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 320ms var(--easing-premium);
+  will-change: opacity, transform, background-position, mask-image, -webkit-mask-image;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .premium-title-ink:hover .title-ink-layer {
+    opacity: 1;
+  }
+}
+
 @supports (((-webkit-background-clip: text) or (background-clip: text)) and ((-webkit-mask-image: radial-gradient(circle, #000 0%, transparent 100%)) or (mask-image: radial-gradient(circle, #000 0%, transparent 100%)))) {
+  .premium-title-ink .title-ink-layer {
+    color: transparent;
+    background-image: linear-gradient(120deg, #00D9FF, #6A5CFF, #FF2FA3, #FFD400, #00D9FF);
+    background-size: 220% 220%;
+    background-position: 0% 50%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: premium-ink-shift 8s ease-in-out infinite alternate;
+    -webkit-mask-image: radial-gradient(
+      circle var(--ink-radius) at var(--ink-x) var(--ink-y),
+      rgba(0, 0, 0, 1) 0%,
+      rgba(0, 0, 0, 0.88) 52%,
+      rgba(0, 0, 0, 0) 100%
+    );
+    mask-image: radial-gradient(
+      circle var(--ink-radius) at var(--ink-x) var(--ink-y),
+      rgba(0, 0, 0, 1) 0%,
+      rgba(0, 0, 0, 0.88) 52%,
+      rgba(0, 0, 0, 0) 100%
+    );
+  }
+
   .interactive-highlight {
     position: relative;
     display: inline-block;
@@ -633,6 +678,15 @@ h1 span {
     --highlight-glow-blur: 0px;
     --highlight-glow-strength: 0;
     --highlight-intensity: 0.26;
+  }
+}
+
+@keyframes premium-ink-shift {
+  0% {
+    background-position: 4% 50%;
+  }
+  100% {
+    background-position: 96% 50%;
   }
 }
 
