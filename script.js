@@ -675,6 +675,291 @@ magneticButtons.forEach((button) => {
   });
 });
 
+const createSupabaseClient = () => {
+  const supabaseUrl = window.LAB_SUPABASE_URL;
+  const supabaseAnonKey = window.LAB_SUPABASE_ANON_KEY;
+
+  if (!window.supabase || !supabaseUrl || !supabaseAnonKey) return null;
+
+  try {
+    return window.supabase.createClient(supabaseUrl, supabaseAnonKey);
+  } catch (error) {
+    return null;
+  }
+};
+
+const supabaseClient = createSupabaseClient();
+
+const normalizeToArray = (value) => {
+  if (Array.isArray(value)) return value;
+  if (typeof value === 'undefined' || value === null || value === '') return [];
+  return [value];
+};
+
+const getFormValues = (formElement) => {
+  const formData = new FormData(formElement);
+  const values = {};
+
+  for (const [key, value] of formData.entries()) {
+    if (Object.hasOwn(values, key)) {
+      const current = values[key];
+      values[key] = Array.isArray(current) ? [...current, value] : [current, value];
+      continue;
+    }
+
+    values[key] = value;
+  }
+
+  return values;
+};
+
+const saveLeadInSupabase = async (values, packSugerido) => {
+  if (!supabaseClient) return;
+
+  const payload = {
+    negocio: values.negocio ?? null,
+    rubro: values.rubro ?? null,
+    web_actual: values.web_actual ?? null,
+    branding: values.branding ?? null,
+    objetivo: normalizeToArray(values.objetivo),
+    tipo_web: values.tipo_web ?? null,
+    secciones: values.secciones ?? null,
+    nivel_diseno: values.nivel_diseno ?? null,
+    funcionalidades: normalizeToArray(values.funcionalidades),
+    presupuesto: values.presupuesto ?? null,
+    tiempos: values.tiempos ?? null,
+    pack_sugerido: packSugerido,
+    enviado_en: new Date().toISOString(),
+    payload: values,
+  };
+
+  try {
+    await supabaseClient.from('leads_lab_runia').insert(payload);
+  } catch (error) {
+    // Error silencioso para no afectar UX del formulario
+  }
+};
+
+const valueLabels = {
+  tipo_web: {
+    landing: 'Landing simple',
+    completa: 'Web completa',
+    premium: 'Premium / diferencial',
+  },
+  presupuesto: {
+    bajo: 'Menos de USD 500',
+    'medio-1': 'USD 500 – 1000',
+    'medio-2': 'USD 1000 – 2000',
+    alto: 'USD 2000+',
+  },
+  objetivo: {
+    clientes: 'Conseguir clientes',
+    servicios: 'Mostrar servicios',
+    vender: 'Vender online',
+    marca: 'Posicionamiento de marca',
+  },
+  secciones: {
+    '1': '1 sección',
+    '2-4': '2 a 4 secciones',
+    '5+': '5 o más secciones',
+  },
+  funcionalidades: {
+    'form-contacto': 'Formulario de contacto',
+    whatsapp: 'Integración WhatsApp',
+    tienda: 'Tienda online',
+    automatizacion: 'Automatización',
+    ia: 'IA / chatbot',
+    interactivo: 'Algo interactivo',
+  },
+};
+
+const packMeta = {
+  'LANDING PRO': {
+    inversion: { min: 400, max: 700 },
+    mensaje: 'Una base clara, efectiva y profesional para presentar tu negocio con una inversión inicial más accesible.',
+  },
+  'WEB PRO': {
+    inversion: { min: 900, max: 1500 },
+    mensaje: 'La opción más equilibrada para marcas que necesitan una presencia digital sólida, bien estructurada y pensada para crecer.',
+  },
+  'WEB PREMIUM': {
+    inversion: { min: 1500, max: 3000 },
+    mensaje: 'La mejor opción para proyectos que buscan diferenciarse visualmente, elevar su percepción de marca y generar una experiencia de alto nivel.',
+  },
+  'BRANDING + WEB': {
+    inversion: { min: 1200, max: 3500 },
+    mensaje: 'Recomendado para marcas que todavía necesitan una base visual coherente antes de construir una web realmente potente.',
+  },
+  'RUNIA SYSTEM': {
+    inversion: { min: 1800, max: 5000, plus: true },
+    mensaje: 'Ideal para proyectos que necesitan interacción, automatización o una solución digital más avanzada que una web tradicional.',
+  },
+  'PACK A MEDIDA': {
+    inversion: { min: 900, max: 2200 },
+    mensaje: 'Recomendación inicial pensada para tu contexto actual y con margen de ajuste según prioridades.',
+  },
+};
+
+const labelFromMap = (field, value) => {
+  if (!value) return '-';
+  return valueLabels[field]?.[value] || value;
+};
+
+const formatList = (field, value) => {
+  const list = normalizeToArray(value);
+  if (!list.length) return [];
+  return list.map((item) => labelFromMap(field, item));
+};
+
+const formatUsd = (value) => `USD ${value}`;
+
+const formatEstimatedRange = (range) => {
+  if (!range) return 'USD a definir';
+  const maxText = range.plus ? `${range.max}+` : range.max;
+  return `${formatUsd(range.min)} – ${maxText}`;
+};
+
+const getInvestmentEstimate = (values, packSugerido) => {
+  const packData = packMeta[packSugerido] || packMeta['PACK A MEDIDA'];
+  const features = normalizeToArray(values.funcionalidades);
+  const manyFeatures = features.length >= 4;
+  const needsBranding = values.branding !== 'si';
+  const isPremium = values.tipo_web === 'premium' || values.nivel_diseno === 'premium';
+  const isUrgent = values.tiempos === 'urgente';
+  const lowContent = values.secciones === '1' && features.length <= 2;
+
+  const range = { ...packData.inversion };
+
+  if (manyFeatures) {
+    range.max += 600;
+  }
+
+  if (isPremium) {
+    range.min += 150;
+    range.max += 500;
+  }
+
+  if (lowContent) {
+    range.min = Math.max(350, range.min - 120);
+    range.max = Math.max(range.min + 150, range.max - 280);
+  }
+
+  const notes = [];
+
+  if (needsBranding) {
+    notes.push('Inversión adicional sugerida para branding: USD 300 – 900');
+  }
+
+  if (isUrgent) {
+    notes.push('Prioridad por tiempos: el trabajo urgente puede incluir adicional de coordinación.');
+  }
+
+  return {
+    range,
+    rangeText: formatEstimatedRange(range),
+    notes,
+  };
+};
+
+const getPackSuggestionFromValues = (values) => {
+  const websiteType = values.tipo_web;
+  const designLevel = values.nivel_diseno;
+  const budget = values.presupuesto;
+  const branding = values.branding;
+  const features = normalizeToArray(values.funcionalidades);
+
+  const hasAdvancedNeed = features.some((feature) => ['automatizacion', 'ia', 'interactivo'].includes(feature));
+  if (hasAdvancedNeed && (websiteType === 'premium' || budget === 'alto')) {
+    return 'RUNIA SYSTEM';
+  }
+
+  if (branding !== 'si' && (websiteType === 'premium' || designLevel === 'premium')) {
+    return 'BRANDING + WEB';
+  }
+
+  if (websiteType === 'landing' && budget === 'bajo') {
+    return 'LANDING PRO';
+  }
+
+  if (websiteType === 'completa' && (budget === 'medio-1' || budget === 'medio-2')) {
+    return 'WEB PRO';
+  }
+
+  if ((websiteType === 'premium' || designLevel === 'premium') && budget === 'alto') {
+    return 'WEB PREMIUM';
+  }
+
+  if (hasAdvancedNeed) {
+    return 'RUNIA SYSTEM';
+  }
+
+  if (branding !== 'si') {
+    return 'BRANDING + WEB';
+  }
+
+  return 'PACK A MEDIDA';
+};
+
+const getDynamicExtras = (values) => {
+  const extras = [];
+  const branding = values.branding;
+  const objectives = normalizeToArray(values.objetivo);
+  const features = normalizeToArray(values.funcionalidades);
+  const isPremiumFocus = values.tipo_web === 'premium' || values.nivel_diseno === 'premium' || objectives.includes('marca');
+
+  if (branding !== 'si') {
+    extras.push(values.nivel_diseno === 'premium' ? 'Branding Pro' : 'Branding Starter');
+  }
+
+  if (objectives.includes('clientes')) {
+    extras.push('Automatización de leads');
+  }
+
+  if (isPremiumFocus) {
+    extras.push('Experiencia interactiva o IA');
+  }
+
+  if (features.includes('tienda') || features.length >= 4) {
+    extras.push('Planificación escalable / arquitectura extendida');
+  }
+
+  return Array.from(new Set(extras));
+};
+
+const getNextStep = (values) => {
+  if (values.tiempos === 'urgente') {
+    return 'Agendemos una llamada prioritaria para definir alcance mínimo viable y fechas de entrega.';
+  }
+
+  return 'Coordinemos una llamada de diagnóstico para confirmar alcance, contenido y roadmap de implementación.';
+};
+
+const generarBrief = (values, packSugerido) => {
+  const objetivos = formatList('objetivo', values.objetivo).join(', ') || '-';
+  const funcionalidades = formatList('funcionalidades', values.funcionalidades);
+
+  return `PROYECTO:
+Marca: ${values.negocio || '-'}
+Rubro: ${values.rubro || '-'}
+
+OBJETIVO:
+Tipo de web: ${labelFromMap('tipo_web', values.tipo_web)}
+Objetivo principal: ${objetivos}
+
+PACK:
+Sugerido: ${packSugerido}
+Rango: ${getInvestmentEstimate(values, packSugerido).rangeText}
+
+CONTENIDO:
+Secciones: ${labelFromMap('secciones', values.secciones)}
+
+FUNCIONALIDADES:
+${funcionalidades.length ? funcionalidades.map((item) => `- ${item}`).join('\n') : '-'}
+
+ESTRATEGIA:
+${getNextStep(values)}`;
+};
+
 const projectWizard = document.querySelector('[data-project-wizard]');
 
 if (projectWizard) {
@@ -686,32 +971,73 @@ if (projectWizard) {
   const stepLabel = document.querySelector('[data-step-label]');
   const packResult = document.querySelector('[data-pack-result]');
   const successMessage = document.querySelector('[data-success-message]');
+  const finalCard = document.querySelector('[data-final-card]');
+  const resultPack = document.querySelector('[data-result-pack]');
+  const resultInvestment = document.querySelector('[data-result-investment]');
+  const resultWhy = document.querySelector('[data-result-why]');
+  const resultExtras = document.querySelector('[data-result-extras]');
+  const resultNextStep = document.querySelector('[data-result-next-step]');
+  const resultNote = document.querySelector('[data-result-note]');
+  const whatsappCta = document.querySelector('[data-whatsapp-cta]');
+  const copySummaryButton = document.querySelector('[data-copy-summary]');
 
   let currentStep = 0;
+  let latestSummary = '';
 
   const getPackSuggestion = () => {
-    const websiteType = projectWizard.querySelector('input[name="tipo_web"]:checked')?.value;
-    const designLevel = projectWizard.querySelector('input[name="nivel_diseno"]:checked')?.value;
-    const budget = projectWizard.querySelector('input[name="presupuesto"]:checked')?.value;
-
-    if (websiteType === 'landing' && budget === 'bajo') {
-      return 'LANDING PRO';
-    }
-
-    if (websiteType === 'completa' && (budget === 'medio-1' || budget === 'medio-2')) {
-      return 'WEB PRO';
-    }
-
-    if ((websiteType === 'premium' || designLevel === 'premium') && budget === 'alto') {
-      return 'WEB PREMIUM';
-    }
-
-    return 'PACK A MEDIDA';
+    const currentValues = getFormValues(projectWizard);
+    return getPackSuggestionFromValues(currentValues);
   };
 
   const syncSuggestion = () => {
     if (!packResult) return;
-    packResult.textContent = `Sugerencia: ${getPackSuggestion()}`;
+    packResult.textContent = `Recomendación inicial: ${getPackSuggestion()}`;
+  };
+
+  const renderFinalCard = (values, packSugerido) => {
+    if (!finalCard) return;
+
+    const extras = getDynamicExtras(values);
+    const packData = packMeta[packSugerido] || packMeta['PACK A MEDIDA'];
+    const estimate = getInvestmentEstimate(values, packSugerido);
+
+    if (resultPack) resultPack.textContent = packSugerido;
+    if (resultInvestment) {
+      const notes = estimate.notes.length ? ` · ${estimate.notes.join(' · ')}` : '';
+      resultInvestment.textContent = `Inversión estimada: ${estimate.rangeText}${notes}`;
+    }
+    if (resultWhy) resultWhy.textContent = packData.mensaje;
+    if (resultNextStep) resultNextStep.textContent = getNextStep(values);
+    if (resultNote) {
+      resultNote.textContent = 'Esta estimación funciona como referencia inicial. La propuesta final puede ajustarse según contenido, tiempos y alcance real del proyecto.';
+    }
+
+    if (resultExtras) {
+      resultExtras.innerHTML = '';
+      const extraItems = extras.length ? extras : ['Definición de contenidos y roadmap de implementación'];
+      extraItems.forEach((extra) => {
+        const li = document.createElement('li');
+        li.textContent = extra;
+        resultExtras.appendChild(li);
+      });
+    }
+
+    if (whatsappCta) {
+      const text = `Hola LAB_, completé el formulario y mi recomendación inicial fue ${packSugerido}. Quiero avanzar con el próximo paso.`;
+      whatsappCta.href = `https://wa.me/?text=${encodeURIComponent(text)}`;
+    }
+
+    finalCard.hidden = false;
+  };
+
+  const copySummaryToClipboard = async (summaryText) => {
+    if (!summaryText || !navigator.clipboard?.writeText) return;
+
+    try {
+      await navigator.clipboard.writeText(summaryText);
+    } catch (error) {
+      // Error silencioso para no afectar UX
+    }
   };
 
   const validateObjectives = () => {
@@ -755,6 +1081,10 @@ if (projectWizard) {
 
   projectWizard.addEventListener('input', syncSuggestion);
 
+  copySummaryButton?.addEventListener('click', () => {
+    void copySummaryToClipboard(latestSummary);
+  });
+
   nextButton?.addEventListener('click', () => {
     if (!validateCurrentStep()) {
       projectWizard.reportValidity();
@@ -770,13 +1100,20 @@ if (projectWizard) {
     syncSuggestion();
   });
 
-  projectWizard.addEventListener('submit', (event) => {
+  projectWizard.addEventListener('submit', async (event) => {
     event.preventDefault();
 
     if (!validateCurrentStep()) {
       projectWizard.reportValidity();
       return;
     }
+
+    const formValues = getFormValues(projectWizard);
+    const packSugerido = getPackSuggestionFromValues(formValues);
+    latestSummary = generarBrief(formValues, packSugerido);
+
+    renderFinalCard(formValues, packSugerido);
+    await saveLeadInSupabase(formValues, packSugerido);
 
     syncSuggestion();
     projectWizard.hidden = true;
