@@ -61,7 +61,8 @@ const initInteractiveHighlights = () => {
 
     const styles = getComputedStyle(highlight);
     const followLerp = Number.parseFloat(styles.getPropertyValue('--highlight-follow')) || 0.16;
-    const fadeLerp = Number.parseFloat(styles.getPropertyValue('--highlight-fade')) || 0.1;
+    const fadeLerpIn = Number.parseFloat(styles.getPropertyValue('--highlight-fade-in')) || 0.105;
+    const fadeLerpOut = Number.parseFloat(styles.getPropertyValue('--highlight-fade-out')) || 0.075;
     const maxAlpha = Number.parseFloat(styles.getPropertyValue('--highlight-max-alpha')) || 0.92;
     const glowScale = Number.parseFloat(styles.getPropertyValue('--highlight-glow-scale')) || 0.72;
     const settleThreshold = Number.parseFloat(styles.getPropertyValue('--highlight-settle-threshold')) || 0.14;
@@ -69,8 +70,14 @@ const initInteractiveHighlights = () => {
 
     const render = () => {
       state.raf = 0;
-      state.x += (state.tx - state.x) * followLerp;
-      state.y += (state.ty - state.y) * followLerp;
+      const dx = state.tx - state.x;
+      const dy = state.ty - state.y;
+      const distance = Math.hypot(dx, dy);
+      const adaptiveFollow = Math.min(0.24, followLerp + distance * 0.0012);
+      const fadeLerp = state.targetAlpha > state.alpha ? fadeLerpIn : fadeLerpOut;
+
+      state.x += dx * adaptiveFollow;
+      state.y += dy * adaptiveFollow;
       state.alpha += (state.targetAlpha - state.alpha) * fadeLerp;
 
       highlight.style.setProperty('--highlight-x', `${state.x.toFixed(2)}px`);
