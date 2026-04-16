@@ -13,6 +13,7 @@ const interactiveCards = document.querySelectorAll('.tilt, .project, .interactiv
 const magneticButtons = document.querySelectorAll('.magnetic');
 const spotReactive = document.querySelectorAll('.interactive-surface');
 const motionTitles = document.querySelectorAll('.motion-title');
+const premiumSpotTitles = document.querySelectorAll('.hero h1, .section-head > h2, .showcase-content > h2, .cta h2');
 const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 const mobileCardsMedia = window.matchMedia('(max-width: 980px), (pointer: coarse)');
 const showcaseSlides = document.querySelectorAll('[data-showcase-slide]');
