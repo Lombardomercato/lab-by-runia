@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Formulario de proyecto — LAB_ by Runia</title>
+    <meta
+      name="description"
+      content="Formulario de diagnóstico para definir el pack ideal y armar una propuesta web a medida en LAB_ by Runia."
+    />
+    <meta name="theme-color" content="#080808" />
+    <link rel="icon" type="image/png" href="assets/favicon/favicon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Syne:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="site-atmosphere" aria-hidden="true"><span></span><span></span><span></span></div>
+    <div class="hero-scroll-bg" aria-hidden="true"></div>
+    <div class="global-particle-field" aria-hidden="true"></div>
+
+    <header class="navbar" id="top">
+      <nav class="container nav-wrap" aria-label="Principal">
+        <a href="index.html#top" class="brand" aria-label="LAB by Runia">LAB_<span>by Runia</span></a>
+        <a href="index.html#work" class="btn btn-ghost magnetic">Ver casos</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="section form-hero" id="project-form">
+        <div class="container form-shell reveal" data-reveal="rise">
+          <div class="section-head">
+            <p class="section-tag">Proyecto_</p>
+            <h1 class="motion-title">Contanos tu idea y te sugerimos el pack ideal.</h1>
+            <p class="section-intro">
+              Responde este formulario paso a paso y te vamos a devolver una propuesta con alcance, tiempos y enfoque recomendado.
+            </p>
+          </div>
+
+          <div class="wizard-progress" aria-hidden="true">
+            <span class="wizard-progress-bar" data-progress-bar></span>
+          </div>
+
+          <p class="wizard-step-label" data-step-label>Paso 1 de 7</p>
+
+          <form class="project-wizard" data-project-wizard novalidate>
+            <fieldset class="wizard-step is-active" data-step="1">
+              <legend>SECCIÓN 1 — NEGOCIO</legend>
+              <div class="field-grid">
+                <label class="field">
+                  <span>Nombre del negocio</span>
+                  <input type="text" name="negocio" required />
+                </label>
+                <label class="field">
+                  <span>Rubro</span>
+                  <input type="text" name="rubro" required />
+                </label>
+              </div>
+
+              <div class="field-group">
+                <p>¿Tenés web actualmente?</p>
+                <label><input type="radio" name="web_actual" value="si" required /> Sí</label>
+                <label><input type="radio" name="web_actual" value="no" required /> No</label>
+              </div>
+
+              <div class="field-group">
+                <p>¿Tenés branding definido?</p>
+                <label><input type="radio" name="branding" value="si" required /> Sí</label>
+                <label><input type="radio" name="branding" value="no" required /> No</label>
+                <label><input type="radio" name="branding" value="parcial" required /> Parcial</label>
+              </div>
+            </fieldset>
+
+            <fieldset class="wizard-step" data-step="2">
+              <legend>SECCIÓN 2 — OBJETIVO</legend>
+              <div class="field-group">
+                <p>¿Qué querés lograr con la web?</p>
+                <label><input type="checkbox" name="objetivo" value="clientes" /> Conseguir clientes</label>
+                <label><input type="checkbox" name="objetivo" value="servicios" /> Mostrar servicios</label>
+                <label><input type="checkbox" name="objetivo" value="vender" /> Vender online</label>
+                <label><input type="checkbox" name="objetivo" value="marca" /> Posicionamiento de marca</label>
+              </div>
+            </fieldset>
+
+            <fieldset class="wizard-step" data-step="3">
+              <legend>SECCIÓN 3 — ALCANCE</legend>
+              <div class="field-group">
+                <p>¿Qué tipo de web buscás?</p>
+                <label><input type="radio" name="tipo_web" value="landing" required /> Landing simple</label>
+                <label><input type="radio" name="tipo_web" value="completa" required /> Web completa</label>
+                <label><input type="radio" name="tipo_web" value="premium" required /> Algo premium / diferencial</label>
+              </div>
+
+              <div class="field-group">
+                <p>¿Cuántas secciones estimás?</p>
+                <label><input type="radio" name="secciones" value="1" required /> 1</label>
+                <label><input type="radio" name="secciones" value="2-4" required /> 2 a 4</label>
+                <label><input type="radio" name="secciones" value="5+" required /> 5+</label>
+              </div>
+            </fieldset>
+
+            <fieldset class="wizard-step" data-step="4">
+              <legend>SECCIÓN 4 — DISEÑO</legend>
+              <div class="field-group">
+                <p>Nivel de diseño esperado</p>
+                <label><input type="radio" name="nivel_diseno" value="basico" required /> Básico</label>
+                <label><input type="radio" name="nivel_diseno" value="profesional" required /> Profesional</label>
+                <label><input type="radio" name="nivel_diseno" value="premium" required /> Premium / tipo Apple</label>
+              </div>
+            </fieldset>
+
+            <fieldset class="wizard-step" data-step="5">
+              <legend>SECCIÓN 5 — FUNCIONALIDADES</legend>
+              <div class="field-group">
+                <p>¿Qué funcionalidades querés incluir?</p>
+                <label><input type="checkbox" name="funcionalidades" value="form-contacto" /> Formulario de contacto</label>
+                <label><input type="checkbox" name="funcionalidades" value="whatsapp" /> Integración WhatsApp</label>
+                <label><input type="checkbox" name="funcionalidades" value="tienda" /> Tienda online</label>
+                <label><input type="checkbox" name="funcionalidades" value="automatizacion" /> Automatización</label>
+                <label><input type="checkbox" name="funcionalidades" value="ia" /> IA / chatbot</label>
+                <label><input type="checkbox" name="funcionalidades" value="interactivo" /> Algo interactivo</label>
+              </div>
+            </fieldset>
+
+            <fieldset class="wizard-step" data-step="6">
+              <legend>SECCIÓN 6 — PRESUPUESTO</legend>
+              <div class="field-group">
+                <p>Rango de presupuesto</p>
+                <label><input type="radio" name="presupuesto" value="bajo" required /> Menos de USD 500</label>
+                <label><input type="radio" name="presupuesto" value="medio-1" required /> USD 500 – 1000</label>
+                <label><input type="radio" name="presupuesto" value="medio-2" required /> USD 1000 – 2000</label>
+                <label><input type="radio" name="presupuesto" value="alto" required /> USD 2000+</label>
+              </div>
+            </fieldset>
+
+            <fieldset class="wizard-step" data-step="7">
+              <legend>SECCIÓN 7 — TIEMPOS</legend>
+              <div class="field-group">
+                <p>¿Para cuándo lo necesitás?</p>
+                <label><input type="radio" name="tiempos" value="urgente" required /> Urgente</label>
+                <label><input type="radio" name="tiempos" value="2-4" required /> 2 a 4 semanas</label>
+                <label><input type="radio" name="tiempos" value="flexible" required /> Flexible</label>
+              </div>
+            </fieldset>
+
+            <aside class="suggestion-box" aria-live="polite" data-pack-card>
+              <p class="section-tag">Sugerencia automática_</p>
+              <p class="suggestion-output" data-pack-result>Pack sugerido: PACK A MEDIDA</p>
+              <dl class="suggestion-meta">
+                <div>
+                  <dt>Rango estimado</dt>
+                  <dd data-pack-range>Completá datos clave para estimarlo.</dd>
+                </div>
+                <div>
+                  <dt>Extras recomendados</dt>
+                  <dd data-pack-extras>Sin extras sugeridos por ahora.</dd>
+                </div>
+              </dl>
+            </aside>
+
+            <div class="wizard-actions">
+              <button type="button" class="btn btn-ghost" data-prev>Anterior</button>
+              <button type="button" class="btn btn-solid" data-next>Siguiente</button>
+              <button type="submit" class="btn btn-solid" data-submit>Enviar proyecto</button>
+            </div>
+          </form>
+
+          <div class="form-success" data-success-message hidden>
+            <p class="section-tag">Enviado_</p>
+            <h2>Gracias. En base a tus respuestas, vamos a armar una propuesta a medida.</h2>
+            <a class="btn btn-ghost" href="index.html">Volver al inicio</a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="container footer-wrap">
+        <a href="index.html#top" class="brand">LAB_<span>by Runia</span></a>
+        <ul>
+          <li><a href="index.html#studio">Studio</a></li>
+          <li><a href="index.html#services">Servicios</a></li>
+          <li><a href="index.html#work">Casos</a></li>
+          <li><a href="index.html#contact">Contacto</a></li>
+        </ul>
+        <div>
+          <a href="mailto:hola@labbyrunia.com">hola@labbyrunia.com</a>
+          <p>Instagram / LinkedIn</p>
+        </div>
+      </div>
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
+</html>

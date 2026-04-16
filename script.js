@@ -674,3 +674,162 @@ magneticButtons.forEach((button) => {
     button.style.transform = 'translate3d(0, 0, 0)';
   });
 });
+
+const projectWizard = document.querySelector('[data-project-wizard]');
+
+if (projectWizard) {
+  const wizardSteps = Array.from(projectWizard.querySelectorAll('.wizard-step'));
+  const prevButton = projectWizard.querySelector('[data-prev]');
+  const nextButton = projectWizard.querySelector('[data-next]');
+  const submitButton = projectWizard.querySelector('[data-submit]');
+  const progressBar = document.querySelector('[data-progress-bar]');
+  const stepLabel = document.querySelector('[data-step-label]');
+  const packResult = document.querySelector('[data-pack-result]');
+  const packCard = document.querySelector('[data-pack-card]');
+  const packRange = document.querySelector('[data-pack-range]');
+  const packExtras = document.querySelector('[data-pack-extras]');
+  const successMessage = document.querySelector('[data-success-message]');
+
+  let currentStep = 0;
+
+  function calcularPackSugerido() {
+    const websiteType = projectWizard.querySelector('input[name="tipo_web"]:checked')?.value;
+    const sections = projectWizard.querySelector('input[name="secciones"]:checked')?.value;
+    const designLevel = projectWizard.querySelector('input[name="nivel_diseno"]:checked')?.value;
+    const budget = projectWizard.querySelector('input[name="presupuesto"]:checked')?.value;
+    const branding = projectWizard.querySelector('input[name="branding"]:checked')?.value;
+    const selectedFeatures = Array.from(projectWizard.querySelectorAll('input[name="funcionalidades"]:checked')).map((input) => input.value);
+    const hasSystemFeatures = selectedFeatures.some((feature) =>
+      ['ia', 'automatizacion', 'interactivo'].includes(feature),
+    );
+    const needsBranding = branding === 'no' || branding === 'parcial';
+
+    let pack = 'PACK A MEDIDA';
+    let range = 'USD 900 – 1800';
+    const extras = [];
+
+    if (websiteType === 'landing' && sections === '1' && budget === 'bajo') {
+      pack = 'LANDING PRO';
+      range = 'USD 350 – 700';
+      extras.push('Copy de conversión');
+    }
+
+    if (websiteType === 'completa' && (sections === '2-4' || sections === '5+') && (budget === 'medio-1' || budget === 'medio-2')) {
+      pack = 'WEB PRO';
+      range = 'USD 900 – 2000';
+      extras.push('Estructura SEO inicial');
+    }
+
+    if (designLevel === 'premium' || budget === 'alto' || branding === 'no') {
+      pack = 'WEB PREMIUM';
+      range = 'USD 2000+';
+      extras.push('Dirección creativa premium');
+    }
+
+    if (needsBranding) {
+      pack = 'BRANDING + WEB';
+      range = 'USD 1500 – 2800';
+      extras.push('Sistema visual + lineamientos');
+    }
+
+    if (hasSystemFeatures) {
+      pack = 'RUNIA SYSTEM';
+      range = 'USD 2200+';
+      extras.push('Automatización / IA aplicada');
+    }
+
+    if (selectedFeatures.includes('whatsapp')) extras.push('Flujo de contacto por WhatsApp');
+    if (selectedFeatures.includes('tienda')) extras.push('Setup e-commerce base');
+
+    return {
+      pack,
+      range,
+      extras: [...new Set(extras)],
+      isReady: Boolean(websiteType || designLevel || budget || sections || selectedFeatures.length),
+    };
+  }
+
+  const syncSuggestion = () => {
+    const suggestion = calcularPackSugerido();
+    if (packResult) packResult.textContent = `Pack sugerido: ${suggestion.pack}`;
+    if (packRange) packRange.textContent = suggestion.range;
+    if (packExtras) {
+      packExtras.textContent = suggestion.extras.length
+        ? suggestion.extras.join(' · ')
+        : 'Sin extras sugeridos por ahora.';
+    }
+    if (packCard) packCard.classList.toggle('is-ready', suggestion.isReady);
+  };
+
+  const validateObjectives = () => {
+    const objectiveInputs = projectWizard.querySelectorAll('input[name="objetivo"]');
+    const hasAny = Array.from(objectiveInputs).some((input) => input.checked);
+    objectiveInputs.forEach((input) => {
+      input.setCustomValidity(hasAny ? '' : 'Seleccioná al menos un objetivo.');
+    });
+    return hasAny;
+  };
+
+  const showStep = (index) => {
+    wizardSteps.forEach((step, stepIndex) => {
+      step.classList.toggle('is-active', stepIndex === index);
+    });
+
+    currentStep = index;
+
+    const totalSteps = wizardSteps.length;
+    const progress = ((index + 1) / totalSteps) * 100;
+
+    if (progressBar) progressBar.style.width = `${progress}%`;
+    if (stepLabel) stepLabel.textContent = `Paso ${index + 1} de ${totalSteps}`;
+
+    if (prevButton) prevButton.hidden = index === 0;
+    if (nextButton) nextButton.hidden = index === totalSteps - 1;
+    if (submitButton) submitButton.hidden = index !== totalSteps - 1;
+  };
+
+  const validateCurrentStep = () => {
+    const activeStep = wizardSteps[currentStep];
+    if (!activeStep) return true;
+
+    if (activeStep.querySelector('input[name="objetivo"]')) {
+      validateObjectives();
+    }
+
+    const inputs = activeStep.querySelectorAll('input, select, textarea');
+    return Array.from(inputs).every((input) => input.checkValidity());
+  };
+
+  projectWizard.addEventListener('input', syncSuggestion);
+
+  nextButton?.addEventListener('click', () => {
+    if (!validateCurrentStep()) {
+      projectWizard.reportValidity();
+      return;
+    }
+
+    showStep(Math.min(currentStep + 1, wizardSteps.length - 1));
+    syncSuggestion();
+  });
+
+  prevButton?.addEventListener('click', () => {
+    showStep(Math.max(currentStep - 1, 0));
+    syncSuggestion();
+  });
+
+  projectWizard.addEventListener('submit', (event) => {
+    event.preventDefault();
+
+    if (!validateCurrentStep()) {
+      projectWizard.reportValidity();
+      return;
+    }
+
+    syncSuggestion();
+    projectWizard.hidden = true;
+    if (successMessage) successMessage.hidden = false;
+  });
+
+  showStep(0);
+  syncSuggestion();
+}
