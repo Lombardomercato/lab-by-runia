@@ -52,6 +52,10 @@
               <legend>SECCIÓN 1 — NEGOCIO</legend>
               <div class="field-grid">
                 <label class="field">
+                  <span>Nombre</span>
+                  <input type="text" name="nombre" required />
+                </label>
+                <label class="field">
                   <span>Nombre del negocio</span>
                   <input type="text" name="negocio" required />
                 </label>
@@ -61,13 +65,13 @@
                 </label>
               </div>
 
-              <div class="field-group">
+              <div class="field-group phase-two-only">
                 <p>¿Tenés web actualmente?</p>
                 <label><input type="radio" name="web_actual" value="si" required /> Sí</label>
                 <label><input type="radio" name="web_actual" value="no" required /> No</label>
               </div>
 
-              <div class="field-group">
+              <div class="field-group phase-two-only">
                 <p>¿Tenés branding definido?</p>
                 <label><input type="radio" name="branding" value="si" required /> Sí</label>
                 <label><input type="radio" name="branding" value="no" required /> No</label>
@@ -95,7 +99,7 @@
                 <label><input type="radio" name="tipo_web" value="premium" required /> Algo premium / diferencial</label>
               </div>
 
-              <div class="field-group">
+              <div class="field-group phase-two-only">
                 <p>¿Cuántas secciones estimás?</p>
                 <label><input type="radio" name="secciones" value="1" required /> 1</label>
                 <label><input type="radio" name="secciones" value="2-4" required /> 2 a 4</label>
@@ -158,6 +162,25 @@
               <button type="submit" class="btn btn-solid" data-submit>Enviar proyecto</button>
             </div>
           </form>
+
+
+
+          <aside class="phase-one-result suggestion-box" data-phase1-result hidden>
+            <p class="section-tag">Cotización rápida_</p>
+            <h2 class="phase-one-title">Tu proyecto encaja mejor en:</h2>
+            <p class="suggestion-output" data-phase1-pack>PACK A MEDIDA</p>
+            <p class="final-result-copy" data-phase1-investment>Inversión estimada: USD -</p>
+            <p class="final-result-copy" data-phase1-why>-</p>
+            <div>
+              <p class="section-tag">Extras sugeridos</p>
+              <ul class="final-result-list" data-phase1-extras></ul>
+            </div>
+            <div class="wizard-actions final-result-actions">
+              <a class="btn btn-solid" data-phase1-whatsapp target="_blank" rel="noopener noreferrer" href="#">Hablar por WhatsApp</a>
+              <a class="btn btn-ghost" href="mailto:hola@labbyrunia.com?subject=Agendar%20llamada%20LAB_">Agendar llamada</a>
+              <button type="button" class="btn btn-ghost" data-phase2-start>Completar detalles del proyecto</button>
+            </div>
+          </aside>
 
           <div class="form-success" data-success-message hidden>
             <p class="section-tag">Enviado_</p>
