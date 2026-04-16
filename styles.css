@@ -569,7 +569,8 @@ h1 span {
     --highlight-glow-blur: 2px;
     --highlight-glow-strength: 1;
     --highlight-intensity: 1;
-    --highlight-gradient: linear-gradient(120deg, #00e5ff, #ff00a8, #ffd600, #0066ff, #00e5ff);
+    --highlight-duration: 8.8s;
+    --highlight-gradient: linear-gradient(120deg, #00d9ff, #6a5cff, #ff2fa3, #ffd400, #00d9ff);
   }
 
   .interactive-highlight::before,
@@ -585,7 +586,7 @@ h1 span {
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
-    animation: cmyk-shift 5.4s linear infinite;
+    animation: cmyk-shift var(--highlight-duration) ease-in-out infinite;
     will-change: opacity, background-position, transform, filter, mask-image, -webkit-mask-image;
     -webkit-mask-image: radial-gradient(
       circle var(--highlight-radius) at var(--highlight-x) var(--highlight-y),
@@ -614,36 +615,43 @@ h1 span {
 
   .hero-highlight {
     --highlight-radius: clamp(170px, 22vw, 250px);
-    --highlight-saturation: 1.36;
-    --highlight-glow-blur: 6px;
-    --highlight-glow-strength: 1;
+    --highlight-saturation: 1.24;
+    --highlight-glow-blur: 5px;
+    --highlight-glow-strength: 0.7;
+    --highlight-duration: 6.5s;
   }
 
   .section-highlight {
     --highlight-radius: clamp(130px, 17vw, 200px);
-    --highlight-saturation: 0.92;
-    --highlight-glow-blur: 2px;
-    --highlight-glow-strength: 0.3;
-    --highlight-intensity: 0.56;
+    --highlight-saturation: 0.84;
+    --highlight-glow-blur: 1px;
+    --highlight-glow-strength: 0.18;
+    --highlight-intensity: 0.48;
+    --highlight-duration: 9.8s;
   }
 
   .subtle-highlight {
     --highlight-radius: clamp(95px, 12vw, 150px);
-    --highlight-saturation: 0.95;
-    --highlight-glow-blur: 1px;
-    --highlight-glow-strength: 0.24;
+    --highlight-saturation: 0.72;
+    --highlight-glow-blur: 0px;
+    --highlight-glow-strength: 0;
+    --highlight-intensity: 0.28;
+    --highlight-duration: 11.5s;
   }
 }
 
 @keyframes cmyk-shift {
   0% {
-    background-position: 0% 50%;
+    background-position: 0% 42%;
   }
-  50% {
-    background-position: 100% 50%;
+  35% {
+    background-position: 82% 58%;
+  }
+  68% {
+    background-position: 30% 60%;
   }
   100% {
-    background-position: 0% 50%;
+    background-position: 100% 44%;
   }
 }
 
