@@ -45,8 +45,21 @@ const splitTitles = () => {
 splitTitles();
 
 const initInteractiveHighlights = () => {
-  const highlights = document.querySelectorAll('.hero-highlight, .section-highlight, .subtle-highlight');
+  const highlights = document.querySelectorAll('h1, h2, h3, h4');
   highlights.forEach((highlight) => {
+    if (highlight.closest('script, style, noscript')) return;
+
+    if (!highlight.classList.contains('hero-highlight') && !highlight.classList.contains('section-highlight') && !highlight.classList.contains('subtle-highlight')) {
+      const tagName = highlight.tagName.toLowerCase();
+      if (tagName === 'h1') {
+        highlight.classList.add('hero-highlight');
+      } else if (tagName === 'h2') {
+        highlight.classList.add('section-highlight');
+      } else {
+        highlight.classList.add('subtle-highlight');
+      }
+    }
+
     const normalizedText = (highlight.textContent || '').trim().replace(/\s+/g, ' ');
     if (!normalizedText) return;
 
