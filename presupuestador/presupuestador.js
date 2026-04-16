@@ -240,139 +240,67 @@ const updateStateFromInput = (target) => {
   render();
 };
 
-const splitText = (doc, text, maxWidth) => doc.splitTextToSize((text || '').toString(), maxWidth);
+const createExportNodeFromPreview = () => {
+  const preview = document.getElementById('proposalPreview');
+  const clone = preview.cloneNode(true);
+  clone.style.width = '980px';
+  clone.style.maxWidth = '980px';
+  clone.style.margin = '0';
+  clone.style.boxSizing = 'border-box';
 
-const exportPdf = () => {
+  const wrapper = document.createElement('div');
+  wrapper.style.position = 'fixed';
+  wrapper.style.left = '-99999px';
+  wrapper.style.top = '0';
+  wrapper.style.padding = '28px';
+  wrapper.style.background = '#0b0b0b';
+  wrapper.style.width = '1036px';
+  wrapper.style.boxSizing = 'border-box';
+  wrapper.appendChild(clone);
+
+  document.body.appendChild(wrapper);
+  return { wrapper, clone };
+};
+
+const exportPdf = async () => {
   const { jsPDF } = window.jspdf;
-  const totals = calculate();
-  const doc = new jsPDF({ unit: 'pt', format: 'a4' });
+  const exportButton = dom.exportPdfBtn;
+  const originalLabel = exportButton.textContent;
+  exportButton.disabled = true;
+  exportButton.textContent = 'Exportando...';
 
-  const width = doc.internal.pageSize.getWidth();
-  const height = doc.internal.pageSize.getHeight();
-  const margin = 38;
-  const contentWidth = width - margin * 2;
+  const { wrapper, clone } = createExportNodeFromPreview();
 
-  doc.setFillColor(10, 10, 10);
-  doc.rect(0, 0, width, height, 'F');
+  try {
+    const canvas = await window.html2canvas(clone, {
+      backgroundColor: '#0b0b0b',
+      scale: 2,
+      useCORS: true,
+      logging: false,
+    });
 
-  doc.setDrawColor(68, 68, 68);
-  doc.setFillColor(18, 18, 18);
-  doc.roundedRect(margin, margin, contentWidth, height - margin * 2, 16, 16, 'FD');
+    const image = canvas.toDataURL('image/png', 1);
+    const doc = new jsPDF({ unit: 'pt', format: 'a4' });
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
+    const margin = 22;
+    const targetWidth = pageWidth - margin * 2;
+    const targetHeight = (canvas.height * targetWidth) / canvas.width;
+    const renderHeight = Math.min(targetHeight, pageHeight - margin * 2);
+    const renderWidth = (canvas.width * renderHeight) / canvas.height;
+    const x = (pageWidth - renderWidth) / 2;
+    const y = (pageHeight - renderHeight) / 2;
 
-  let y = margin + 34;
-
-  doc.setTextColor(241, 237, 230);
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(18);
-  doc.text('LAB_ by Runia', margin + 24, y);
-
-  doc.setFontSize(10);
-  doc.setTextColor(168, 160, 147);
-  doc.text('PRESUPUESTO PERSONALIZADO', margin + 24, y + 18);
-
-  doc.setFont('helvetica', 'normal');
-  doc.setTextColor(241, 237, 230);
-  doc.setFontSize(11);
-  doc.text(`Cliente: ${state.clientName || '-'}`, width - margin - 24, y, { align: 'right' });
-  doc.text(`Fecha: ${formatInputDate(state.date)}`, width - margin - 24, y + 16, { align: 'right' });
-  doc.text(`Email: ${state.clientEmail || '-'}`, width - margin - 24, y + 32, { align: 'right' });
-
-  y += 56;
-  doc.setDrawColor(53, 53, 53);
-  doc.line(margin + 24, y, width - margin - 24, y);
-  y += 18;
-
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(11);
-  doc.setTextColor(168, 160, 147);
-  doc.text('ITEMS COTIZADOS', margin + 24, y);
-
-  y += 16;
-  state.items.forEach((item) => {
-    doc.setFillColor(23, 23, 23);
-    doc.setDrawColor(53, 53, 53);
-    doc.roundedRect(margin + 24, y, contentWidth - 48, 54, 8, 8, 'FD');
-
-    doc.setTextColor(241, 237, 230);
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(11);
-    doc.text(item.name || 'Ítem sin nombre', margin + 36, y + 18);
-    doc.text(USD_FORMAT.format(Number(item.priceUsd) || 0), width - margin - 36, y + 18, { align: 'right' });
-
-    doc.setFont('helvetica', 'normal');
-    doc.setTextColor(168, 160, 147);
-    doc.setFontSize(9.5);
-    const description = splitText(doc, item.description || 'Sin descripción.', contentWidth - 84);
-    doc.text(description.slice(0, 2), margin + 36, y + 34);
-    y += 62;
-  });
-
-  y += 2;
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(11);
-  doc.setTextColor(168, 160, 147);
-  doc.text('RESUMEN ECONÓMICO', margin + 24, y);
-
-  y += 14;
-  const summaryRows = [
-    ['Subtotal (USD)', USD_FORMAT.format(totals.subtotalUsd)],
-    ['Cotización aplicada', `${state.dollarType} · ${ARS_FORMAT.format(Number(state.exchangeRate) || 0)}`],
-    ['Valor de referencia ARS', ARS_FORMAT.format(totals.referenceArs)],
-    ['Descuento aplicado', `- ${ARS_FORMAT.format(totals.discountArs)}`],
-  ];
-
-  summaryRows.forEach(([label, value]) => {
-    doc.setFont('helvetica', 'normal');
-    doc.setTextColor(168, 160, 147);
-    doc.setFontSize(10.5);
-    doc.text(label, margin + 24, y + 16);
-    doc.setTextColor(241, 237, 230);
-    doc.text(value, width - margin - 24, y + 16, { align: 'right' });
-    y += 20;
-  });
-
-  doc.setFillColor(26, 26, 26);
-  doc.setDrawColor(65, 65, 65);
-  doc.roundedRect(margin + 24, y + 6, contentWidth - 48, 54, 10, 10, 'FD');
-  doc.setFont('helvetica', 'bold');
-  doc.setTextColor(233, 222, 204);
-  doc.setFontSize(12);
-  doc.text('TOTAL FINAL ARS', margin + 38, y + 27);
-  doc.setFontSize(20);
-  doc.text(ARS_FORMAT.format(totals.totalArs), width - margin - 38, y + 34, { align: 'right' });
-
-  y += 76;
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(11);
-  doc.setTextColor(168, 160, 147);
-  doc.text('CONDICIONES COMERCIALES', margin + 24, y);
-
-  y += 18;
-  doc.setFont('helvetica', 'normal');
-  doc.setFontSize(10);
-  doc.setTextColor(241, 237, 230);
-  const conditionsLines = [
-    `Inicio: ${state.startTime || '-'}`,
-    `Plazo: ${state.deliveryTime || '-'}`,
-    `Pago: ${state.paymentMethod || '-'}`,
-    `Condición: ${state.commercialTerms || '-'}`,
-  ];
-
-  conditionsLines.forEach((line) => {
-    doc.text(line, margin + 24, y);
-    y += 14;
-  });
-
-  const observations = splitText(doc, `Observaciones: ${state.observations || 'Sin observaciones adicionales.'}`, contentWidth - 48);
-  doc.text(observations, margin + 24, y + 2);
-  y += Math.min(observations.length, 3) * 14 + 8;
-
-  doc.setTextColor(168, 160, 147);
-  const closing = splitText(doc, state.closingText, contentWidth - 48);
-  doc.text(closing.slice(0, 3), margin + 24, Math.min(y + 6, height - 56));
-
-  const filename = `Presupuesto_LAB_${sanitizeFileName(state.clientName)}.pdf`;
-  doc.save(filename);
+    doc.setFillColor(11, 11, 11);
+    doc.rect(0, 0, pageWidth, pageHeight, 'F');
+    doc.addImage(image, 'PNG', x, y, renderWidth, renderHeight, undefined, 'FAST');
+    const filename = `Presupuesto_LAB_${sanitizeFileName(state.clientName)}.pdf`;
+    doc.save(filename);
+  } finally {
+    wrapper.remove();
+    exportButton.disabled = false;
+    exportButton.textContent = originalLabel;
+  }
 };
 
 dom.form.addEventListener('input', (event) => {
