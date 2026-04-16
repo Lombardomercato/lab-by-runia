@@ -1059,12 +1059,24 @@ const projectWizard = document.querySelector('[data-project-wizard]');
 
 if (projectWizard) {
   const wizardSteps = Array.from(projectWizard.querySelectorAll('.wizard-step'));
+  const stepByNumber = new Map(
+    wizardSteps.map((step) => [Number.parseInt(step.dataset.step || '0', 10), step]),
+  );
+
   const prevButton = projectWizard.querySelector('[data-prev]');
   const nextButton = projectWizard.querySelector('[data-next]');
   const submitButton = projectWizard.querySelector('[data-submit]');
   const progressBar = document.querySelector('[data-progress-bar]');
   const stepLabel = document.querySelector('[data-step-label]');
   const packResult = document.querySelector('[data-pack-result]');
+  const phaseOneResult = document.querySelector('[data-phase1-result]');
+  const phaseOnePack = document.querySelector('[data-phase1-pack]');
+  const phaseOneInvestment = document.querySelector('[data-phase1-investment]');
+  const phaseOneWhy = document.querySelector('[data-phase1-why]');
+  const phaseOneExtras = document.querySelector('[data-phase1-extras]');
+  const phaseOneWhatsapp = document.querySelector('[data-phase1-whatsapp]');
+  const phaseTwoStartButton = document.querySelector('[data-phase2-start]');
+
   const successMessage = document.querySelector('[data-success-message]');
   const finalCard = document.querySelector('[data-final-card]');
   const resultPack = document.querySelector('[data-result-pack]');
@@ -1076,8 +1088,22 @@ if (projectWizard) {
   const whatsappCta = document.querySelector('[data-whatsapp-cta]');
   const copySummaryButton = document.querySelector('[data-copy-summary]');
 
-  let currentStep = 0;
+  const phaseTwoInputs = Array.from(projectWizard.querySelectorAll('.phase-two-only input'));
+  const phaseOneSequence = [1, 2, 3, 4, 6];
+  const phaseTwoSequence = [1, 3, 5, 7];
+
+  let currentPhase = 'quote';
+  let activeSequence = phaseOneSequence;
+  let currentIndex = 0;
   let latestSummary = '';
+
+  const setPhaseTwoEnabled = (enabled) => {
+    projectWizard.classList.toggle('is-phase-two', enabled);
+
+    phaseTwoInputs.forEach((input) => {
+      input.disabled = !enabled;
+    });
+  };
 
   const getPackSuggestion = () => {
     const currentValues = getFormValues(projectWizard);
@@ -1087,6 +1113,38 @@ if (projectWizard) {
   const syncSuggestion = () => {
     if (!packResult) return;
     packResult.textContent = `Recomendación inicial: ${getPackSuggestion()}`;
+  };
+
+  const renderExtrasList = (node, extras) => {
+    if (!node) return;
+    node.innerHTML = '';
+    const extraItems = extras.length ? extras : ['Definición de contenidos y roadmap de implementación'];
+
+    extraItems.forEach((extra) => {
+      const li = document.createElement('li');
+      li.textContent = extra;
+      node.appendChild(li);
+    });
+  };
+
+  const renderPhaseOneResult = (values, packSugerido) => {
+    if (!phaseOneResult) return;
+
+    const packData = packMeta[packSugerido] || packMeta['PACK A MEDIDA'];
+    const estimate = getInvestmentEstimate(values, packSugerido);
+    const extras = getDynamicExtras(values);
+
+    if (phaseOnePack) phaseOnePack.textContent = packSugerido;
+    if (phaseOneInvestment) phaseOneInvestment.textContent = `Inversión estimada: ${estimate.rangeText}`;
+    if (phaseOneWhy) phaseOneWhy.textContent = packData.mensaje;
+    renderExtrasList(phaseOneExtras, extras);
+
+    if (phaseOneWhatsapp) {
+      const text = buildWhatsappSummaryMessage(values, packSugerido, estimate.rangeText);
+      phaseOneWhatsapp.href = `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`;
+    }
+
+    phaseOneResult.hidden = false;
   };
 
   const renderFinalCard = (values, packSugerido) => {
@@ -1107,20 +1165,13 @@ if (projectWizard) {
       resultNote.textContent = 'Esta estimación funciona como referencia inicial. La propuesta final puede ajustarse según contenido, tiempos y alcance real del proyecto.';
     }
 
-    if (resultExtras) {
-      resultExtras.innerHTML = '';
-      const extraItems = extras.length ? extras : ['Definición de contenidos y roadmap de implementación'];
-      extraItems.forEach((extra) => {
-        const li = document.createElement('li');
-        li.textContent = extra;
-        resultExtras.appendChild(li);
-      });
-    }
+    renderExtrasList(resultExtras, extras);
 
     if (whatsappCta) {
       const text = buildWhatsappSummaryMessage(values, packSugerido, estimate.rangeText);
       whatsappCta.href = `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`;
     }
+
     finalCard.hidden = false;
   };
 
@@ -1135,7 +1186,7 @@ if (projectWizard) {
   };
 
   const validateObjectives = () => {
-    const objectiveInputs = projectWizard.querySelectorAll('input[name="objetivo"]');
+    const objectiveInputs = projectWizard.querySelectorAll('input[name="objetivo"]:not(:disabled)');
     const hasAny = Array.from(objectiveInputs).some((input) => input.checked);
     objectiveInputs.forEach((input) => {
       input.setCustomValidity(hasAny ? '' : 'Seleccioná al menos un objetivo.');
@@ -1144,33 +1195,43 @@ if (projectWizard) {
   };
 
   const showStep = (index) => {
-    wizardSteps.forEach((step, stepIndex) => {
-      step.classList.toggle('is-active', stepIndex === index);
+    wizardSteps.forEach((step) => {
+      step.classList.remove('is-active');
     });
 
-    currentStep = index;
+    currentIndex = index;
+    const stepNumber = activeSequence[index];
+    const activeStep = stepByNumber.get(stepNumber);
+    if (activeStep) activeStep.classList.add('is-active');
 
-    const totalSteps = wizardSteps.length;
+    const totalSteps = activeSequence.length;
     const progress = ((index + 1) / totalSteps) * 100;
 
     if (progressBar) progressBar.style.width = `${progress}%`;
-    if (stepLabel) stepLabel.textContent = `Paso ${index + 1} de ${totalSteps}`;
+    if (stepLabel) {
+      const phaseLabel = currentPhase === 'quote' ? 'Cotización' : 'Detalles';
+      stepLabel.textContent = `${phaseLabel} · Paso ${index + 1} de ${totalSteps}`;
+    }
 
     if (prevButton) prevButton.hidden = index === 0;
     if (nextButton) nextButton.hidden = index === totalSteps - 1;
-    if (submitButton) submitButton.hidden = index !== totalSteps - 1;
+    if (submitButton) {
+      submitButton.hidden = index !== totalSteps - 1;
+      submitButton.textContent = currentPhase === 'quote' ? 'Ver cotización' : 'Enviar proyecto';
+    }
   };
 
   const validateCurrentStep = () => {
-    const activeStep = wizardSteps[currentStep];
+    const stepNumber = activeSequence[currentIndex];
+    const activeStep = stepByNumber.get(stepNumber);
     if (!activeStep) return true;
 
-    if (activeStep.querySelector('input[name="objetivo"]')) {
+    if (activeStep.querySelector('input[name="objetivo"]:not(:disabled)')) {
       validateObjectives();
     }
 
     const inputs = activeStep.querySelectorAll('input, select, textarea');
-    return Array.from(inputs).every((input) => input.checkValidity());
+    return Array.from(inputs).every((input) => input.disabled || input.checkValidity());
   };
 
   projectWizard.addEventListener('input', syncSuggestion);
@@ -1185,13 +1246,26 @@ if (projectWizard) {
       return;
     }
 
-    showStep(Math.min(currentStep + 1, wizardSteps.length - 1));
+    showStep(Math.min(currentIndex + 1, activeSequence.length - 1));
     syncSuggestion();
   });
 
   prevButton?.addEventListener('click', () => {
-    showStep(Math.max(currentStep - 1, 0));
+    showStep(Math.max(currentIndex - 1, 0));
     syncSuggestion();
+  });
+
+  phaseTwoStartButton?.addEventListener('click', () => {
+    currentPhase = 'details';
+    activeSequence = phaseTwoSequence;
+    setPhaseTwoEnabled(true);
+
+    if (phaseOneResult) phaseOneResult.hidden = true;
+    projectWizard.hidden = false;
+
+    showStep(0);
+    syncSuggestion();
+    projectWizard.scrollIntoView({ behavior: 'smooth', block: 'start' });
   });
 
   projectWizard.addEventListener('submit', async (event) => {
@@ -1204,8 +1278,14 @@ if (projectWizard) {
 
     const formValues = getFormValues(projectWizard);
     const packSugerido = getPackSuggestionFromValues(formValues);
-    latestSummary = generarBrief(formValues, packSugerido);
 
+    if (currentPhase === 'quote') {
+      renderPhaseOneResult(formValues, packSugerido);
+      projectWizard.hidden = true;
+      return;
+    }
+
+    latestSummary = generarBrief(formValues, packSugerido);
     renderFinalCard(formValues, packSugerido);
     await saveLeadInSupabase(formValues, packSugerido);
 
@@ -1214,6 +1294,7 @@ if (projectWizard) {
     if (successMessage) successMessage.hidden = false;
   });
 
+  setPhaseTwoEnabled(false);
   showStep(0);
   syncSuggestion();
 }

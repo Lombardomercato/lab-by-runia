@@ -1201,6 +1201,21 @@ html.js .reveal.is-visible {
   gap: 1.3rem;
 }
 
+.project-wizard:not(.is-phase-two) .phase-two-only {
+  display: none;
+}
+
+.phase-one-result {
+  margin-top: 1.1rem;
+  display: grid;
+  gap: 0.8rem;
+}
+
+.phase-one-title {
+  margin: 0;
+  font-size: clamp(1.25rem, 2.4vw, 1.6rem);
+}
+
 .wizard-progress {
   width: 100%;
   height: 6px;
