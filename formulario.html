@@ -161,18 +161,44 @@
 
           <div class="form-success" data-success-message hidden>
             <p class="section-tag">Enviado_</p>
-            <h2>Gracias. En base a tus respuestas, vamos a armar una propuesta a medida.</h2>
+            <h2>Gracias. En base a tus respuestas, preparamos una recomendación inicial para tu proyecto.</h2>
 
-            <div class="suggestion-box" data-brief-container hidden>
-              <p class="section-tag">Brief automático_</p>
-              <pre class="suggestion-output" data-brief-output></pre>
-              <div class="wizard-actions">
-                <button type="button" class="btn btn-ghost" data-copy-brief>Copiar brief</button>
-                <button type="button" class="btn btn-solid" data-download-brief>Descargar .txt</button>
+            <article class="final-result-card suggestion-box" data-final-card hidden>
+              <p class="final-result-title">Tu proyecto encaja mejor en:</p>
+              <p class="suggestion-output" data-result-pack>PACK A MEDIDA</p>
+
+              <div class="final-result-grid">
+                <div>
+                  <p class="section-tag">Inversión estimada</p>
+                  <p class="final-result-copy" data-result-investment>-</p>
+                </div>
+                <div>
+                  <p class="section-tag">Recomendación inicial</p>
+                  <p class="final-result-copy" data-result-why>-</p>
+                </div>
               </div>
-            </div>
 
-            <a class="btn btn-ghost" href="index.html">Volver al inicio</a>
+              <div>
+                <p class="section-tag">Extras que pueden potenciar tu proyecto</p>
+                <ul class="final-result-list" data-result-extras></ul>
+              </div>
+
+              <div>
+                <p class="section-tag">Próximo paso</p>
+                <p class="final-result-copy" data-result-next-step>-</p>
+              </div>
+
+              <p class="final-result-note" data-result-note>
+                Esta recomendación puede ajustarse según el contenido disponible, tiempos reales y alcance final del proyecto.
+              </p>
+
+              <div class="wizard-actions final-result-actions">
+                <a class="btn btn-solid" data-whatsapp-cta target="_blank" rel="noopener noreferrer" href="#">Hablar por WhatsApp</a>
+                <a class="btn btn-ghost" href="mailto:hola@labbyrunia.com?subject=Agendar%20llamada%20LAB_">Agendar llamada</a>
+                <a class="btn btn-ghost" href="catalogo-privado.html">Volver al catálogo</a>
+                <button type="button" class="btn btn-ghost" data-copy-summary>Copiar resumen</button>
+              </div>
+            </article>
           </div>
         </div>
       </section>
