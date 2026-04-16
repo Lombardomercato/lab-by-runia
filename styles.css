@@ -556,49 +556,67 @@ h1 span {
 }
 
 @supports (((-webkit-background-clip: text) or (background-clip: text)) and ((-webkit-mask-image: radial-gradient(circle, #000 0%, transparent 100%)) or (mask-image: radial-gradient(circle, #000 0%, transparent 100%)))) {
-  .premium-spot-title {
+  .wow-cmyk-spot {
     position: relative;
     display: inline-block;
     color: #f6f2ea;
-    --title-spot-x: 50%;
-    --title-spot-y: 50%;
-    --title-spot-size: clamp(120px, 15vw, 190px);
-    --title-spot-alpha: 0;
+    --wow-x: 50%;
+    --wow-y: 50%;
+    --wow-radius: clamp(160px, 20vw, 240px);
+    --wow-alpha: 0;
+    --wow-glow-alpha: 0;
+    --wow-gradient: linear-gradient(120deg, #00e5ff, #ff00a8, #ffd600, #0066ff, #00e5ff);
   }
 
-  .premium-spot-title::after {
-    content: attr(data-premium-text);
+  .wow-cmyk-spot::before,
+  .wow-cmyk-spot::after {
+    content: attr(data-wow-text);
     position: absolute;
     inset: 0;
     pointer-events: none;
     color: transparent;
-    background-image: linear-gradient(
-      116deg,
-      rgba(166, 206, 255, 0.95) 8%,
-      rgba(178, 156, 235, 0.93) 44%,
-      rgba(148, 233, 245, 0.92) 73%,
-      rgba(218, 203, 183, 0.82) 100%
-    );
-    background-size: 140% 140%;
-    background-position: 50% 48%;
+    background-image: var(--wow-gradient);
+    background-size: 220% 220%;
+    background-position: 0% 50%;
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
-    opacity: var(--title-spot-alpha);
-    transition: opacity 280ms var(--easing-premium);
-    will-change: opacity, mask-image, -webkit-mask-image;
+    animation: cmyk-shift 5.4s linear infinite;
+    will-change: opacity, background-position, transform, filter, mask-image, -webkit-mask-image;
     -webkit-mask-image: radial-gradient(
-      circle var(--title-spot-size) at var(--title-spot-x) var(--title-spot-y),
-      rgba(0, 0, 0, 0.98) 0%,
-      rgba(0, 0, 0, 0.82) 46%,
-      rgba(0, 0, 0, 0) 80%
+      circle var(--wow-radius) at var(--wow-x) var(--wow-y),
+      rgba(0, 0, 0, 1) 0%,
+      rgba(0, 0, 0, 0.88) 46%,
+      rgba(0, 0, 0, 0) 84%
     );
     mask-image: radial-gradient(
-      circle var(--title-spot-size) at var(--title-spot-x) var(--title-spot-y),
-      rgba(0, 0, 0, 0.98) 0%,
-      rgba(0, 0, 0, 0.82) 46%,
-      rgba(0, 0, 0, 0) 80%
+      circle var(--wow-radius) at var(--wow-x) var(--wow-y),
+      rgba(0, 0, 0, 1) 0%,
+      rgba(0, 0, 0, 0.88) 46%,
+      rgba(0, 0, 0, 0) 84%
     );
+  }
+
+  .wow-cmyk-spot::before {
+    opacity: var(--wow-glow-alpha);
+    filter: blur(5px) saturate(1.22);
+    transform: translate3d(0, 0, 0);
+  }
+
+  .wow-cmyk-spot::after {
+    opacity: var(--wow-alpha);
+  }
+}
+
+@keyframes cmyk-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
   }
 }
 
