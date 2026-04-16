@@ -13,13 +13,14 @@ const interactiveCards = document.querySelectorAll('.tilt, .project, .interactiv
 const magneticButtons = document.querySelectorAll('.magnetic');
 const spotReactive = document.querySelectorAll('.interactive-surface');
 const motionTitles = document.querySelectorAll('.motion-title');
+const premiumSpotTitles = document.querySelectorAll('.hero h1, .section-head > h2, .showcase-content > h2, .cta h2');
 const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 const mobileCardsMedia = window.matchMedia('(max-width: 980px), (pointer: coarse)');
 const showcaseSlides = document.querySelectorAll('[data-showcase-slide]');
 
 const splitTitles = () => {
   motionTitles.forEach((title) => {
-    if (title.dataset.split === 'true') return;
+    if (title.dataset.split === 'true' || title.dataset.noSplit === 'true') return;
 
     const text = title.textContent || '';
     const words = text.trim().split(/\s+/).filter(Boolean);
@@ -42,6 +43,81 @@ const splitTitles = () => {
 };
 
 splitTitles();
+
+const initInteractiveHighlights = () => {
+  const highlights = document.querySelectorAll('.hero-highlight, .section-highlight, .subtle-highlight');
+  highlights.forEach((highlight) => {
+    const normalizedText = (highlight.textContent || '').trim().replace(/\s+/g, ' ');
+    if (!normalizedText) return;
+
+    highlight.classList.add('interactive-highlight');
+    highlight.setAttribute('data-highlight-text', normalizedText);
+    highlight.style.setProperty('--highlight-x', '50%');
+    highlight.style.setProperty('--highlight-y', '50%');
+    highlight.style.setProperty('--highlight-alpha', '0');
+    highlight.style.setProperty('--highlight-glow-alpha', '0');
+
+    if (prefersReducedMotion.matches) return;
+
+    const styles = getComputedStyle(highlight);
+    const followLerp = Number.parseFloat(styles.getPropertyValue('--highlight-follow')) || 0.16;
+    const fadeLerp = Number.parseFloat(styles.getPropertyValue('--highlight-fade')) || 0.1;
+    const maxAlpha = Number.parseFloat(styles.getPropertyValue('--highlight-max-alpha')) || 0.92;
+    const glowScale = Number.parseFloat(styles.getPropertyValue('--highlight-glow-scale')) || 0.72;
+    const settleThreshold = Number.parseFloat(styles.getPropertyValue('--highlight-settle-threshold')) || 0.14;
+    const state = { x: 0, y: 0, tx: 0, ty: 0, alpha: 0, targetAlpha: 0, raf: 0, initialized: false };
+
+    const render = () => {
+      state.raf = 0;
+      state.x += (state.tx - state.x) * followLerp;
+      state.y += (state.ty - state.y) * followLerp;
+      state.alpha += (state.targetAlpha - state.alpha) * fadeLerp;
+
+      highlight.style.setProperty('--highlight-x', `${state.x.toFixed(2)}px`);
+      highlight.style.setProperty('--highlight-y', `${state.y.toFixed(2)}px`);
+      highlight.style.setProperty('--highlight-alpha', state.alpha.toFixed(3));
+      highlight.style.setProperty('--highlight-glow-alpha', (state.alpha * glowScale).toFixed(3));
+
+      if (Math.abs(state.tx - state.x) > settleThreshold || Math.abs(state.ty - state.y) > settleThreshold || state.alpha > 0.015) {
+        state.raf = requestAnimationFrame(render);
+      }
+    };
+
+    const requestRender = () => {
+      if (!state.raf) state.raf = requestAnimationFrame(render);
+    };
+
+    const syncFromEvent = (event) => {
+      const rect = highlight.getBoundingClientRect();
+      state.tx = event.clientX - rect.left;
+      state.ty = event.clientY - rect.top;
+      if (!state.initialized) {
+        state.x = state.tx;
+        state.y = state.ty;
+        state.initialized = true;
+      }
+    };
+
+    highlight.addEventListener('pointerenter', (event) => {
+      syncFromEvent(event);
+      state.targetAlpha = maxAlpha;
+      requestRender();
+    });
+
+    highlight.addEventListener('pointermove', (event) => {
+      syncFromEvent(event);
+      state.targetAlpha = maxAlpha;
+      requestRender();
+    });
+
+    highlight.addEventListener('pointerleave', () => {
+      state.targetAlpha = 0;
+      requestRender();
+    });
+  });
+};
+
+initInteractiveHighlights();
 
 const setRevealDelay = () => {
   sections.forEach((section) => {
