@@ -555,6 +555,106 @@ h1 span {
   text-wrap: balance;
 }
 
+@supports (((-webkit-background-clip: text) or (background-clip: text)) and ((-webkit-mask-image: radial-gradient(circle, #000 0%, transparent 100%)) or (mask-image: radial-gradient(circle, #000 0%, transparent 100%)))) {
+  .interactive-highlight {
+    position: relative;
+    display: inline-block;
+    color: #f6f2ea;
+    --highlight-x: 50%;
+    --highlight-y: 50%;
+    --highlight-alpha: 0;
+    --highlight-glow-alpha: 0;
+    --highlight-radius: clamp(120px, 16vw, 200px);
+    --highlight-saturation: 1;
+    --highlight-glow-blur: 2px;
+    --highlight-glow-strength: 1;
+    --highlight-intensity: 1;
+    --highlight-duration: 8.8s;
+    --highlight-gradient: linear-gradient(120deg, #00d9ff, #6a5cff, #ff2fa3, #ffd400, #00d9ff);
+  }
+
+  .interactive-highlight::before,
+  .interactive-highlight::after {
+    content: attr(data-highlight-text);
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    color: transparent;
+    background-image: var(--highlight-gradient);
+    background-size: 220% 220%;
+    background-position: 0% 50%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: cmyk-shift var(--highlight-duration) ease-in-out infinite;
+    will-change: opacity, background-position, transform, filter, mask-image, -webkit-mask-image;
+    -webkit-mask-image: radial-gradient(
+      circle var(--highlight-radius) at var(--highlight-x) var(--highlight-y),
+      rgba(0, 0, 0, 1) 0%,
+      rgba(0, 0, 0, 0.88) 46%,
+      rgba(0, 0, 0, 0) 84%
+    );
+    mask-image: radial-gradient(
+      circle var(--highlight-radius) at var(--highlight-x) var(--highlight-y),
+      rgba(0, 0, 0, 1) 0%,
+      rgba(0, 0, 0, 0.88) 46%,
+      rgba(0, 0, 0, 0) 84%
+    );
+  }
+
+  .interactive-highlight::before {
+    opacity: calc(var(--highlight-glow-alpha) * var(--highlight-glow-strength) * var(--highlight-intensity));
+    filter: blur(var(--highlight-glow-blur)) saturate(var(--highlight-saturation));
+    transform: translate3d(0, 0, 0);
+  }
+
+  .interactive-highlight::after {
+    opacity: calc(var(--highlight-alpha) * var(--highlight-intensity));
+    filter: saturate(var(--highlight-saturation));
+  }
+
+  .hero-highlight {
+    --highlight-radius: clamp(170px, 22vw, 250px);
+    --highlight-saturation: 1.24;
+    --highlight-glow-blur: 5px;
+    --highlight-glow-strength: 0.7;
+    --highlight-duration: 6.5s;
+  }
+
+  .section-highlight {
+    --highlight-radius: clamp(130px, 17vw, 200px);
+    --highlight-saturation: 0.84;
+    --highlight-glow-blur: 1px;
+    --highlight-glow-strength: 0.18;
+    --highlight-intensity: 0.48;
+    --highlight-duration: 9.8s;
+  }
+
+  .subtle-highlight {
+    --highlight-radius: clamp(95px, 12vw, 150px);
+    --highlight-saturation: 0.72;
+    --highlight-glow-blur: 0px;
+    --highlight-glow-strength: 0;
+    --highlight-intensity: 0.28;
+    --highlight-duration: 11.5s;
+  }
+}
+
+@keyframes cmyk-shift {
+  0% {
+    background-position: 0% 42%;
+  }
+  35% {
+    background-position: 82% 58%;
+  }
+  68% {
+    background-position: 30% 60%;
+  }
+  100% {
+    background-position: 100% 44%;
+  }
+}
+
 .showcase-content p {
   margin: 0.9rem 0 0;
   max-width: 30ch;
