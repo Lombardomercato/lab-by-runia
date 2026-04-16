@@ -624,14 +624,15 @@ h1 span {
     --highlight-saturation: 0.92;
     --highlight-glow-blur: 2px;
     --highlight-glow-strength: 0.3;
-    --highlight-intensity: 0.56;
+    --highlight-intensity: 0.62;
   }
 
   .subtle-highlight {
     --highlight-radius: clamp(95px, 12vw, 150px);
-    --highlight-saturation: 0.95;
-    --highlight-glow-blur: 1px;
-    --highlight-glow-strength: 0.24;
+    --highlight-saturation: 0.78;
+    --highlight-glow-blur: 0px;
+    --highlight-glow-strength: 0;
+    --highlight-intensity: 0.26;
   }
 }
 
