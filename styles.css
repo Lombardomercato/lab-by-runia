@@ -568,6 +568,7 @@ h1 span {
     --highlight-saturation: 1;
     --highlight-glow-blur: 2px;
     --highlight-glow-strength: 1;
+    --highlight-intensity: 1;
     --highlight-gradient: linear-gradient(120deg, #00e5ff, #ff00a8, #ffd600, #0066ff, #00e5ff);
   }
 
@@ -601,13 +602,13 @@ h1 span {
   }
 
   .interactive-highlight::before {
-    opacity: calc(var(--highlight-glow-alpha) * var(--highlight-glow-strength));
+    opacity: calc(var(--highlight-glow-alpha) * var(--highlight-glow-strength) * var(--highlight-intensity));
     filter: blur(var(--highlight-glow-blur)) saturate(var(--highlight-saturation));
     transform: translate3d(0, 0, 0);
   }
 
   .interactive-highlight::after {
-    opacity: var(--highlight-alpha);
+    opacity: calc(var(--highlight-alpha) * var(--highlight-intensity));
     filter: saturate(var(--highlight-saturation));
   }
 
@@ -620,9 +621,10 @@ h1 span {
 
   .section-highlight {
     --highlight-radius: clamp(130px, 17vw, 200px);
-    --highlight-saturation: 1.08;
-    --highlight-glow-blur: 3px;
-    --highlight-glow-strength: 0.55;
+    --highlight-saturation: 0.92;
+    --highlight-glow-blur: 2px;
+    --highlight-glow-strength: 0.3;
+    --highlight-intensity: 0.56;
   }
 
   .subtle-highlight {
