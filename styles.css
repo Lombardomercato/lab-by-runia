@@ -556,26 +556,29 @@ h1 span {
 }
 
 @supports (((-webkit-background-clip: text) or (background-clip: text)) and ((-webkit-mask-image: radial-gradient(circle, #000 0%, transparent 100%)) or (mask-image: radial-gradient(circle, #000 0%, transparent 100%)))) {
-  .wow-cmyk-spot {
+  .interactive-highlight {
     position: relative;
     display: inline-block;
     color: #f6f2ea;
-    --wow-x: 50%;
-    --wow-y: 50%;
-    --wow-radius: clamp(160px, 20vw, 240px);
-    --wow-alpha: 0;
-    --wow-glow-alpha: 0;
-    --wow-gradient: linear-gradient(120deg, #00e5ff, #ff00a8, #ffd600, #0066ff, #00e5ff);
+    --highlight-x: 50%;
+    --highlight-y: 50%;
+    --highlight-alpha: 0;
+    --highlight-glow-alpha: 0;
+    --highlight-radius: clamp(120px, 16vw, 200px);
+    --highlight-saturation: 1;
+    --highlight-glow-blur: 2px;
+    --highlight-glow-strength: 1;
+    --highlight-gradient: linear-gradient(120deg, #00e5ff, #ff00a8, #ffd600, #0066ff, #00e5ff);
   }
 
-  .wow-cmyk-spot::before,
-  .wow-cmyk-spot::after {
-    content: attr(data-wow-text);
+  .interactive-highlight::before,
+  .interactive-highlight::after {
+    content: attr(data-highlight-text);
     position: absolute;
     inset: 0;
     pointer-events: none;
     color: transparent;
-    background-image: var(--wow-gradient);
+    background-image: var(--highlight-gradient);
     background-size: 220% 220%;
     background-position: 0% 50%;
     -webkit-background-clip: text;
@@ -584,27 +587,49 @@ h1 span {
     animation: cmyk-shift 5.4s linear infinite;
     will-change: opacity, background-position, transform, filter, mask-image, -webkit-mask-image;
     -webkit-mask-image: radial-gradient(
-      circle var(--wow-radius) at var(--wow-x) var(--wow-y),
+      circle var(--highlight-radius) at var(--highlight-x) var(--highlight-y),
       rgba(0, 0, 0, 1) 0%,
       rgba(0, 0, 0, 0.88) 46%,
       rgba(0, 0, 0, 0) 84%
     );
     mask-image: radial-gradient(
-      circle var(--wow-radius) at var(--wow-x) var(--wow-y),
+      circle var(--highlight-radius) at var(--highlight-x) var(--highlight-y),
       rgba(0, 0, 0, 1) 0%,
       rgba(0, 0, 0, 0.88) 46%,
       rgba(0, 0, 0, 0) 84%
     );
   }
 
-  .wow-cmyk-spot::before {
-    opacity: var(--wow-glow-alpha);
-    filter: blur(5px) saturate(1.22);
+  .interactive-highlight::before {
+    opacity: calc(var(--highlight-glow-alpha) * var(--highlight-glow-strength));
+    filter: blur(var(--highlight-glow-blur)) saturate(var(--highlight-saturation));
     transform: translate3d(0, 0, 0);
   }
 
-  .wow-cmyk-spot::after {
-    opacity: var(--wow-alpha);
+  .interactive-highlight::after {
+    opacity: var(--highlight-alpha);
+    filter: saturate(var(--highlight-saturation));
+  }
+
+  .hero-highlight {
+    --highlight-radius: clamp(170px, 22vw, 250px);
+    --highlight-saturation: 1.36;
+    --highlight-glow-blur: 6px;
+    --highlight-glow-strength: 1;
+  }
+
+  .section-highlight {
+    --highlight-radius: clamp(130px, 17vw, 200px);
+    --highlight-saturation: 1.08;
+    --highlight-glow-blur: 3px;
+    --highlight-glow-strength: 0.55;
+  }
+
+  .subtle-highlight {
+    --highlight-radius: clamp(95px, 12vw, 150px);
+    --highlight-saturation: 0.95;
+    --highlight-glow-blur: 1px;
+    --highlight-glow-strength: 0.24;
   }
 }
 

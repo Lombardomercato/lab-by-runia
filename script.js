@@ -20,7 +20,7 @@ const showcaseSlides = document.querySelectorAll('[data-showcase-slide]');
 
 const splitTitles = () => {
   motionTitles.forEach((title) => {
-    if (title.dataset.split === 'true') return;
+    if (title.dataset.split === 'true' || title.dataset.noSplit === 'true') return;
 
     const text = title.textContent || '';
     const words = text.trim().split(/\s+/).filter(Boolean);
@@ -44,92 +44,74 @@ const splitTitles = () => {
 
 splitTitles();
 
-const initCmykWowWord = () => {
-  const heroTitle = document.querySelector('.hero .motion-title');
-  if (!heroTitle) return;
+const initInteractiveHighlights = () => {
+  const highlights = document.querySelectorAll('.hero-highlight, .section-highlight, .subtle-highlight');
+  highlights.forEach((highlight) => {
+    const normalizedText = (highlight.textContent || '').trim().replace(/\s+/g, ' ');
+    if (!normalizedText) return;
 
-  const words = Array.from(heroTitle.querySelectorAll('.word'));
-  if (words.length < 2) return;
+    highlight.classList.add('interactive-highlight');
+    highlight.setAttribute('data-highlight-text', normalizedText);
+    highlight.style.setProperty('--highlight-x', '50%');
+    highlight.style.setProperty('--highlight-y', '50%');
+    highlight.style.setProperty('--highlight-alpha', '0');
+    highlight.style.setProperty('--highlight-glow-alpha', '0');
 
-  const normalizeWord = (value) => value.replace(/[^\p{L}\p{N}]/gu, '').toUpperCase();
-  const targetIndex = words.findIndex((word, index) => (
-    normalizeWord(word.textContent || '') === 'COBRE'
-    && normalizeWord(words[index + 1]?.textContent || '') === 'VIDA'
-  ));
+    if (prefersReducedMotion.matches) return;
 
-  if (targetIndex < 0) return;
+    const state = { x: 0, y: 0, tx: 0, ty: 0, alpha: 0, targetAlpha: 0, raf: 0, initialized: false };
 
-  const cmykSpot = document.createElement('span');
-  cmykSpot.className = 'wow-cmyk-spot';
-  cmykSpot.setAttribute('data-wow-text', 'COBRE VIDA');
-  cmykSpot.style.setProperty('--wow-x', '50%');
-  cmykSpot.style.setProperty('--wow-y', '50%');
-  cmykSpot.style.setProperty('--wow-alpha', '0');
-  cmykSpot.style.setProperty('--wow-glow-alpha', '0');
+    const render = () => {
+      state.raf = 0;
+      state.x += (state.tx - state.x) * 0.24;
+      state.y += (state.ty - state.y) * 0.24;
+      state.alpha += (state.targetAlpha - state.alpha) * 0.14;
 
-  const first = words[targetIndex];
-  const second = words[targetIndex + 1];
-  const between = first.nextSibling;
+      highlight.style.setProperty('--highlight-x', `${state.x.toFixed(2)}px`);
+      highlight.style.setProperty('--highlight-y', `${state.y.toFixed(2)}px`);
+      highlight.style.setProperty('--highlight-alpha', state.alpha.toFixed(3));
+      highlight.style.setProperty('--highlight-glow-alpha', (state.alpha * 0.86).toFixed(3));
 
-  first.before(cmykSpot);
-  cmykSpot.append(first);
-  if (between && between.nodeType === Node.TEXT_NODE) cmykSpot.append(between);
-  cmykSpot.append(second);
+      if (Math.abs(state.tx - state.x) > 0.25 || Math.abs(state.ty - state.y) > 0.25 || state.alpha > 0.02) {
+        state.raf = requestAnimationFrame(render);
+      }
+    };
 
-  if (prefersReducedMotion.matches) return;
+    const requestRender = () => {
+      if (!state.raf) state.raf = requestAnimationFrame(render);
+    };
 
-  const state = { x: 0, y: 0, tx: 0, ty: 0, alpha: 0, targetAlpha: 0, raf: 0, initialized: false };
+    const syncFromEvent = (event) => {
+      const rect = highlight.getBoundingClientRect();
+      state.tx = event.clientX - rect.left;
+      state.ty = event.clientY - rect.top;
+      if (!state.initialized) {
+        state.x = state.tx;
+        state.y = state.ty;
+        state.initialized = true;
+      }
+    };
 
-  const render = () => {
-    state.raf = 0;
-    state.x += (state.tx - state.x) * 0.24;
-    state.y += (state.ty - state.y) * 0.24;
-    state.alpha += (state.targetAlpha - state.alpha) * 0.14;
+    highlight.addEventListener('pointerenter', (event) => {
+      syncFromEvent(event);
+      state.targetAlpha = 1;
+      requestRender();
+    });
 
-    cmykSpot.style.setProperty('--wow-x', `${state.x.toFixed(2)}px`);
-    cmykSpot.style.setProperty('--wow-y', `${state.y.toFixed(2)}px`);
-    cmykSpot.style.setProperty('--wow-alpha', state.alpha.toFixed(3));
-    cmykSpot.style.setProperty('--wow-glow-alpha', (state.alpha * 0.86).toFixed(3));
+    highlight.addEventListener('pointermove', (event) => {
+      syncFromEvent(event);
+      state.targetAlpha = 1;
+      requestRender();
+    });
 
-    if (Math.abs(state.tx - state.x) > 0.25 || Math.abs(state.ty - state.y) > 0.25 || state.alpha > 0.02) {
-      state.raf = requestAnimationFrame(render);
-    }
-  };
-
-  const requestRender = () => {
-    if (!state.raf) state.raf = requestAnimationFrame(render);
-  };
-
-  const syncFromEvent = (event) => {
-    const rect = cmykSpot.getBoundingClientRect();
-    state.tx = event.clientX - rect.left;
-    state.ty = event.clientY - rect.top;
-    if (!state.initialized) {
-      state.x = state.tx;
-      state.y = state.ty;
-      state.initialized = true;
-    }
-  };
-
-  cmykSpot.addEventListener('pointerenter', (event) => {
-    syncFromEvent(event);
-    state.targetAlpha = 1;
-    requestRender();
-  });
-
-  cmykSpot.addEventListener('pointermove', (event) => {
-    syncFromEvent(event);
-    state.targetAlpha = 1;
-    requestRender();
-  });
-
-  cmykSpot.addEventListener('pointerleave', () => {
-    state.targetAlpha = 0;
-    requestRender();
+    highlight.addEventListener('pointerleave', () => {
+      state.targetAlpha = 0;
+      requestRender();
+    });
   });
 };
 
-initCmykWowWord();
+initInteractiveHighlights();
 
 const setRevealDelay = () => {
   sections.forEach((section) => {
