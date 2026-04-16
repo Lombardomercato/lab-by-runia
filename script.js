@@ -713,10 +713,8 @@ const getFormValues = (formElement) => {
   return values;
 };
 
-const saveLeadInSupabase = async (formElement, packSugerido) => {
+const saveLeadInSupabase = async (values, packSugerido) => {
   if (!supabaseClient) return;
-
-  const values = getFormValues(formElement);
 
   const payload = {
     negocio: values.negocio ?? null,
@@ -742,6 +740,87 @@ const saveLeadInSupabase = async (formElement, packSugerido) => {
   }
 };
 
+const valueLabels = {
+  tipo_web: {
+    landing: 'Landing simple',
+    completa: 'Web completa',
+    premium: 'Premium / diferencial',
+  },
+  presupuesto: {
+    bajo: 'Menos de USD 500',
+    'medio-1': 'USD 500 – 1000',
+    'medio-2': 'USD 1000 – 2000',
+    alto: 'USD 2000+',
+  },
+  objetivo: {
+    clientes: 'Conseguir clientes',
+    servicios: 'Mostrar servicios',
+    vender: 'Vender online',
+    marca: 'Posicionamiento de marca',
+  },
+  secciones: {
+    '1': '1 sección',
+    '2-4': '2 a 4 secciones',
+    '5+': '5 o más secciones',
+  },
+  funcionalidades: {
+    'form-contacto': 'Formulario de contacto',
+    whatsapp: 'Integración WhatsApp',
+    tienda: 'Tienda online',
+    automatizacion: 'Automatización',
+    ia: 'IA / chatbot',
+    interactivo: 'Algo interactivo',
+  },
+};
+
+const labelFromMap = (field, value) => {
+  if (!value) return '-';
+  return valueLabels[field]?.[value] || value;
+};
+
+const formatList = (field, value) => {
+  const list = normalizeToArray(value);
+  if (!list.length) return '-';
+  return list.map((item) => `- ${labelFromMap(field, item)}`).join('\n');
+};
+
+const getStrategicLine = (values) => {
+  const budget = values.presupuesto;
+  const timing = values.tiempos;
+
+  if (timing === 'urgente') return 'Lanzar un MVP de alto impacto y luego iterar mejoras por etapas.';
+  if (budget === 'alto') return 'Priorizar una experiencia premium con foco en conversión y diferenciación de marca.';
+  if (budget === 'bajo') return 'Enfocar el alcance en lo esencial para validar resultados rápido con inversión controlada.';
+
+  return 'Equilibrar velocidad, diseño y funcionalidades para construir una base escalable.';
+};
+
+const generarBrief = (values, packSugerido) => {
+  const objetivos = normalizeToArray(values.objetivo);
+  const objetivoPrincipal = objetivos.length ? labelFromMap('objetivo', objetivos[0]) : '-';
+
+  return `PROYECTO:
+Marca: ${values.negocio || '-'}
+Rubro: ${values.rubro || '-'}
+
+OBJETIVO:
+Tipo de web: ${labelFromMap('tipo_web', values.tipo_web)}
+Objetivo principal: ${objetivoPrincipal}
+
+PACK:
+Sugerido: ${packSugerido}
+Rango: ${labelFromMap('presupuesto', values.presupuesto)}
+
+CONTENIDO:
+Secciones: ${labelFromMap('secciones', values.secciones)}
+
+FUNCIONALIDADES:
+${formatList('funcionalidades', values.funcionalidades)}
+
+ESTRATEGIA:
+${getStrategicLine(values)}`;
+};
+
 const projectWizard = document.querySelector('[data-project-wizard]');
 
 if (projectWizard) {
@@ -753,6 +832,10 @@ if (projectWizard) {
   const stepLabel = document.querySelector('[data-step-label]');
   const packResult = document.querySelector('[data-pack-result]');
   const successMessage = document.querySelector('[data-success-message]');
+  const briefContainer = document.querySelector('[data-brief-container]');
+  const briefOutput = document.querySelector('[data-brief-output]');
+  const copyBriefButton = document.querySelector('[data-copy-brief]');
+  const downloadBriefButton = document.querySelector('[data-download-brief]');
 
   let currentStep = 0;
 
@@ -779,6 +862,34 @@ if (projectWizard) {
   const syncSuggestion = () => {
     if (!packResult) return;
     packResult.textContent = `Sugerencia: ${getPackSuggestion()}`;
+  };
+
+  const renderBrief = (briefText) => {
+    if (!briefOutput || !briefContainer) return;
+    briefOutput.textContent = briefText;
+    briefContainer.hidden = false;
+  };
+
+  const copyBriefToClipboard = async () => {
+    if (!briefOutput?.textContent || !navigator.clipboard?.writeText) return;
+
+    try {
+      await navigator.clipboard.writeText(briefOutput.textContent);
+    } catch (error) {
+      // Error silencioso para no afectar UX
+    }
+  };
+
+  const downloadBriefAsText = () => {
+    if (!briefOutput?.textContent) return;
+
+    const blob = new Blob([briefOutput.textContent], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `brief-${(new Date()).toISOString().slice(0, 10)}.txt`;
+    link.click();
+    URL.revokeObjectURL(url);
   };
 
   const validateObjectives = () => {
@@ -822,6 +933,14 @@ if (projectWizard) {
 
   projectWizard.addEventListener('input', syncSuggestion);
 
+  copyBriefButton?.addEventListener('click', () => {
+    void copyBriefToClipboard();
+  });
+
+  downloadBriefButton?.addEventListener('click', () => {
+    downloadBriefAsText();
+  });
+
   nextButton?.addEventListener('click', () => {
     if (!validateCurrentStep()) {
       projectWizard.reportValidity();
@@ -845,8 +964,12 @@ if (projectWizard) {
       return;
     }
 
+    const formValues = getFormValues(projectWizard);
     const packSugerido = getPackSuggestion();
-    await saveLeadInSupabase(projectWizard, packSugerido);
+    const brief = generarBrief(formValues, packSugerido);
+
+    renderBrief(brief);
+    await saveLeadInSupabase(formValues, packSugerido);
 
     syncSuggestion();
     projectWizard.hidden = true;
