@@ -13,6 +13,7 @@ const interactiveCards = document.querySelectorAll('.tilt, .project, .interactiv
 const magneticButtons = document.querySelectorAll('.magnetic');
 const spotReactive = document.querySelectorAll('.interactive-surface');
 const motionTitles = document.querySelectorAll('.motion-title');
+const premiumSpotTitles = document.querySelectorAll('.hero h1, .section-head > h2, .showcase-content > h2, .cta h2');
 const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 const mobileCardsMedia = window.matchMedia('(max-width: 980px), (pointer: coarse)');
 const showcaseSlides = document.querySelectorAll('[data-showcase-slide]');
@@ -42,6 +43,72 @@ const splitTitles = () => {
 };
 
 splitTitles();
+
+const initPremiumSpotTitles = () => {
+  premiumSpotTitles.forEach((title) => {
+    const normalizedText = (title.textContent || '').trim().replace(/\s+/g, ' ');
+    if (!normalizedText) return;
+
+    title.classList.add('premium-spot-title');
+    title.setAttribute('data-premium-text', normalizedText);
+    title.style.setProperty('--title-spot-x', '50%');
+    title.style.setProperty('--title-spot-y', '50%');
+    title.style.setProperty('--title-spot-alpha', '0');
+
+    if (prefersReducedMotion.matches) return;
+
+    const state = { x: 0, y: 0, tx: 0, ty: 0, alpha: 0, targetAlpha: 0, raf: 0, initialized: false };
+
+    const render = () => {
+      state.raf = 0;
+      state.x += (state.tx - state.x) * 0.2;
+      state.y += (state.ty - state.y) * 0.2;
+      state.alpha += (state.targetAlpha - state.alpha) * 0.18;
+
+      title.style.setProperty('--title-spot-x', `${state.x.toFixed(2)}px`);
+      title.style.setProperty('--title-spot-y', `${state.y.toFixed(2)}px`);
+      title.style.setProperty('--title-spot-alpha', state.alpha.toFixed(3));
+
+      if (Math.abs(state.tx - state.x) > 0.3 || Math.abs(state.ty - state.y) > 0.3 || state.alpha > 0.02) {
+        state.raf = requestAnimationFrame(render);
+      }
+    };
+
+    const requestRender = () => {
+      if (!state.raf) state.raf = requestAnimationFrame(render);
+    };
+
+    const syncFromEvent = (event) => {
+      const rect = title.getBoundingClientRect();
+      state.tx = event.clientX - rect.left;
+      state.ty = event.clientY - rect.top;
+      if (!state.initialized) {
+        state.x = state.tx;
+        state.y = state.ty;
+        state.initialized = true;
+      }
+    };
+
+    title.addEventListener('pointerenter', (event) => {
+      syncFromEvent(event);
+      state.targetAlpha = 1;
+      requestRender();
+    });
+
+    title.addEventListener('pointermove', (event) => {
+      syncFromEvent(event);
+      state.targetAlpha = 1;
+      requestRender();
+    });
+
+    title.addEventListener('pointerleave', () => {
+      state.targetAlpha = 0;
+      requestRender();
+    });
+  });
+};
+
+initPremiumSpotTitles();
 
 const setRevealDelay = () => {
   sections.forEach((section) => {
@@ -980,6 +1047,34 @@ if (projectWizard) {
     } catch (error) {
       // Error silencioso para no afectar UX
     }
+  };
+
+  const renderBrief = (briefText) => {
+    if (!briefOutput || !briefContainer) return;
+    briefOutput.textContent = briefText;
+    briefContainer.hidden = false;
+  };
+
+  const copyBriefToClipboard = async () => {
+    if (!briefOutput?.textContent || !navigator.clipboard?.writeText) return;
+
+    try {
+      await navigator.clipboard.writeText(briefOutput.textContent);
+    } catch (error) {
+      // Error silencioso para no afectar UX
+    }
+  };
+
+  const downloadBriefAsText = () => {
+    if (!briefOutput?.textContent) return;
+
+    const blob = new Blob([briefOutput.textContent], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `brief-${(new Date()).toISOString().slice(0, 10)}.txt`;
+    link.click();
+    URL.revokeObjectURL(url);
   };
 
   const validateObjectives = () => {
