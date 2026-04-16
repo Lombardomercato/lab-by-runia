@@ -1115,8 +1115,6 @@ if (projectWizard) {
       const text = buildWhatsappSummaryMessage(values, packSugerido, estimate.rangeText);
       whatsappCta.href = `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`;
     }
-  };
-
     finalCard.hidden = false;
   };
 
