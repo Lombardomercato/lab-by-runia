@@ -564,12 +564,17 @@ h1 span {
     --highlight-y: 50%;
     --highlight-alpha: 0;
     --highlight-glow-alpha: 0;
-    --highlight-radius: clamp(120px, 16vw, 200px);
+    --highlight-radius: clamp(84px, 11vw, 140px);
     --highlight-saturation: 1;
-    --highlight-glow-blur: 2px;
+    --highlight-glow-blur: 1.5px;
     --highlight-glow-strength: 1;
     --highlight-intensity: 1;
-    --highlight-gradient: linear-gradient(120deg, #00e5ff, #ff00a8, #ffd600, #0066ff, #00e5ff);
+    --highlight-follow: 0.16;
+    --highlight-fade: 0.1;
+    --highlight-max-alpha: 0.9;
+    --highlight-glow-scale: 0.72;
+    --highlight-settle-threshold: 0.14;
+    --highlight-gradient: linear-gradient(128deg, #33dfff 0%, #9c7cff 30%, #ff61b8 57%, #ffc26d 78%, #4ea0ff 100%);
   }
 
   .interactive-highlight::before,
@@ -580,24 +585,28 @@ h1 span {
     pointer-events: none;
     color: transparent;
     background-image: var(--highlight-gradient);
-    background-size: 220% 220%;
-    background-position: 0% 50%;
+    background-size: 198% 198%;
+    background-position: 12% 50%;
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
-    animation: cmyk-shift 5.4s linear infinite;
+    animation: cmyk-shift 9.8s ease-in-out infinite;
     will-change: opacity, background-position, transform, filter, mask-image, -webkit-mask-image;
     -webkit-mask-image: radial-gradient(
       circle var(--highlight-radius) at var(--highlight-x) var(--highlight-y),
       rgba(0, 0, 0, 1) 0%,
-      rgba(0, 0, 0, 0.88) 46%,
-      rgba(0, 0, 0, 0) 84%
+      rgba(0, 0, 0, 0.95) 34%,
+      rgba(0, 0, 0, 0.68) 58%,
+      rgba(0, 0, 0, 0.22) 74%,
+      rgba(0, 0, 0, 0) 90%
     );
     mask-image: radial-gradient(
       circle var(--highlight-radius) at var(--highlight-x) var(--highlight-y),
       rgba(0, 0, 0, 1) 0%,
-      rgba(0, 0, 0, 0.88) 46%,
-      rgba(0, 0, 0, 0) 84%
+      rgba(0, 0, 0, 0.95) 34%,
+      rgba(0, 0, 0, 0.68) 58%,
+      rgba(0, 0, 0, 0.22) 74%,
+      rgba(0, 0, 0, 0) 90%
     );
   }
 
@@ -613,38 +622,48 @@ h1 span {
   }
 
   .hero-highlight {
-    --highlight-radius: clamp(170px, 22vw, 250px);
-    --highlight-saturation: 1.36;
-    --highlight-glow-blur: 6px;
-    --highlight-glow-strength: 1;
+    --highlight-radius: clamp(128px, 16vw, 188px);
+    --highlight-saturation: 1.22;
+    --highlight-glow-blur: 4.5px;
+    --highlight-glow-strength: 0.9;
+    --highlight-intensity: 0.95;
+    --highlight-max-alpha: 0.94;
+    --highlight-follow: 0.17;
+    --highlight-fade: 0.11;
   }
 
   .section-highlight {
-    --highlight-radius: clamp(130px, 17vw, 200px);
-    --highlight-saturation: 0.92;
-    --highlight-glow-blur: 2px;
-    --highlight-glow-strength: 0.3;
-    --highlight-intensity: 0.62;
+    --highlight-radius: clamp(96px, 12vw, 148px);
+    --highlight-saturation: 0.9;
+    --highlight-glow-blur: 1.2px;
+    --highlight-glow-strength: 0.24;
+    --highlight-intensity: 0.52;
+    --highlight-max-alpha: 0.82;
+    --highlight-follow: 0.15;
+    --highlight-fade: 0.095;
   }
 
   .subtle-highlight {
-    --highlight-radius: clamp(95px, 12vw, 150px);
-    --highlight-saturation: 0.78;
+    --highlight-radius: clamp(72px, 9vw, 112px);
+    --highlight-saturation: 0.72;
     --highlight-glow-blur: 0px;
     --highlight-glow-strength: 0;
-    --highlight-intensity: 0.26;
+    --highlight-intensity: 0.2;
+    --highlight-max-alpha: 0.72;
+    --highlight-follow: 0.14;
+    --highlight-fade: 0.085;
   }
 }
 
 @keyframes cmyk-shift {
   0% {
-    background-position: 0% 50%;
+    background-position: 12% 50%;
   }
   50% {
-    background-position: 100% 50%;
+    background-position: 88% 50%;
   }
   100% {
-    background-position: 0% 50%;
+    background-position: 12% 50%;
   }
 }
 
