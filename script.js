@@ -13,6 +13,7 @@ const interactiveCards = document.querySelectorAll('.tilt, .project, .interactiv
 const magneticButtons = document.querySelectorAll('.magnetic');
 const spotReactive = document.querySelectorAll('.interactive-surface');
 const motionTitles = document.querySelectorAll('.motion-title');
+const premiumSpotTitles = document.querySelectorAll('.hero h1, .section-head > h2, .showcase-content > h2, .cta h2');
 const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 const mobileCardsMedia = window.matchMedia('(max-width: 980px), (pointer: coarse)');
 const showcaseSlides = document.querySelectorAll('[data-showcase-slide]');
@@ -842,6 +843,33 @@ const valueLabels = {
   },
 };
 
+const packMeta = {
+  'LANDING PRO': {
+    inversion: { min: 400, max: 700 },
+    mensaje: 'Una base clara, efectiva y profesional para presentar tu negocio con una inversión inicial más accesible.',
+  },
+  'WEB PRO': {
+    inversion: { min: 900, max: 1500 },
+    mensaje: 'La opción más equilibrada para marcas que necesitan una presencia digital sólida, bien estructurada y pensada para crecer.',
+  },
+  'WEB PREMIUM': {
+    inversion: { min: 1500, max: 3000 },
+    mensaje: 'La mejor opción para proyectos que buscan diferenciarse visualmente, elevar su percepción de marca y generar una experiencia de alto nivel.',
+  },
+  'BRANDING + WEB': {
+    inversion: { min: 1200, max: 3500 },
+    mensaje: 'Recomendado para marcas que todavía necesitan una base visual coherente antes de construir una web realmente potente.',
+  },
+  'RUNIA SYSTEM': {
+    inversion: { min: 1800, max: 5000, plus: true },
+    mensaje: 'Ideal para proyectos que necesitan interacción, automatización o una solución digital más avanzada que una web tradicional.',
+  },
+  'PACK A MEDIDA': {
+    inversion: { min: 900, max: 2200 },
+    mensaje: 'Recomendación inicial pensada para tu contexto actual y con margen de ajuste según prioridades.',
+  },
+};
+
 const labelFromMap = (field, value) => {
   if (!value) return '-';
   return valueLabels[field]?.[value] || value;
@@ -849,24 +877,155 @@ const labelFromMap = (field, value) => {
 
 const formatList = (field, value) => {
   const list = normalizeToArray(value);
-  if (!list.length) return '-';
-  return list.map((item) => `- ${labelFromMap(field, item)}`).join('\n');
+  if (!list.length) return [];
+  return list.map((item) => labelFromMap(field, item));
 };
 
-const getStrategicLine = (values) => {
+const formatUsd = (value) => `USD ${value}`;
+
+const formatEstimatedRange = (range) => {
+  if (!range) return 'USD a definir';
+  const maxText = range.plus ? `${range.max}+` : range.max;
+  return `${formatUsd(range.min)} – ${maxText}`;
+};
+
+const getInvestmentEstimate = (values, packSugerido) => {
+  const packData = packMeta[packSugerido] || packMeta['PACK A MEDIDA'];
+  const features = normalizeToArray(values.funcionalidades);
+  const manyFeatures = features.length >= 4;
+  const needsBranding = values.branding !== 'si';
+  const isPremium = values.tipo_web === 'premium' || values.nivel_diseno === 'premium';
+  const isUrgent = values.tiempos === 'urgente';
+  const lowContent = values.secciones === '1' && features.length <= 2;
+
+  const range = { ...packData.inversion };
+
+  if (manyFeatures) {
+    range.max += 600;
+  }
+
+  if (isPremium) {
+    range.min += 150;
+    range.max += 500;
+  }
+
+  if (lowContent) {
+    range.min = Math.max(350, range.min - 120);
+    range.max = Math.max(range.min + 150, range.max - 280);
+  }
+
+  const notes = [];
+
+  if (needsBranding) {
+    notes.push('Inversión adicional sugerida para branding: USD 300 – 900');
+  }
+
+  if (isUrgent) {
+    notes.push('Prioridad por tiempos: el trabajo urgente puede incluir adicional de coordinación.');
+  }
+
+  return {
+    range,
+    rangeText: formatEstimatedRange(range),
+    notes,
+  };
+};
+
+const getPackSuggestionFromValues = (values) => {
+  const websiteType = values.tipo_web;
+  const designLevel = values.nivel_diseno;
   const budget = values.presupuesto;
-  const timing = values.tiempos;
+  const branding = values.branding;
+  const features = normalizeToArray(values.funcionalidades);
 
-  if (timing === 'urgente') return 'Lanzar un MVP de alto impacto y luego iterar mejoras por etapas.';
-  if (budget === 'alto') return 'Priorizar una experiencia premium con foco en conversión y diferenciación de marca.';
-  if (budget === 'bajo') return 'Enfocar el alcance en lo esencial para validar resultados rápido con inversión controlada.';
+  const hasAdvancedNeed = features.some((feature) => ['automatizacion', 'ia', 'interactivo'].includes(feature));
+  if (hasAdvancedNeed && (websiteType === 'premium' || budget === 'alto')) {
+    return 'RUNIA SYSTEM';
+  }
 
-  return 'Equilibrar velocidad, diseño y funcionalidades para construir una base escalable.';
+  if (branding !== 'si' && (websiteType === 'premium' || designLevel === 'premium')) {
+    return 'BRANDING + WEB';
+  }
+
+  if (websiteType === 'landing' && budget === 'bajo') {
+    return 'LANDING PRO';
+  }
+
+  if (websiteType === 'completa' && (budget === 'medio-1' || budget === 'medio-2')) {
+    return 'WEB PRO';
+  }
+
+  if ((websiteType === 'premium' || designLevel === 'premium') && budget === 'alto') {
+    return 'WEB PREMIUM';
+  }
+
+  if (hasAdvancedNeed) {
+    return 'RUNIA SYSTEM';
+  }
+
+  if (branding !== 'si') {
+    return 'BRANDING + WEB';
+  }
+
+  return 'PACK A MEDIDA';
+};
+
+const getDynamicExtras = (values) => {
+  const extras = [];
+  const branding = values.branding;
+  const objectives = normalizeToArray(values.objetivo);
+  const features = normalizeToArray(values.funcionalidades);
+  const isPremiumFocus = values.tipo_web === 'premium' || values.nivel_diseno === 'premium' || objectives.includes('marca');
+
+  if (branding !== 'si') {
+    extras.push(values.nivel_diseno === 'premium' ? 'Branding Pro' : 'Branding Starter');
+  }
+
+  if (objectives.includes('clientes')) {
+    extras.push('Automatización de leads');
+  }
+
+  if (isPremiumFocus) {
+    extras.push('Experiencia interactiva o IA');
+  }
+
+  if (features.includes('tienda') || features.length >= 4) {
+    extras.push('Planificación escalable / arquitectura extendida');
+  }
+
+  return Array.from(new Set(extras));
+};
+
+const getNextStep = (values) => {
+  if (values.tiempos === 'urgente') {
+    return 'Agendemos una llamada prioritaria para definir alcance mínimo viable y fechas de entrega.';
+  }
+
+  return 'Coordinemos una llamada de diagnóstico para confirmar alcance, contenido y roadmap de implementación.';
+};
+
+const getPrimaryObjective = (values) => {
+  const objectives = formatList('objetivo', values.objetivo);
+  return objectives[0] || 'mejorar mi presencia digital';
+};
+
+const buildWhatsappSummaryMessage = (values, packSugerido, rangeText) => {
+  const clientName = values.negocio || 'No indicado';
+  const brandName = values.negocio || 'No indicada';
+  const primaryObjective = getPrimaryObjective(values);
+
+  return `Hola! Completé el formulario de LAB_ by Runia.
+Mi nombre es ${clientName}.
+Mi marca es ${brandName}.
+El pack sugerido fue ${packSugerido}.
+La inversión estimada fue ${rangeText}.
+Estoy buscando ${primaryObjective}.
+Quisiera avanzar con la propuesta.`;
 };
 
 const generarBrief = (values, packSugerido) => {
-  const objetivos = normalizeToArray(values.objetivo);
-  const objetivoPrincipal = objetivos.length ? labelFromMap('objetivo', objetivos[0]) : '-';
+  const objetivos = formatList('objetivo', values.objetivo).join(', ') || '-';
+  const funcionalidades = formatList('funcionalidades', values.funcionalidades);
 
   return `PROYECTO:
 Marca: ${values.negocio || '-'}
@@ -874,20 +1033,20 @@ Rubro: ${values.rubro || '-'}
 
 OBJETIVO:
 Tipo de web: ${labelFromMap('tipo_web', values.tipo_web)}
-Objetivo principal: ${objetivoPrincipal}
+Objetivo principal: ${objetivos}
 
 PACK:
 Sugerido: ${packSugerido}
-Rango: ${labelFromMap('presupuesto', values.presupuesto)}
+Rango: ${getInvestmentEstimate(values, packSugerido).rangeText}
 
 CONTENIDO:
 Secciones: ${labelFromMap('secciones', values.secciones)}
 
 FUNCIONALIDADES:
-${formatList('funcionalidades', values.funcionalidades)}
+${funcionalidades.length ? funcionalidades.map((item) => `- ${item}`).join('\n') : '-'}
 
 ESTRATEGIA:
-${getStrategicLine(values)}`;
+${getNextStep(values)}`;
 };
 
 const projectWizard = document.querySelector('[data-project-wizard]');
@@ -901,64 +1060,74 @@ if (projectWizard) {
   const stepLabel = document.querySelector('[data-step-label]');
   const packResult = document.querySelector('[data-pack-result]');
   const successMessage = document.querySelector('[data-success-message]');
-  const briefContainer = document.querySelector('[data-brief-container]');
-  const briefOutput = document.querySelector('[data-brief-output]');
-  const copyBriefButton = document.querySelector('[data-copy-brief]');
-  const downloadBriefButton = document.querySelector('[data-download-brief]');
+  const finalCard = document.querySelector('[data-final-card]');
+  const resultPack = document.querySelector('[data-result-pack]');
+  const resultInvestment = document.querySelector('[data-result-investment]');
+  const resultWhy = document.querySelector('[data-result-why]');
+  const resultExtras = document.querySelector('[data-result-extras]');
+  const resultNextStep = document.querySelector('[data-result-next-step]');
+  const resultNote = document.querySelector('[data-result-note]');
+  const whatsappCta = document.querySelector('[data-whatsapp-cta]');
+  const copySummaryButton = document.querySelector('[data-copy-summary]');
 
   let currentStep = 0;
+  let latestSummary = '';
 
   const getPackSuggestion = () => {
-    const websiteType = projectWizard.querySelector('input[name="tipo_web"]:checked')?.value;
-    const designLevel = projectWizard.querySelector('input[name="nivel_diseno"]:checked')?.value;
-    const budget = projectWizard.querySelector('input[name="presupuesto"]:checked')?.value;
-
-    if (websiteType === 'landing' && budget === 'bajo') {
-      return 'LANDING PRO';
-    }
-
-    if (websiteType === 'completa' && (budget === 'medio-1' || budget === 'medio-2')) {
-      return 'WEB PRO';
-    }
-
-    if ((websiteType === 'premium' || designLevel === 'premium') && budget === 'alto') {
-      return 'WEB PREMIUM';
-    }
-
-    return 'PACK A MEDIDA';
+    const currentValues = getFormValues(projectWizard);
+    return getPackSuggestionFromValues(currentValues);
   };
 
   const syncSuggestion = () => {
     if (!packResult) return;
-    packResult.textContent = `Sugerencia: ${getPackSuggestion()}`;
+    packResult.textContent = `Recomendación inicial: ${getPackSuggestion()}`;
   };
 
-  const renderBrief = (briefText) => {
-    if (!briefOutput || !briefContainer) return;
-    briefOutput.textContent = briefText;
-    briefContainer.hidden = false;
-  };
+  const renderFinalCard = (values, packSugerido) => {
+    if (!finalCard) return;
 
-  const copyBriefToClipboard = async () => {
-    if (!briefOutput?.textContent || !navigator.clipboard?.writeText) return;
+    const extras = getDynamicExtras(values);
+    const packData = packMeta[packSugerido] || packMeta['PACK A MEDIDA'];
+    const estimate = getInvestmentEstimate(values, packSugerido);
 
-    try {
-      await navigator.clipboard.writeText(briefOutput.textContent);
-    } catch (error) {
-      // Error silencioso para no afectar UX
+    if (resultPack) resultPack.textContent = packSugerido;
+    if (resultInvestment) {
+      const notes = estimate.notes.length ? ` · ${estimate.notes.join(' · ')}` : '';
+      resultInvestment.textContent = `Inversión estimada: ${estimate.rangeText}${notes}`;
+    }
+    if (resultWhy) resultWhy.textContent = packData.mensaje;
+    if (resultNextStep) resultNextStep.textContent = getNextStep(values);
+    if (resultNote) {
+      resultNote.textContent = 'Esta estimación funciona como referencia inicial. La propuesta final puede ajustarse según contenido, tiempos y alcance real del proyecto.';
+    }
+
+    if (resultExtras) {
+      resultExtras.innerHTML = '';
+      const extraItems = extras.length ? extras : ['Definición de contenidos y roadmap de implementación'];
+      extraItems.forEach((extra) => {
+        const li = document.createElement('li');
+        li.textContent = extra;
+        resultExtras.appendChild(li);
+      });
+    }
+
+    if (whatsappCta) {
+      const text = buildWhatsappSummaryMessage(values, packSugerido, estimate.rangeText);
+      whatsappCta.href = `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`;
     }
   };
 
-  const downloadBriefAsText = () => {
-    if (!briefOutput?.textContent) return;
+    finalCard.hidden = false;
+  };
 
-    const blob = new Blob([briefOutput.textContent], { type: 'text/plain;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `brief-${(new Date()).toISOString().slice(0, 10)}.txt`;
-    link.click();
-    URL.revokeObjectURL(url);
+  const copySummaryToClipboard = async (summaryText) => {
+    if (!summaryText || !navigator.clipboard?.writeText) return;
+
+    try {
+      await navigator.clipboard.writeText(summaryText);
+    } catch (error) {
+      // Error silencioso para no afectar UX
+    }
   };
 
   const validateObjectives = () => {
@@ -1002,12 +1171,8 @@ if (projectWizard) {
 
   projectWizard.addEventListener('input', syncSuggestion);
 
-  copyBriefButton?.addEventListener('click', () => {
-    void copyBriefToClipboard();
-  });
-
-  downloadBriefButton?.addEventListener('click', () => {
-    downloadBriefAsText();
+  copySummaryButton?.addEventListener('click', () => {
+    void copySummaryToClipboard(latestSummary);
   });
 
   nextButton?.addEventListener('click', () => {
@@ -1034,10 +1199,10 @@ if (projectWizard) {
     }
 
     const formValues = getFormValues(projectWizard);
-    const packSugerido = getPackSuggestion();
-    const brief = generarBrief(formValues, packSugerido);
+    const packSugerido = getPackSuggestionFromValues(formValues);
+    latestSummary = generarBrief(formValues, packSugerido);
 
-    renderBrief(brief);
+    renderFinalCard(formValues, packSugerido);
     await saveLeadInSupabase(formValues, packSugerido);
 
     syncSuggestion();
