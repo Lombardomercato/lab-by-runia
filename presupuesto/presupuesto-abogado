@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Propuesta LAB_</title>
+<style>
+body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #000;
+    color: #fff;
+}
+
+.container {
+    max-width: 800px;
+    margin: auto;
+    padding: 60px 40px;
+}
+
+h1 {
+    font-size: 42px;
+    margin-bottom: 10px;
+}
+
+h2 {
+    font-size: 22px;
+    margin-top: 50px;
+    color: #aaa;
+}
+
+.card {
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 20px;
+    padding: 25px;
+    margin-top: 20px;
+    background: rgba(255,255,255,0.02);
+}
+
+ul {
+    padding-left: 20px;
+    line-height: 1.8;
+}
+
+.price {
+    font-size: 36px;
+    margin-top: 20px;
+}
+
+.old-price {
+    text-decoration: line-through;
+    color: #777;
+}
+
+.highlight {
+    font-size: 48px;
+    margin-top: 10px;
+}
+
+.cta {
+    margin-top: 50px;
+    font-size: 18px;
+    color: #ccc;
+}
+
+.footer {
+    margin-top: 40px;
+    font-size: 14px;
+    color: #666;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>LAB_ by RUNIA</h1>
+<p>Propuesta personalizada para <strong id="cliente">Cliente</strong></p>
+
+<h2>Solución</h2>
+
+<div class="card">
+    <h3>Landing Pro</h3>
+    <ul>
+        <li>Diseño premium</li>
+        <li>Desarrollo completo</li>
+        <li>Optimización mobile</li>
+        <li>Animaciones sutiles</li>
+    </ul>
+</div>
+
+<div class="card">
+    <h3>Branding Starter</h3>
+    <ul>
+        <li>Logo</li>
+        <li>Colores</li>
+        <li>Tipografía</li>
+    </ul>
+</div>
+
+<h2>Inversión</h2>
+
+<div class="card">
+    <p class="old-price" id="precio_real">$845.000 ARS</p>
+    <p class="highlight" id="precio_final">$700.000 ARS</p>
+    <p id="descuento">Descuento aplicado: $145.000</p>
+</div>
+
+<div class="cta">
+    Inicio inmediato disponible<br>
+    Duración estimada: 7 a 15 días<br><br>
+    ✔ Confirmación con 50% inicial
+</div>
+
+<div class="footer">
+LAB_ by RUNIA
+</div>
+
+</div>
+
+</body>
+</html>
