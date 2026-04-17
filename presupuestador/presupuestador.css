@@ -97,11 +97,6 @@
   align-items: center;
   justify-content: space-between;
   gap: 0.8rem;
-  flex-wrap: wrap;
-}
-
-.row-between > * {
-  min-width: 0;
 }
 
 .row-between h2 {
@@ -352,15 +347,6 @@
 }
 
 @media (max-width: 768px) {
-
-  .row-between {
-    align-items: flex-start;
-  }
-
-  .row-between .btn {
-    width: 100%;
-  }
-
   .field-grid.two-cols,
   .field-grid.three-cols,
   .item-row {

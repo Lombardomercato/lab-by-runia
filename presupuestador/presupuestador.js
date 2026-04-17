@@ -241,10 +241,11 @@ const updateStateFromInput = (target) => {
 };
 
 const createExportNodeFromPreview = () => {
-  const preview = document.querySelector('.preview-panel');
+  const preview = document.getElementById('proposalPreview');
+  const previewRect = preview.getBoundingClientRect();
   const clone = preview.cloneNode(true);
-  clone.style.width = '1080px';
-  clone.style.maxWidth = '1080px';
+  clone.style.width = `${Math.max(previewRect.width, 640)}px`;
+  clone.style.maxWidth = 'none';
   clone.style.margin = '0';
   clone.style.boxSizing = 'border-box';
 
@@ -254,7 +255,7 @@ const createExportNodeFromPreview = () => {
   wrapper.style.top = '0';
   wrapper.style.padding = '0';
   wrapper.style.background = '#070707';
-  wrapper.style.width = '1080px';
+  wrapper.style.width = clone.style.width;
   wrapper.style.boxSizing = 'border-box';
   wrapper.appendChild(clone);
 
@@ -280,30 +281,9 @@ const exportPdf = async () => {
     });
 
     const image = canvas.toDataURL('image/png', 1);
-    const doc = new jsPDF({ unit: 'pt', format: 'a4' });
-    const pageWidth = doc.internal.pageSize.getWidth();
-    const pageHeight = doc.internal.pageSize.getHeight();
-    const imageRatio = canvas.width / canvas.height;
-    const pageRatio = pageWidth / pageHeight;
-
-    let renderWidth = pageWidth;
-    let renderHeight = pageHeight;
-    let x = 0;
-    let y = 0;
-
-    if (imageRatio > pageRatio) {
-      renderHeight = pageHeight;
-      renderWidth = renderHeight * imageRatio;
-      x = (pageWidth - renderWidth) / 2;
-    } else {
-      renderWidth = pageWidth;
-      renderHeight = renderWidth / imageRatio;
-      y = (pageHeight - renderHeight) / 2;
-    }
-
-    doc.setFillColor(11, 11, 11);
-    doc.rect(0, 0, pageWidth, pageHeight, 'F');
-    doc.addImage(image, 'PNG', x, y, renderWidth, renderHeight, undefined, 'SLOW');
+    const orientation = canvas.width >= canvas.height ? 'landscape' : 'portrait';
+    const doc = new jsPDF({ unit: 'px', format: [canvas.width, canvas.height], orientation });
+    doc.addImage(image, 'PNG', 0, 0, canvas.width, canvas.height, undefined, 'SLOW');
     const filename = `Presupuesto_LAB_${sanitizeFileName(state.clientName)}.pdf`;
     doc.save(filename);
   } finally {
