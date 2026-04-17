@@ -602,18 +602,33 @@ h1 span {
     --highlight-y: 50%;
     --highlight-alpha: 0;
     --highlight-glow-alpha: 0;
-    --highlight-radius: clamp(74px, 9.5vw, 122px);
-    --highlight-saturation: 0.94;
-    --highlight-glow-blur: 1.5px;
-    --highlight-glow-strength: 0.84;
-    --highlight-intensity: 1;
-    --highlight-follow: 0.16;
-    --highlight-fade-in: 0.105;
-    --highlight-fade-out: 0.075;
-    --highlight-max-alpha: 0.9;
-    --highlight-glow-scale: 0.62;
+    --highlight-radius: clamp(58px, 7.4vw, 96px);
+    --highlight-saturation: 0.83;
+    --highlight-glow-blur: 2.6px;
+    --highlight-glow-strength: 0.52;
+    --highlight-intensity: 0.74;
+    --highlight-follow: 0.118;
+    --highlight-inertia: 0.052;
+    --highlight-drag: 0.74;
+    --highlight-fade-in: 0.09;
+    --highlight-fade-out: 0.068;
+    --highlight-max-alpha: 0.66;
+    --highlight-glow-scale: 0.44;
     --highlight-settle-threshold: 0.14;
-    --highlight-gradient: linear-gradient(132deg, #45d6ff 0%, #7d8cff 29%, #d985f0 53%, #ff8eb7 72%, #f5bf86 100%);
+    --highlight-gradient: linear-gradient(
+      120deg,
+      #00d9ff 0%,
+      #2fb9ff 12%,
+      #4a7bff 24%,
+      #695fff 35%,
+      #8a5cff 46%,
+      #b04fe7 56%,
+      #ff2fa3 68%,
+      #ff7f81 78%,
+      #ffd400 89%,
+      #7fe8e0 96%,
+      #00d9ff 100%
+    );
   }
 
   .interactive-highlight::before,
@@ -624,30 +639,36 @@ h1 span {
     pointer-events: none;
     color: transparent;
     background-image: var(--highlight-gradient);
-    background-size: 184% 184%;
-    background-position: 18% 50%;
+    background-size: 172% 172%;
+    background-position: 24% 50%;
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
-    animation: cmyk-shift 12.4s ease-in-out infinite;
+    animation: cmyk-shift 19s ease-in-out infinite;
     will-change: opacity, background-position, transform, filter, mask-image, -webkit-mask-image;
     -webkit-mask-image: radial-gradient(
       circle var(--highlight-radius) at var(--highlight-x) var(--highlight-y),
       rgba(0, 0, 0, 1) 0%,
-      rgba(0, 0, 0, 0.96) 30%,
-      rgba(0, 0, 0, 0.74) 50%,
-      rgba(0, 0, 0, 0.36) 66%,
-      rgba(0, 0, 0, 0.14) 78%,
-      rgba(0, 0, 0, 0) 92%
+      rgba(0, 0, 0, 0.96) 20%,
+      rgba(0, 0, 0, 0.86) 36%,
+      rgba(0, 0, 0, 0.7) 50%,
+      rgba(0, 0, 0, 0.48) 62%,
+      rgba(0, 0, 0, 0.28) 72%,
+      rgba(0, 0, 0, 0.13) 81%,
+      rgba(0, 0, 0, 0.04) 89%,
+      rgba(0, 0, 0, 0) 97%
     );
     mask-image: radial-gradient(
       circle var(--highlight-radius) at var(--highlight-x) var(--highlight-y),
       rgba(0, 0, 0, 1) 0%,
-      rgba(0, 0, 0, 0.96) 30%,
-      rgba(0, 0, 0, 0.74) 50%,
-      rgba(0, 0, 0, 0.36) 66%,
-      rgba(0, 0, 0, 0.14) 78%,
-      rgba(0, 0, 0, 0) 92%
+      rgba(0, 0, 0, 0.96) 20%,
+      rgba(0, 0, 0, 0.86) 36%,
+      rgba(0, 0, 0, 0.7) 50%,
+      rgba(0, 0, 0, 0.48) 62%,
+      rgba(0, 0, 0, 0.28) 72%,
+      rgba(0, 0, 0, 0.13) 81%,
+      rgba(0, 0, 0, 0.04) 89%,
+      rgba(0, 0, 0, 0) 97%
     );
   }
 
@@ -663,51 +684,57 @@ h1 span {
   }
 
   .hero-highlight {
-    --highlight-radius: clamp(112px, 13.8vw, 164px);
-    --highlight-saturation: 1.08;
-    --highlight-glow-blur: 3.8px;
-    --highlight-glow-strength: 0.78;
-    --highlight-intensity: 0.9;
-    --highlight-max-alpha: 0.9;
-    --highlight-follow: 0.16;
-    --highlight-fade-in: 0.11;
-    --highlight-fade-out: 0.078;
+    --highlight-radius: clamp(92px, 11.4vw, 132px);
+    --highlight-saturation: 0.9;
+    --highlight-glow-blur: 4.6px;
+    --highlight-glow-strength: 0.58;
+    --highlight-intensity: 0.72;
+    --highlight-max-alpha: 0.62;
+    --highlight-follow: 0.114;
+    --highlight-inertia: 0.05;
+    --highlight-drag: 0.73;
+    --highlight-fade-in: 0.086;
+    --highlight-fade-out: 0.064;
   }
 
   .section-highlight {
-    --highlight-radius: clamp(84px, 10.2vw, 128px);
-    --highlight-saturation: 0.82;
-    --highlight-glow-blur: 1px;
-    --highlight-glow-strength: 0.18;
-    --highlight-intensity: 0.46;
-    --highlight-max-alpha: 0.74;
-    --highlight-follow: 0.145;
-    --highlight-fade-in: 0.095;
-    --highlight-fade-out: 0.072;
+    --highlight-radius: clamp(68px, 8.5vw, 102px);
+    --highlight-saturation: 0.74;
+    --highlight-glow-blur: 1.8px;
+    --highlight-glow-strength: 0.12;
+    --highlight-intensity: 0.36;
+    --highlight-max-alpha: 0.52;
+    --highlight-follow: 0.107;
+    --highlight-inertia: 0.047;
+    --highlight-drag: 0.75;
+    --highlight-fade-in: 0.081;
+    --highlight-fade-out: 0.061;
   }
 
   .subtle-highlight {
-    --highlight-radius: clamp(62px, 7.4vw, 96px);
-    --highlight-saturation: 0.66;
+    --highlight-radius: clamp(52px, 6vw, 76px);
+    --highlight-saturation: 0.58;
     --highlight-glow-blur: 0px;
     --highlight-glow-strength: 0;
-    --highlight-intensity: 0.16;
-    --highlight-max-alpha: 0.62;
-    --highlight-follow: 0.135;
-    --highlight-fade-in: 0.088;
-    --highlight-fade-out: 0.066;
+    --highlight-intensity: 0.12;
+    --highlight-max-alpha: 0.4;
+    --highlight-follow: 0.1;
+    --highlight-inertia: 0.044;
+    --highlight-drag: 0.76;
+    --highlight-fade-in: 0.073;
+    --highlight-fade-out: 0.057;
   }
 }
 
 @keyframes cmyk-shift {
   0% {
-    background-position: 18% 50%;
+    background-position: 24% 50%;
   }
   50% {
-    background-position: 82% 50%;
+    background-position: 76% 50%;
   }
   100% {
-    background-position: 18% 50%;
+    background-position: 24% 50%;
   }
 }
 
