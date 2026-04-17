@@ -82,7 +82,20 @@ const initInteractiveHighlights = () => {
     const maxAlpha = Number.parseFloat(styles.getPropertyValue('--highlight-max-alpha')) || 0.92;
     const glowScale = Number.parseFloat(styles.getPropertyValue('--highlight-glow-scale')) || 0.72;
     const settleThreshold = Number.parseFloat(styles.getPropertyValue('--highlight-settle-threshold')) || 0.14;
-    const state = { x: 0, y: 0, tx: 0, ty: 0, vx: 0, vy: 0, alpha: 0, targetAlpha: 0, raf: 0, initialized: false };
+    const isHeroHighlight = highlight.classList.contains('hero-highlight');
+    const state = {
+      x: 0,
+      y: 0,
+      tx: 0,
+      ty: 0,
+      vx: 0,
+      vy: 0,
+      alpha: 0,
+      targetAlpha: 0,
+      raf: 0,
+      initialized: false,
+      trail: [],
+    };
 
     const render = () => {
       state.raf = 0;
@@ -104,6 +117,42 @@ const initInteractiveHighlights = () => {
       highlight.style.setProperty('--highlight-y', `${state.y.toFixed(2)}px`);
       highlight.style.setProperty('--highlight-alpha', state.alpha.toFixed(3));
       highlight.style.setProperty('--highlight-glow-alpha', (state.alpha * glowScale).toFixed(3));
+      const now = performance.now() * 0.0048;
+      const waveMix = state.alpha * 0.95;
+      const waveX = Math.sin(now + state.x * 0.024) * 0.85 * waveMix;
+      const waveY = Math.cos(now * 0.92 + state.y * 0.02) * 0.7 * waveMix;
+      const maskJitterX = Math.sin(now * 1.2 + state.y * 0.014) * 1.2 * waveMix;
+      const maskJitterY = Math.cos(now * 1.1 + state.x * 0.016) * 1.05 * waveMix;
+      highlight.style.setProperty('--highlight-wave-x', `${waveX.toFixed(2)}px`);
+      highlight.style.setProperty('--highlight-wave-y', `${waveY.toFixed(2)}px`);
+      highlight.style.setProperty('--highlight-mask-jitter-x', `${maskJitterX.toFixed(2)}px`);
+      highlight.style.setProperty('--highlight-mask-jitter-y', `${maskJitterY.toFixed(2)}px`);
+      if (isHeroHighlight) {
+        const trailLimit = 5;
+        state.trail.unshift({ x: state.x, y: state.y, alpha: state.alpha });
+        if (state.trail.length > trailLimit) state.trail.length = trailLimit;
+
+        const normalizedTrail = state.trail.map((point, index) => {
+          const decay = Math.max(0, 1 - index * 0.24);
+          return {
+            x: point.x,
+            y: point.y,
+            alpha: point.alpha * decay,
+          };
+        });
+
+        for (let i = 0; i < 4; i += 1) {
+          const point = normalizedTrail[i + 1];
+          if (point) {
+            highlight.style.setProperty(`--trail-${i + 1}-x`, `${point.x.toFixed(2)}px`);
+            highlight.style.setProperty(`--trail-${i + 1}-y`, `${point.y.toFixed(2)}px`);
+            highlight.style.setProperty(`--trail-${i + 1}-alpha`, point.alpha.toFixed(3));
+          } else {
+            highlight.style.setProperty(`--trail-${i + 1}-alpha`, '0');
+          }
+        }
+        highlight.style.setProperty('--hero-energy', Math.min(1, state.alpha * 1.7).toFixed(3));
+      }
 
       if (
         Math.abs(state.tx - state.x) > settleThreshold
@@ -145,6 +194,13 @@ const initInteractiveHighlights = () => {
 
     highlight.addEventListener('pointerleave', () => {
       state.targetAlpha = 0;
+      if (isHeroHighlight) {
+        state.trail = [];
+        highlight.style.setProperty('--hero-energy', '0');
+        for (let i = 1; i <= 4; i += 1) {
+          highlight.style.setProperty(`--trail-${i}-alpha`, '0');
+        }
+      }
       requestRender();
     });
   });
