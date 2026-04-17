@@ -380,8 +380,8 @@ h1 span {
 
 .hero-visual {
   min-height: clamp(23rem, 47vw, 35rem);
-  width: min(120%, 44rem);
-  margin-left: max(-2.6rem, -5vw);
+  width: min(100%, 44rem);
+  margin-left: 0;
   position: relative;
   perspective: 1500px;
   transform-style: preserve-3d;
@@ -437,28 +437,28 @@ h1 span {
 }
 
 .card-main {
-  inset: -4% auto auto -6%;
+  inset: 2% auto auto 2%;
   width: min(22rem, 73%);
 }
 
 .card-mid {
-  inset: 24% -4% auto auto;
+  inset: 22% 3% auto auto;
   width: min(18.5rem, 62%);
   --scale: 0.95;
 }
 
 .card-back {
-  inset: auto auto 1% 8%;
+  inset: auto auto 4% 8%;
   width: min(19rem, 64%);
   --scale: 0.9;
 }
 
 .card-edge {
-  inset: 58% -8% auto auto;
+  inset: 58% 4% auto auto;
   width: min(14.4rem, 52%);
   --scale: 0.82;
   --depth-blur: 0.2px;
-  opacity: 0.48;
+  opacity: 0.62;
 }
 
 .section {
