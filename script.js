@@ -17,6 +17,7 @@ const premiumSpotTitles = document.querySelectorAll('.hero h1, .section-head > h
 const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 const mobileCardsMedia = window.matchMedia('(max-width: 980px), (pointer: coarse)');
 const showcaseSlides = document.querySelectorAll('[data-showcase-slide]');
+let navIsScrolled = false;
 
 const splitTitles = () => {
   motionTitles.forEach((title) => {
@@ -45,8 +46,21 @@ const splitTitles = () => {
 splitTitles();
 
 const initInteractiveHighlights = () => {
-  const highlights = document.querySelectorAll('.hero-highlight, .section-highlight, .subtle-highlight');
+  const highlights = document.querySelectorAll('h1, h2, h3, h4');
   highlights.forEach((highlight) => {
+    if (highlight.closest('script, style, noscript')) return;
+
+    if (!highlight.classList.contains('hero-highlight') && !highlight.classList.contains('section-highlight') && !highlight.classList.contains('subtle-highlight')) {
+      const tagName = highlight.tagName.toLowerCase();
+      if (tagName === 'h1') {
+        highlight.classList.add('hero-highlight');
+      } else if (tagName === 'h2') {
+        highlight.classList.add('section-highlight');
+      } else {
+        highlight.classList.add('subtle-highlight');
+      }
+    }
+
     const normalizedText = (highlight.textContent || '').trim().replace(/\s+/g, ' ');
     if (!normalizedText) return;
 
@@ -167,7 +181,10 @@ if (menuToggle && navLinks) {
 
 const applyScrollMotion = () => {
   if (navbar) {
-    navbar.classList.toggle('is-scrolled', window.scrollY > 8);
+    const y = window.scrollY;
+    if (!navIsScrolled && y > 26) navIsScrolled = true;
+    if (navIsScrolled && y < 10) navIsScrolled = false;
+    navbar.classList.toggle('is-scrolled', navIsScrolled);
   }
 
   parallaxTargets.forEach((element, index) => {
