@@ -93,11 +93,10 @@
 }
 
 .row-between {
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
-  justify-content: space-between;
   gap: 0.8rem;
-  flex-wrap: wrap;
 }
 
 .row-between > * {
@@ -111,7 +110,8 @@
 }
 
 .row-between .btn {
-  flex: 0 0 auto;
+  justify-self: end;
+  max-width: 100%;
   white-space: nowrap;
 }
 
@@ -361,12 +361,13 @@
 @media (max-width: 768px) {
 
   .row-between {
+    grid-template-columns: 1fr;
     align-items: flex-start;
   }
 
   .row-between .btn {
     width: 100%;
-    flex: 1 1 100%;
+    justify-self: stretch;
   }
 
   .field-grid.two-cols,
