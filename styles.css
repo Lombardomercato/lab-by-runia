@@ -139,17 +139,30 @@ body::after {
   top: 0;
   z-index: 40;
   padding-block: 0;
+  border-bottom: 0;
+  isolation: isolate;
+  transition: padding 520ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.navbar::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
   backdrop-filter: blur(15px) saturate(1.08);
-  background: linear-gradient(180deg, rgba(9, 9, 9, 0.72), rgba(9, 9, 9, 0.28));
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  transition: background-color 340ms var(--easing-premium), border-color 340ms var(--easing-premium), box-shadow 340ms var(--easing-premium), padding 340ms var(--easing-premium);
+  background: linear-gradient(180deg, rgba(9, 9, 9, 0.7), rgba(9, 9, 9, 0.16));
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  opacity: 1;
+  transition: opacity 420ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .navbar.is-scrolled {
-  padding-block: 0.42rem;
-  background: transparent;
-  border-bottom-color: transparent;
-  box-shadow: none;
+  padding-block: 0.5rem;
+}
+
+.navbar.is-scrolled::before {
+  opacity: 0;
 }
 
 .nav-wrap {
@@ -158,17 +171,29 @@ body::after {
   align-items: center;
   justify-content: space-between;
   gap: 1.2rem;
-  transition: min-height 340ms var(--easing-premium), background-color 340ms var(--easing-premium), border-color 340ms var(--easing-premium), border-radius 340ms var(--easing-premium), box-shadow 340ms var(--easing-premium), padding 340ms var(--easing-premium), transform 340ms var(--easing-premium);
+  border: 1px solid transparent;
+  border-radius: 1.1rem;
+  background: transparent;
+  box-shadow: none;
+  will-change: transform, min-height, border-color, background-color, box-shadow;
+  transition:
+    min-height 520ms cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 520ms cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 520ms cubic-bezier(0.22, 1, 0.36, 1),
+    border-radius 520ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 520ms cubic-bezier(0.22, 1, 0.36, 1),
+    padding 520ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 520ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .navbar.is-scrolled .nav-wrap {
   min-height: 3.9rem;
   padding-inline: clamp(0.9rem, 1.6vw, 1.7rem);
-  border: 1px solid rgba(243, 232, 212, 0.16);
+  border: 1px solid rgba(243, 232, 212, 0.18);
   border-radius: 1.1rem;
-  background: rgba(17, 17, 17, 0.82);
-  box-shadow: 0 12px 36px -26px rgba(0, 0, 0, 0.9);
-  transform: translateY(0.2rem);
+  background: rgba(12, 12, 12, 0.86);
+  box-shadow: 0 18px 34px -28px rgba(0, 0, 0, 0.88);
+  transform: translateY(0.22rem);
 }
 
 .brand {
