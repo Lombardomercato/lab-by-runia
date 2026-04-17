@@ -104,6 +104,16 @@ const initInteractiveHighlights = () => {
       highlight.style.setProperty('--highlight-y', `${state.y.toFixed(2)}px`);
       highlight.style.setProperty('--highlight-alpha', state.alpha.toFixed(3));
       highlight.style.setProperty('--highlight-glow-alpha', (state.alpha * glowScale).toFixed(3));
+      const now = performance.now() * 0.0048;
+      const waveMix = state.alpha * 0.95;
+      const waveX = Math.sin(now + state.x * 0.024) * 0.85 * waveMix;
+      const waveY = Math.cos(now * 0.92 + state.y * 0.02) * 0.7 * waveMix;
+      const maskJitterX = Math.sin(now * 1.2 + state.y * 0.014) * 1.2 * waveMix;
+      const maskJitterY = Math.cos(now * 1.1 + state.x * 0.016) * 1.05 * waveMix;
+      highlight.style.setProperty('--highlight-wave-x', `${waveX.toFixed(2)}px`);
+      highlight.style.setProperty('--highlight-wave-y', `${waveY.toFixed(2)}px`);
+      highlight.style.setProperty('--highlight-mask-jitter-x', `${maskJitterX.toFixed(2)}px`);
+      highlight.style.setProperty('--highlight-mask-jitter-y', `${maskJitterY.toFixed(2)}px`);
 
       if (
         Math.abs(state.tx - state.x) > settleThreshold
