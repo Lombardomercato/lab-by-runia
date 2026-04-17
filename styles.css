@@ -138,16 +138,18 @@ body::after {
   position: sticky;
   top: 0;
   z-index: 40;
+  padding-block: 0;
   backdrop-filter: blur(15px) saturate(1.08);
-  background: linear-gradient(180deg, rgba(9, 9, 9, 0.82), rgba(9, 9, 9, 0.58));
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-  transition: background-color 340ms var(--easing-premium), border-color 340ms var(--easing-premium), box-shadow 340ms var(--easing-premium);
+  background: linear-gradient(180deg, rgba(9, 9, 9, 0.72), rgba(9, 9, 9, 0.28));
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  transition: background-color 340ms var(--easing-premium), border-color 340ms var(--easing-premium), box-shadow 340ms var(--easing-premium), padding 340ms var(--easing-premium);
 }
 
 .navbar.is-scrolled {
-  background: linear-gradient(180deg, rgba(9, 9, 9, 0.9), rgba(8, 8, 8, 0.78));
-  border-bottom-color: rgba(255, 255, 255, 0.12);
-  box-shadow: 0 22px 48px -44px rgba(0, 0, 0, 0.9);
+  padding-block: 0.42rem;
+  background: transparent;
+  border-bottom-color: transparent;
+  box-shadow: none;
 }
 
 .nav-wrap {
@@ -156,6 +158,17 @@ body::after {
   align-items: center;
   justify-content: space-between;
   gap: 1.2rem;
+  transition: min-height 340ms var(--easing-premium), background-color 340ms var(--easing-premium), border-color 340ms var(--easing-premium), border-radius 340ms var(--easing-premium), box-shadow 340ms var(--easing-premium), padding 340ms var(--easing-premium), transform 340ms var(--easing-premium);
+}
+
+.navbar.is-scrolled .nav-wrap {
+  min-height: 3.9rem;
+  padding-inline: clamp(0.9rem, 1.6vw, 1.7rem);
+  border: 1px solid rgba(243, 232, 212, 0.16);
+  border-radius: 1.1rem;
+  background: rgba(17, 17, 17, 0.82);
+  box-shadow: 0 12px 36px -26px rgba(0, 0, 0, 0.9);
+  transform: translateY(0.2rem);
 }
 
 .brand {
