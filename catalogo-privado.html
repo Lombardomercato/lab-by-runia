@@ -44,7 +44,7 @@
     <header class="navbar" id="top">
       <nav class="container nav-wrap" aria-label="Catálogo privado">
         <a href="#top" class="brand" aria-label="LAB by Runia">LAB_<span>by Runia</span></a>
-        <a href="#formulario" class="btn btn-solid magnetic">Completar formulario</a>
+        <a href="formulario.html" class="btn btn-solid magnetic">Completar formulario</a>
       </nav>
     </header>
 
@@ -59,7 +59,7 @@
             <h2 class="catalog-subtitle reveal" data-reveal="soft">Propuestas personalizadas según cada proyecto.</h2>
             <div class="hero-actions reveal" data-reveal="soft">
               <a href="#packs" class="btn btn-ghost">Ver opciones</a>
-              <a href="#formulario" class="btn btn-solid">Iniciar propuesta</a>
+              <a href="formulario.html" class="btn btn-solid">Iniciar propuesta</a>
             </div>
           </div>
 
@@ -105,6 +105,7 @@
               <ul class="catalog-list">
                 <li>Diseño premium</li>
                 <li>Desarrollo completo</li>
+                <li>Copy estratégico</li>
                 <li>Optimización mobile</li>
                 <li>Animaciones sutiles</li>
               </ul>
@@ -117,6 +118,7 @@
               <ul class="catalog-list">
                 <li>4 a 6 secciones</li>
                 <li>Diseño + desarrollo</li>
+                <li>SEO on-page inicial</li>
                 <li>Microinteracciones</li>
                 <li>Optimización mobile</li>
               </ul>
@@ -124,14 +126,17 @@
             </article>
 
             <article class="service-card interactive-surface reveal tilt pack-featured" data-reveal="right">
-              <p class="section-tag">Recomendado_</p>
-              <h3>WEB PREMIUM</h3>
+              <div class="pack-featured-head">
+                <h3>WEB PREMIUM</h3>
+                <p class="pack-badge">RECOMENDADO_</p>
+              </div>
               <p>Experiencia digital de alto nivel, pensada para diferenciarte.</p>
               <ul class="catalog-list">
                 <li>Diseño tipo estudio internacional</li>
                 <li>UX avanzada</li>
                 <li>Animaciones premium</li>
                 <li>Branding aplicado</li>
+                <li>Optimización mobile</li>
               </ul>
               <p class="catalog-price">Desde USD 1500</p>
             </article>
@@ -148,7 +153,7 @@
 
           <div class="catalog-grid catalog-brand-grid">
             <article class="service-card interactive-surface reveal" data-reveal="left">
-              <h3>Branding Starter</h3>
+              <h3>BRANDING STARTER</h3>
               <ul class="catalog-list">
                 <li>Logo</li>
                 <li>Colores</li>
@@ -158,7 +163,7 @@
             </article>
 
             <article class="service-card interactive-surface reveal" data-reveal="right">
-              <h3>Branding Pro</h3>
+              <h3>BRANDING PRO</h3>
               <ul class="catalog-list">
                 <li>Sistema visual completo</li>
                 <li>Aplicación en redes y web</li>
@@ -178,17 +183,17 @@
 
           <div class="catalog-grid catalog-extras-grid">
             <article class="service-card interactive-surface reveal" data-reveal="left">
-              <h3>IA para tu web</h3>
+              <h3>IA PARA TU WEB</h3>
               <p>Chatbot o asistente inteligente</p>
               <p class="catalog-price">+USD 300</p>
             </article>
             <article class="service-card interactive-surface reveal" data-reveal="rise">
-              <h3>Automatizaciones</h3>
+              <h3>AUTOMATIZACIONES</h3>
               <p>Captura y seguimiento de clientes</p>
               <p class="catalog-price">+USD 200</p>
             </article>
             <article class="service-card interactive-surface reveal" data-reveal="right">
-              <h3>Experiencias interactivas</h3>
+              <h3>EXPERIENCIAS INTERACTIVAS</h3>
               <p>Juegos, quizzes, sistemas tipo Tinder</p>
               <p class="catalog-price">+USD 400</p>
             </article>
@@ -198,29 +203,12 @@
 
       <section class="section cta" id="formulario">
         <div class="container cta-inner reveal" data-reveal="rise">
-          <p class="section-tag">Brief_</p>
+          <a class="section-tag brief-link" href="formulario.html">BRIEF_</a>
           <h2 class="motion-title">Cada proyecto es único. Creamos una propuesta a medida desde esta base.</h2>
           <p class="section-intro">
             Completá el formulario para recibir una recomendación personalizada según tus objetivos y tiempos.
           </p>
-
-          <form class="catalog-form" action="https://formsubmit.co/hola@labbyrunia.com" method="POST">
-            <input type="hidden" name="_subject" value="Nuevo lead desde catálogo privado LAB_" />
-            <input type="hidden" name="_captcha" value="false" />
-            <label>
-              Nombre
-              <input type="text" name="nombre" required />
-            </label>
-            <label>
-              Email
-              <input type="email" name="email" required />
-            </label>
-            <label>
-              ¿Qué necesitás construir?
-              <textarea name="mensaje" rows="4" required></textarea>
-            </label>
-            <button class="btn btn-solid" type="submit">Completar formulario</button>
-          </form>
+          <a class="btn btn-solid cta-form-link" href="formulario.html">Completar formulario</a>
         </div>
       </section>
     </main>
