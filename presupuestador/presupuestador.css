@@ -11,7 +11,7 @@
 .presupuestador-grid {
   margin-top: 2rem;
   display: grid;
-  grid-template-columns: 1fr 0.95fr;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.95fr);
   gap: 1.5rem;
 }
 
@@ -97,10 +97,22 @@
   align-items: center;
   justify-content: space-between;
   gap: 0.8rem;
+  flex-wrap: wrap;
+}
+
+.row-between > * {
+  min-width: 0;
 }
 
 .row-between h2 {
+  margin: 0;
+  flex: 1 1 auto;
   font-size: 1.02rem;
+}
+
+.row-between .btn {
+  flex: 0 0 auto;
+  white-space: nowrap;
 }
 
 .items-list {
@@ -314,7 +326,7 @@
   border-top: 1px solid rgba(236, 226, 208, 0.08);
 }
 
-@media (max-width: 1240px) {
+@media (max-width: 1360px) {
   .presupuestador-grid {
     grid-template-columns: 1fr;
   }
@@ -347,6 +359,16 @@
 }
 
 @media (max-width: 768px) {
+
+  .row-between {
+    align-items: flex-start;
+  }
+
+  .row-between .btn {
+    width: 100%;
+    flex: 1 1 100%;
+  }
+
   .field-grid.two-cols,
   .field-grid.three-cols,
   .item-row {
