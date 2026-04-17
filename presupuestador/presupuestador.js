@@ -241,10 +241,10 @@ const updateStateFromInput = (target) => {
 };
 
 const createExportNodeFromPreview = () => {
-  const preview = document.getElementById('proposalPreview');
+  const preview = document.querySelector('.preview-panel');
   const clone = preview.cloneNode(true);
-  clone.style.width = '980px';
-  clone.style.maxWidth = '980px';
+  clone.style.width = '1080px';
+  clone.style.maxWidth = '1080px';
   clone.style.margin = '0';
   clone.style.boxSizing = 'border-box';
 
@@ -252,9 +252,9 @@ const createExportNodeFromPreview = () => {
   wrapper.style.position = 'fixed';
   wrapper.style.left = '-99999px';
   wrapper.style.top = '0';
-  wrapper.style.padding = '28px';
-  wrapper.style.background = '#0b0b0b';
-  wrapper.style.width = '1036px';
+  wrapper.style.padding = '0';
+  wrapper.style.background = '#070707';
+  wrapper.style.width = '1080px';
   wrapper.style.boxSizing = 'border-box';
   wrapper.appendChild(clone);
 
@@ -283,17 +283,27 @@ const exportPdf = async () => {
     const doc = new jsPDF({ unit: 'pt', format: 'a4' });
     const pageWidth = doc.internal.pageSize.getWidth();
     const pageHeight = doc.internal.pageSize.getHeight();
-    const margin = 22;
-    const targetWidth = pageWidth - margin * 2;
-    const targetHeight = (canvas.height * targetWidth) / canvas.width;
-    const renderHeight = Math.min(targetHeight, pageHeight - margin * 2);
-    const renderWidth = (canvas.width * renderHeight) / canvas.height;
-    const x = (pageWidth - renderWidth) / 2;
-    const y = (pageHeight - renderHeight) / 2;
+    const imageRatio = canvas.width / canvas.height;
+    const pageRatio = pageWidth / pageHeight;
+
+    let renderWidth = pageWidth;
+    let renderHeight = pageHeight;
+    let x = 0;
+    let y = 0;
+
+    if (imageRatio > pageRatio) {
+      renderHeight = pageHeight;
+      renderWidth = renderHeight * imageRatio;
+      x = (pageWidth - renderWidth) / 2;
+    } else {
+      renderWidth = pageWidth;
+      renderHeight = renderWidth / imageRatio;
+      y = (pageHeight - renderHeight) / 2;
+    }
 
     doc.setFillColor(11, 11, 11);
     doc.rect(0, 0, pageWidth, pageHeight, 'F');
-    doc.addImage(image, 'PNG', x, y, renderWidth, renderHeight, undefined, 'FAST');
+    doc.addImage(image, 'PNG', x, y, renderWidth, renderHeight, undefined, 'SLOW');
     const filename = `Presupuesto_LAB_${sanitizeFileName(state.clientName)}.pdf`;
     doc.save(filename);
   } finally {
