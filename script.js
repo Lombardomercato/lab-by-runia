@@ -17,6 +17,7 @@ const premiumSpotTitles = document.querySelectorAll('.hero h1, .section-head > h
 const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 const mobileCardsMedia = window.matchMedia('(max-width: 980px), (pointer: coarse)');
 const showcaseSlides = document.querySelectorAll('[data-showcase-slide]');
+let navIsScrolled = false;
 
 const splitTitles = () => {
   motionTitles.forEach((title) => {
@@ -180,7 +181,10 @@ if (menuToggle && navLinks) {
 
 const applyScrollMotion = () => {
   if (navbar) {
-    navbar.classList.toggle('is-scrolled', window.scrollY > 8);
+    const y = window.scrollY;
+    if (!navIsScrolled && y > 26) navIsScrolled = true;
+    if (navIsScrolled && y < 10) navIsScrolled = false;
+    navbar.classList.toggle('is-scrolled', navIsScrolled);
   }
 
   parallaxTargets.forEach((element, index) => {
