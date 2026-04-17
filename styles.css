@@ -615,20 +615,31 @@ h1 span {
     --highlight-max-alpha: 0.66;
     --highlight-glow-scale: 0.44;
     --highlight-settle-threshold: 0.14;
+    --highlight-wave-x: 0px;
+    --highlight-wave-y: 0px;
+    --highlight-mask-jitter-x: 0px;
+    --highlight-mask-jitter-y: 0px;
+    --highlight-offset-opacity: 0;
+    --highlight-channel-shift-x: 1px;
+    --highlight-channel-shift-y: 0.8px;
     --highlight-gradient: linear-gradient(
-      120deg,
+      128deg,
       #00d9ff 0%,
-      #2fb9ff 12%,
-      #4a7bff 24%,
-      #695fff 35%,
-      #8a5cff 46%,
-      #b04fe7 56%,
-      #ff2fa3 68%,
-      #ff7f81 78%,
-      #ffd400 89%,
-      #7fe8e0 96%,
+      #20d4ff 7%,
+      #438aff 21%,
+      #6767ff 33%,
+      #9151ef 48%,
+      #cf46cb 58%,
+      #ff3d8f 67%,
+      #ff7c74 78%,
+      #ffcb35 90%,
+      #8fe5d8 97%,
       #00d9ff 100%
     );
+  }
+
+  .interactive-highlight:hover {
+    --highlight-offset-opacity: 1;
   }
 
   .interactive-highlight::before,
@@ -638,49 +649,62 @@ h1 span {
     inset: 0;
     pointer-events: none;
     color: transparent;
-    background-image: var(--highlight-gradient);
-    background-size: 172% 172%;
-    background-position: 24% 50%;
+    background-image:
+      var(--highlight-gradient),
+      radial-gradient(circle at 18% 22%, rgba(255, 255, 255, 0.18) 0.5px, transparent 1px),
+      radial-gradient(circle at 74% 64%, rgba(0, 0, 0, 0.14) 0.45px, transparent 1px),
+      repeating-linear-gradient(102deg, rgba(255, 255, 255, 0.025) 0 1px, rgba(0, 0, 0, 0.02) 1px 2px, transparent 2px 4px);
+    background-size: 174% 174%, 3px 3px, 4px 4px, 100% 100%;
+    background-position: 24% 50%, 0 0, 1px 2px, 0 0;
+    background-blend-mode: normal, soft-light, multiply, overlay;
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
     animation: cmyk-shift 19s ease-in-out infinite;
     will-change: opacity, background-position, transform, filter, mask-image, -webkit-mask-image;
     -webkit-mask-image: radial-gradient(
-      circle var(--highlight-radius) at var(--highlight-x) var(--highlight-y),
+      118% 94% at calc(var(--highlight-x) + var(--highlight-mask-jitter-x)) calc(var(--highlight-y) + var(--highlight-mask-jitter-y)),
       rgba(0, 0, 0, 1) 0%,
-      rgba(0, 0, 0, 0.96) 20%,
-      rgba(0, 0, 0, 0.86) 36%,
-      rgba(0, 0, 0, 0.7) 50%,
-      rgba(0, 0, 0, 0.48) 62%,
-      rgba(0, 0, 0, 0.28) 72%,
-      rgba(0, 0, 0, 0.13) 81%,
-      rgba(0, 0, 0, 0.04) 89%,
+      rgba(0, 0, 0, 0.95) 17%,
+      rgba(0, 0, 0, 0.88) 31%,
+      rgba(0, 0, 0, 0.74) 48%,
+      rgba(0, 0, 0, 0.52) 61%,
+      rgba(0, 0, 0, 0.3) 73%,
+      rgba(0, 0, 0, 0.14) 82%,
+      rgba(0, 0, 0, 0.05) 90%,
       rgba(0, 0, 0, 0) 97%
     );
     mask-image: radial-gradient(
-      circle var(--highlight-radius) at var(--highlight-x) var(--highlight-y),
+      118% 94% at calc(var(--highlight-x) + var(--highlight-mask-jitter-x)) calc(var(--highlight-y) + var(--highlight-mask-jitter-y)),
       rgba(0, 0, 0, 1) 0%,
-      rgba(0, 0, 0, 0.96) 20%,
-      rgba(0, 0, 0, 0.86) 36%,
-      rgba(0, 0, 0, 0.7) 50%,
-      rgba(0, 0, 0, 0.48) 62%,
-      rgba(0, 0, 0, 0.28) 72%,
-      rgba(0, 0, 0, 0.13) 81%,
-      rgba(0, 0, 0, 0.04) 89%,
+      rgba(0, 0, 0, 0.95) 17%,
+      rgba(0, 0, 0, 0.88) 31%,
+      rgba(0, 0, 0, 0.74) 48%,
+      rgba(0, 0, 0, 0.52) 61%,
+      rgba(0, 0, 0, 0.3) 73%,
+      rgba(0, 0, 0, 0.14) 82%,
+      rgba(0, 0, 0, 0.05) 90%,
       rgba(0, 0, 0, 0) 97%
     );
   }
 
   .interactive-highlight::before {
     opacity: calc(var(--highlight-glow-alpha) * var(--highlight-glow-strength) * var(--highlight-intensity));
-    filter: blur(var(--highlight-glow-blur)) saturate(var(--highlight-saturation));
-    transform: translate3d(0, 0, 0);
+    filter: blur(var(--highlight-glow-blur)) saturate(var(--highlight-saturation)) contrast(1.02);
+    transform: translate3d(calc(var(--highlight-wave-x) * 0.12), calc(var(--highlight-wave-y) * 0.08), 0);
+    text-shadow:
+      calc(var(--highlight-channel-shift-x) * -1) calc(var(--highlight-channel-shift-y) * -1) 0 rgba(0, 234, 255, calc(var(--highlight-alpha) * var(--highlight-offset-opacity) * 0.36)),
+      calc(var(--highlight-channel-shift-x) * 1) calc(var(--highlight-channel-shift-y) * 1) 0 rgba(255, 59, 162, calc(var(--highlight-alpha) * var(--highlight-offset-opacity) * 0.32));
   }
 
   .interactive-highlight::after {
     opacity: calc(var(--highlight-alpha) * var(--highlight-intensity));
-    filter: saturate(var(--highlight-saturation));
+    filter: saturate(var(--highlight-saturation)) contrast(1.04);
+    transform: translate3d(var(--highlight-wave-x), var(--highlight-wave-y), 0);
+    animation: cmyk-shift 19s ease-in-out infinite, ink-wobble 3.8s ease-in-out infinite;
+    text-shadow:
+      calc(var(--highlight-channel-shift-x) * -1) calc(var(--highlight-channel-shift-y) * -1) 0 rgba(0, 232, 255, calc(var(--highlight-alpha) * var(--highlight-offset-opacity) * 0.5)),
+      calc(var(--highlight-channel-shift-x) * 1) calc(var(--highlight-channel-shift-y) * 1) 0 rgba(255, 55, 171, calc(var(--highlight-alpha) * var(--highlight-offset-opacity) * 0.46));
   }
 
   .hero-highlight {
@@ -728,13 +752,32 @@ h1 span {
 
 @keyframes cmyk-shift {
   0% {
-    background-position: 24% 50%;
+    background-position: 24% 50%, 0 0, 1px 2px, 0 0;
   }
-  50% {
-    background-position: 76% 50%;
+  28% {
+    background-position: 62% 47%, 1px 0, 2px 1px, 0 1px;
+  }
+  57% {
+    background-position: 80% 55%, 1px 1px, 0 1px, 0 -1px;
+  }
+  78% {
+    background-position: 58% 48%, 0 1px, 1px 2px, 0 0;
   }
   100% {
-    background-position: 24% 50%;
+    background-position: 24% 50%, 0 0, 1px 2px, 0 0;
+  }
+}
+
+@keyframes ink-wobble {
+  0%,
+  100% {
+    transform: translate3d(var(--highlight-wave-x), var(--highlight-wave-y), 0);
+  }
+  45% {
+    transform: translate3d(calc(var(--highlight-wave-x) + 0.3px), calc(var(--highlight-wave-y) - 0.25px), 0);
+  }
+  75% {
+    transform: translate3d(calc(var(--highlight-wave-x) - 0.24px), calc(var(--highlight-wave-y) + 0.18px), 0);
   }
 }
 
