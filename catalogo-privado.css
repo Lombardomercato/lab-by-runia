@@ -2,6 +2,14 @@
   align-items: center;
 }
 
+.catalog-title-line {
+  display: block;
+}
+
+.catalog-title-line + .catalog-title-line {
+  margin-top: 0.28em;
+}
+
 .catalog-subtitle {
   margin: -0.6rem 0 0;
   color: var(--muted);
