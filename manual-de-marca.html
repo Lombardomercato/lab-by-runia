@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="robots" content="noindex, nofollow" />
+<meta name="theme-color" content="#0A0F1C" />
+<title>Manual de Marca — De Cero a Inversor</title>
+<style>
+:root {
+  --bg-1:#0A0F1C;
+  --bg-2:#03070D;
+  --bg-3:#0F1724;
+  --txt:#E6EAF2;
+  --acc:#00E0A4;
+  --g:#6B7280;
+  --n:#111827;
+  --line:rgba(230,234,242,.14);
+  --line-soft:rgba(230,234,242,.08);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:radial-gradient(circle at 76% 15%,rgba(0,224,164,.08),transparent 34%),linear-gradient(180deg,var(--bg-1),var(--bg-2));
+  color:var(--txt);
+  font-family:Inter,Arial,Helvetica,sans-serif;
+  min-height:100vh;
+  display:grid;
+  place-items:center;
+  padding:24px;
+}
+.board{
+  width:1440px;
+  min-height:1080px;
+  position:relative;
+  overflow:hidden;
+  border:1px solid var(--line);
+  background:
+    linear-gradient(180deg,rgba(9,14,24,.97),rgba(6,10,18,.98)),
+    repeating-linear-gradient(90deg,transparent 0 119px,rgba(0,224,164,.03) 119px 120px),
+    repeating-linear-gradient(0deg,transparent 0 119px,rgba(0,224,164,.025) 119px 120px);
+  box-shadow:0 34px 70px rgba(0,0,0,.52);
+}
+.board:before,.board:after{
+  content:"";
+  position:absolute;
+  width:5px;height:5px;border-radius:50%;
+  background:var(--acc);
+  box-shadow:0 0 12px rgba(0,224,164,.32);
+  opacity:.65;
+}
+.board:before{top:19%;right:40%}
+.board:after{bottom:43%;right:54%}
+.page{position:relative;z-index:2}
+.topbar{
+  padding:36px 56px 0;
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+}
+.mini-logo{letter-spacing:.2em;text-transform:uppercase;font-size:12px;line-height:1.25}
+.mini-logo .small{color:var(--acc);font-weight:600}
+.mini-logo .big{display:block;margin-top:2px;font-family:Sora,Arial,Helvetica,sans-serif;font-size:25px;font-weight:800;letter-spacing:.02em}
+.arrow{color:var(--acc)}
+.identity{display:flex;align-items:center;gap:14px;text-transform:uppercase;letter-spacing:.18em;font-size:14px;color:rgba(230,234,242,.9);margin-top:7px}
+.identity .line{width:118px;height:2px;background:linear-gradient(90deg,rgba(0,224,164,.15),var(--acc));box-shadow:0 0 8px rgba(0,224,164,.25)}
+.hero{
+  padding:34px 56px 0;
+  display:grid;
+  grid-template-columns:1fr 570px;
+  gap:20px;
+}
+.hero-left{padding-top:106px}
+.eyebrow{margin:0;color:var(--acc);font-family:Sora,Arial,Helvetica,sans-serif;letter-spacing:.34em;text-transform:uppercase;font-size:26px;font-weight:700}
+.hero-logo{margin:10px 0 16px;font-family:Sora,Arial,Helvetica,sans-serif;font-size:96px;line-height:.94;letter-spacing:.02em}
+.tagline{margin:0;color:rgba(230,234,242,.62);font-size:14px;letter-spacing:.16em;text-transform:uppercase}
+.hero-right{position:relative;height:520px}
+.dashboard{
+  position:absolute;right:30px;top:74px;width:390px;height:260px;border-radius:22px;
+  background:linear-gradient(160deg,#101a2a,#0b1321 66%);
+  border:1px solid rgba(230,234,242,.12);
+  transform:rotate(-6deg);
+  box-shadow:0 18px 34px rgba(0,0,0,.35);
+}
+.dashboard:before{
+  content:"";position:absolute;inset:18px;border-radius:12px;border:1px solid rgba(230,234,242,.08);
+  background:
+    linear-gradient(120deg,transparent 0 24%,rgba(0,224,164,.12) 24% 31%,transparent 31%),
+    linear-gradient(180deg,rgba(255,255,255,.02),transparent);
+}
+.dashboard:after{
+  content:"";position:absolute;left:40px;right:34px;bottom:48px;height:62px;border-radius:8px;
+  background:linear-gradient(transparent 0 42%,rgba(0,224,164,.4) 42% 46%,transparent 46%);
+}
+.phone{
+  position:absolute;right:132px;top:20px;width:262px;height:486px;padding:44px 20px 16px;
+  border-radius:34px;border:1px solid rgba(230,234,242,.2);
+  background:linear-gradient(180deg,#101a29,#080e18 68%);
+  transform:rotate(12deg);
+  box-shadow:0 24px 48px rgba(0,0,0,.5),0 0 28px rgba(0,224,164,.05);
+}
+.phone .notch{position:absolute;top:14px;left:50%;transform:translateX(-50%);width:92px;height:14px;border-radius:999px;background:#050912}
+.phone .k{font-size:11px;letter-spacing:.17em;color:var(--acc);text-transform:uppercase}
+.phone .bal{margin:10px 0 16px;font-size:36px;font-weight:800}
+.chart{height:170px;border:1px solid rgba(230,234,242,.12);border-radius:12px;position:relative;overflow:hidden;background:linear-gradient(180deg,rgba(15,23,36,.5),rgba(6,11,19,.4)),repeating-linear-gradient(90deg,transparent 0 36px,rgba(230,234,242,.05) 36px 37px)}
+.chart:after{
+  content:"";position:absolute;left:10px;right:10px;bottom:33px;height:74px;
+  background:linear-gradient(128deg,transparent 0 10%,rgba(0,224,164,.56) 10% 14%,transparent 14% 24%,rgba(0,224,164,.5) 24% 29%,transparent 29% 40%,rgba(0,224,164,.58) 40% 46%,transparent 46% 57%,rgba(0,224,164,.52) 57% 62%,transparent 62%);
+}
+.phone .perf{margin-top:18px;color:var(--acc);font-size:40px;font-weight:700}
+.float,.history{
+  position:absolute;border-radius:16px;border:1px solid rgba(230,234,242,.14);
+  background:linear-gradient(160deg,rgba(15,25,40,.95),rgba(7,12,20,.94));
+  box-shadow:0 10px 26px rgba(0,0,0,.4);
+}
+.float{left:20px;bottom:16px;width:278px;padding:18px 16px}
+.float p{margin:0}
+.float .t1{font-size:22px;color:rgba(230,234,242,.86)}
+.float .t2{margin-top:8px;font-size:30px;font-weight:700}
+.history{right:2px;bottom:30px;width:228px;padding:14px 14px 16px}
+.history h4{margin:0 0 10px;font-size:24px}
+.history ul{list-style:none;padding:0;margin:0;display:grid;gap:8px}
+.history li{border:1px solid rgba(230,234,242,.1);border-radius:9px;padding:7px 10px;color:rgba(230,234,242,.78);font-size:15px}
+.middle{
+  margin-top:8px;
+  height:94px;
+  border-top:1px solid var(--line);
+  border-bottom:1px solid var(--line);
+  padding:0 56px;
+  display:flex;
+  align-items:center;
+}
+.middle p{
+  margin:0;
+  color:var(--acc);
+  text-transform:uppercase;
+  letter-spacing:.22em;
+  font-size:18px;
+  font-weight:700;
+  position:relative;
+}
+.middle p:before{
+  content:"";
+  position:absolute;
+  top:-14px;
+  left:0;
+  width:248px;
+  height:3px;
+  background:linear-gradient(90deg,rgba(0,224,164,.15),var(--acc));
+  box-shadow:0 0 9px rgba(0,224,164,.25);
+}
+.bottom{display:grid;grid-template-columns:41.5% 58.5%;min-height:430px}
+.left,.right{padding:26px 44px 30px}
+.right{border-left:1px solid var(--line-soft)}
+.h{margin:0 0 16px;color:var(--acc);font-family:Sora,Arial,Helvetica,sans-serif;font-size:15px;letter-spacing:.05em;text-transform:uppercase}
+.logo-box{border:1px solid rgba(230,234,242,.16);border-radius:14px;background:linear-gradient(180deg,rgba(15,23,36,.86),rgba(9,14,24,.8));padding:22px;margin-bottom:20px}
+.logo-box .a{margin:0;color:var(--acc);letter-spacing:.2em;text-transform:uppercase;font-size:16px}
+.logo-box .b{margin:8px 0 0;font-family:Sora,Arial,Helvetica,sans-serif;font-size:60px;line-height:.94}
+.variants{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}
+.v{border:1px solid rgba(230,234,242,.14);border-radius:12px;padding:10px;min-height:80px;background:rgba(17,24,39,.35)}
+.k{margin:0 0 8px;color:rgba(230,234,242,.62);font-size:12px;letter-spacing:.14em;text-transform:uppercase}
+.mark{margin:0;font-family:Sora,Arial,Helvetica,sans-serif;font-size:30px;line-height:.95}
+.use{border-top:1px solid var(--line-soft);padding-top:14px}
+.use h4{margin:0 0 9px;color:var(--acc);font-family:Sora,Arial,Helvetica,sans-serif;letter-spacing:.07em;text-transform:uppercase;font-size:13px}
+.use p{margin:0;color:rgba(230,234,242,.68);font-size:11px;line-height:1.5}
+.use p+p{margin-top:5px}
+.safe{margin-top:16px;height:100px;border:1px solid rgba(230,234,242,.17);position:relative}
+.safe:before,.safe:after{content:"";position:absolute;inset:16px;border:1px solid rgba(230,234,242,.12)}
+.safe .w{position:absolute;inset:0;display:grid;place-content:center;font-family:Sora,Arial,Helvetica,sans-serif;font-size:43px}
+.sub{margin:0 0 10px;color:rgba(230,234,242,.66);text-transform:uppercase;font-size:14px;letter-spacing:.14em}
+.sw{display:flex;gap:10px;margin-bottom:14px}
+.s{min-width:128px;padding:50px 12px 10px;border-radius:10px;border:1px solid rgba(230,234,242,.16);font-weight:700;font-size:13px;letter-spacing:.02em}
+.s1{background:#0A0F1C}.s2{background:#0F1724}.s3{background:#E6EAF2;color:#111827}.s4{background:#00E0A4;color:#0A0F1C}.s5{background:#6B7280}.s6{background:#111827}
+.type{margin-top:12px;padding:16px 0;border-top:1px solid var(--line-soft);border-bottom:1px solid var(--line-soft)}
+.type-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.font{border:1px solid rgba(230,234,242,.15);border-radius:12px;background:rgba(17,24,39,.25);padding:12px}
+.font .name{margin:0 0 6px;font-family:Sora,Arial,Helvetica,sans-serif;font-size:34px}
+.font .name.i{font-family:Inter,Arial,Helvetica,sans-serif}
+.font .w{margin:0;font-size:11px;line-height:1.25}
+.font .abc{margin-top:10px;color:rgba(230,234,242,.64);line-height:1.3;font-size:10px}
+.uses{padding-top:16px}
+.use-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.u{min-height:106px;padding:10px;border-radius:14px;border:1px solid rgba(230,234,242,.16);display:flex;flex-direction:column;justify-content:space-between;background:linear-gradient(165deg,rgba(16,26,42,.92),rgba(8,13,22,.88)),radial-gradient(circle at 82% 18%,rgba(0,224,164,.13),transparent 46%)}
+.prev{height:66px;border-radius:10px;border:1px solid rgba(230,234,242,.1);position:relative;background:linear-gradient(120deg,rgba(0,224,164,.2),transparent 38%),linear-gradient(180deg,#0d1728,#0b1220)}
+.prev:after{content:"";position:absolute;left:10px;right:10px;bottom:14px;height:20px;border-radius:5px;background:linear-gradient(90deg,rgba(0,224,164,.4),rgba(230,234,242,.08))}
+.lbl{margin:0;text-transform:uppercase;letter-spacing:.12em;font-size:11px}
+.footer{height:54px;border-top:1px solid var(--line-soft);display:flex;align-items:center;justify-content:space-between;padding:0 26px;font-size:12px;letter-spacing:.13em;text-transform:uppercase;color:rgba(230,234,242,.65)}
+.footer .year{color:var(--acc);font-weight:700}
+@media print{
+  @page{size:landscape;margin:0}
+  html,body{margin:0;padding:0;background:#000 !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  body{display:block;padding:0}
+  .board{width:1440px;min-height:1080px;border:1px solid var(--line);box-shadow:none;break-inside:avoid-page;page-break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<main class="board">
+  <div class="page">
+    <header class="topbar">
+      <div class="mini-logo"><span class="small">DE CERO A</span><span class="big">IN<span class="arrow">V↗</span>ERSOR</span></div>
+      <div class="identity"><span>IDENTIDAD VISUAL</span><span class="line"></span><span>2026</span></div>
+    </header>
+
+    <section class="hero">
+      <div class="hero-left">
+        <p class="eyebrow">DE CERO A</p>
+        <h1 class="hero-logo">IN<span class="arrow">V↗</span>ERSOR</h1>
+        <p class="tagline">APRENDE A INVERTIR EN EL MERCADO FINANCIERO</p>
+      </div>
+      <div class="hero-right" aria-hidden="true">
+        <div class="dashboard"></div>
+        <article class="phone">
+          <div class="notch"></div>
+          <div class="k">DE CERO A</div>
+          <div class="bal">$24,891,00</div>
+          <div class="chart"></div>
+          <div class="perf">+32,5%</div>
+        </article>
+        <article class="float"><p class="t1">Plan de inversión</p><p class="t2">Diversificado</p></article>
+        <article class="history">
+          <h4>Historial</h4>
+          <ul>
+            <li>Aporte</li>
+            <li>Rendimiento</li>
+            <li>Retiro</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section class="middle"><p>MANUAL DE MARCA</p></section>
+
+    <section class="bottom">
+      <aside class="left">
+        <h3 class="h">01. LOGO PRINCIPAL</h3>
+        <div class="logo-box">
+          <p class="a">DE CERO</p>
+          <p class="b">IN<span class="arrow">V↗</span>ERSOR</p>
+        </div>
+
+        <h3 class="h">02. VARIANTES</h3>
+        <div class="variants">
+          <article class="v"><p class="k">SECUNDARIO</p><p class="mark">INVÉRSOR</p></article>
+          <article class="v"><p class="k">ISOTIPO</p><p class="mark"><span class="arrow">↗</span></p></article>
+          <article class="v"><p class="k">MONOCROMO</p><p class="mark">INVÉRSOR</p></article>
+        </div>
+
+        <div class="use">
+          <h4>USO CORRECTO</h4>
+          <p>El logo debe tener siempre espacio libre a su alrededor.</p>
+          <p>No alterar proporciones, colores o tipografías.</p>
+          <p>Usar preferentemente sobre fondos oscuros.</p>
+        </div>
+
+        <div class="safe" aria-hidden="true"><div class="w">IN<span class="arrow">V↗</span>ERSOR</div></div>
+      </aside>
+
+      <section class="right">
+        <h3 class="h">03. PALETA DE COLORES</h3>
+        <p class="sub">PRINCIPALES</p>
+        <div class="sw">
+          <div class="s s1">#0A0F1C</div>
+          <div class="s s2">#0F1724</div>
+          <div class="s s3">#E6EAF2</div>
+          <div class="s s4">#00E0A4</div>
+        </div>
+        <p class="sub">NEUTROS</p>
+        <div class="sw">
+          <div class="s s5">#6B7280</div>
+          <div class="s s6">#111827</div>
+        </div>
+
+        <div class="type">
+          <h3 class="h">04. TIPOGRAFÍAS (CANVA)</h3>
+          <div class="type-grid">
+            <article class="font">
+              <h4 class="name">SORA</h4>
+              <p class="w">Bold</p>
+              <p class="w">Semibold</p>
+              <p class="w">Medium</p>
+              <div class="abc">ABCDEFGHIJKLMNÑOPQRSTUVWXYZ<br>0123456789</div>
+            </article>
+            <article class="font">
+              <h4 class="name i">INTER</h4>
+              <p class="w">Regular</p>
+              <p class="w">Medium</p>
+              <p class="w">Light</p>
+              <div class="abc">ABCDEFGHIJKLMNÑOPQRSTUVWXYZ<br>0123456789</div>
+            </article>
+          </div>
+        </div>
+
+        <div class="uses">
+          <h3 class="h">05. USOS</h3>
+          <div class="use-grid">
+            <article class="u"><div class="prev"></div><p class="lbl">PORTADA</p></article>
+            <article class="u"><div class="prev"></div><p class="lbl">APLICACIÓN</p></article>
+            <article class="u"><div class="prev"></div><p class="lbl">FAVICON</p></article>
+          </div>
+        </div>
+      </section>
+    </section>
+
+    <footer class="footer"><span>DE CERO A INVERSOR / MANUAL DE MARCA</span><span class="year">2026</span></footer>
+  </div>
+</main>
+</body>
+</html>
