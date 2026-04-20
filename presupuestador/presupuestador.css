@@ -58,6 +58,7 @@
 .field input,
 .field select,
 .field textarea,
+.item-row select,
 .item-row input {
   width: 100%;
   border: 1px solid var(--line);
@@ -77,6 +78,7 @@
 .field input:focus,
 .field select:focus,
 .field textarea:focus,
+.item-row select:focus,
 .item-row input:focus {
   outline: none;
   border-color: rgba(213, 197, 171, 0.56);
@@ -154,7 +156,7 @@
 
 .item-row {
   display: grid;
-  grid-template-columns: 1.2fr 1fr 0.7fr;
+  grid-template-columns: 1fr 1.2fr 1fr 0.7fr;
   gap: 0.55rem;
 }
 
