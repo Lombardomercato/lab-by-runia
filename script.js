@@ -962,9 +962,9 @@ const packMeta = {
     inversion: { min: 1800, max: 5000, plus: true },
     mensaje: 'Ideal para proyectos que necesitan interacción, automatización o una solución digital más avanzada que una web tradicional.',
   },
-  'PACK A MEDIDA': {
-    inversion: { min: 900, max: 2200 },
-    mensaje: 'Recomendación inicial pensada para tu contexto actual y con margen de ajuste según prioridades.',
+  'SOLUCIÓN PERSONALIZADA': {
+    inversion: { min: 1200, max: 3000 },
+    mensaje: 'En tu caso conviene diseñar una propuesta combinada para equilibrar alcance, tiempos y diferenciación comercial.',
   },
 };
 
@@ -988,10 +988,10 @@ const formatEstimatedRange = (range) => {
 };
 
 const getInvestmentEstimate = (values, packSugerido) => {
-  const packData = packMeta[packSugerido] || packMeta['PACK A MEDIDA'];
+  const packData = packMeta[packSugerido] || packMeta['SOLUCIÓN PERSONALIZADA'];
   const features = normalizeToArray(values.funcionalidades);
   const manyFeatures = features.length >= 4;
-  const needsBranding = values.branding !== 'si';
+  const needsBranding = values.branding && values.branding !== 'si';
   const isPremium = values.tipo_web === 'premium' || values.nivel_diseno === 'premium';
   const isUrgent = values.tiempos === 'urgente';
   const lowContent = values.secciones === '1' && features.length <= 2;
@@ -1041,7 +1041,7 @@ const getPackSuggestionFromValues = (values) => {
     return 'RUNIA SYSTEM';
   }
 
-  if (branding !== 'si' && (websiteType === 'premium' || designLevel === 'premium')) {
+  if (branding && branding !== 'si' && (websiteType === 'premium' || designLevel === 'premium')) {
     return 'BRANDING + WEB';
   }
 
@@ -1061,11 +1061,23 @@ const getPackSuggestionFromValues = (values) => {
     return 'RUNIA SYSTEM';
   }
 
-  if (branding !== 'si') {
+  if (branding && branding !== 'si') {
     return 'BRANDING + WEB';
   }
 
-  return 'PACK A MEDIDA';
+  if (websiteType === 'landing') {
+    return 'LANDING PRO';
+  }
+
+  if (websiteType === 'completa') {
+    return 'WEB PRO';
+  }
+
+  if (websiteType === 'premium' || designLevel === 'premium') {
+    return 'WEB PREMIUM';
+  }
+
+  return 'SOLUCIÓN PERSONALIZADA';
 };
 
 const getDynamicExtras = (values) => {
@@ -1075,7 +1087,7 @@ const getDynamicExtras = (values) => {
   const features = normalizeToArray(values.funcionalidades);
   const isPremiumFocus = values.tipo_web === 'premium' || values.nivel_diseno === 'premium' || objectives.includes('marca');
 
-  if (branding !== 'si') {
+  if (branding && branding !== 'si') {
     extras.push(values.nivel_diseno === 'premium' ? 'Branding Pro' : 'Branding Starter');
   }
 
@@ -1108,7 +1120,7 @@ const getPrimaryObjective = (values) => {
 };
 
 const buildWhatsappSummaryMessage = (values, packSugerido, rangeText) => {
-  const clientName = values.negocio || 'No indicado';
+  const clientName = values.nombre || 'No indicado';
   const brandName = values.negocio || 'No indicada';
   const primaryObjective = getPrimaryObjective(values);
 
@@ -1138,7 +1150,7 @@ Sugerido: ${packSugerido}
 Rango: ${getInvestmentEstimate(values, packSugerido).rangeText}
 
 CONTENIDO:
-Secciones: ${labelFromMap('secciones', values.secciones)}
+Referencias: ${values.referencias || '-'}
 
 FUNCIONALIDADES:
 ${funcionalidades.length ? funcionalidades.map((item) => `- ${item}`).join('\n') : '-'}
@@ -1180,18 +1192,20 @@ if (projectWizard) {
   const whatsappCta = document.querySelector('[data-whatsapp-cta]');
   const copySummaryButton = document.querySelector('[data-copy-summary]');
 
-  const phaseTwoInputs = Array.from(projectWizard.querySelectorAll('.phase-two-only input'));
-  const phaseOneSequence = [1, 2, 3, 4, 6];
-  const phaseTwoSequence = [1, 3, 5, 7];
+  const liveSuggestion = projectWizard.querySelector('[data-live-suggestion]');
+  const phaseTwoInputs = wizardSteps
+    .filter((step) => Number.parseInt(step.dataset.step || '0', 10) >= 8)
+    .flatMap((step) => Array.from(step.querySelectorAll('input, select, textarea')));
+  const phaseOneSequence = [1, 2, 3, 4, 5, 6, 7];
+  const phaseTwoSequence = [8, 9, 10, 11, 12, 13, 14];
 
   let currentPhase = 'quote';
   let activeSequence = phaseOneSequence;
   let currentIndex = 0;
   let latestSummary = '';
+  const resultPanels = [phaseOneResult, successMessage].filter(Boolean);
 
   const setPhaseTwoEnabled = (enabled) => {
-    projectWizard.classList.toggle('is-phase-two', enabled);
-
     phaseTwoInputs.forEach((input) => {
       input.disabled = !enabled;
     });
@@ -1222,7 +1236,7 @@ if (projectWizard) {
   const renderPhaseOneResult = (values, packSugerido) => {
     if (!phaseOneResult) return;
 
-    const packData = packMeta[packSugerido] || packMeta['PACK A MEDIDA'];
+    const packData = packMeta[packSugerido] || packMeta['SOLUCIÓN PERSONALIZADA'];
     const estimate = getInvestmentEstimate(values, packSugerido);
     const extras = getDynamicExtras(values);
 
@@ -1239,11 +1253,26 @@ if (projectWizard) {
     phaseOneResult.hidden = false;
   };
 
+  const hidePanel = (panel) => {
+    if (!panel) return;
+    panel.classList.remove('is-visible');
+    panel.hidden = true;
+  };
+
+  const showPanel = (panel) => {
+    resultPanels.forEach((item) => hidePanel(item));
+    if (!panel) return;
+    panel.hidden = false;
+    requestAnimationFrame(() => {
+      panel.classList.add('is-visible');
+    });
+  };
+
   const renderFinalCard = (values, packSugerido) => {
     if (!finalCard) return;
 
     const extras = getDynamicExtras(values);
-    const packData = packMeta[packSugerido] || packMeta['PACK A MEDIDA'];
+    const packData = packMeta[packSugerido] || packMeta['SOLUCIÓN PERSONALIZADA'];
     const estimate = getInvestmentEstimate(values, packSugerido);
 
     if (resultPack) resultPack.textContent = packSugerido;
@@ -1301,7 +1330,7 @@ if (projectWizard) {
 
     if (progressBar) progressBar.style.width = `${progress}%`;
     if (stepLabel) {
-      const phaseLabel = currentPhase === 'quote' ? 'Cotización' : 'Detalles';
+      const phaseLabel = currentPhase === 'quote' ? 'Cotización rápida' : 'Detalles del proyecto';
       stepLabel.textContent = `${phaseLabel} · Paso ${index + 1} de ${totalSteps}`;
     }
 
@@ -1352,10 +1381,11 @@ if (projectWizard) {
     activeSequence = phaseTwoSequence;
     setPhaseTwoEnabled(true);
 
-    if (phaseOneResult) phaseOneResult.hidden = true;
+    hidePanel(phaseOneResult);
     projectWizard.hidden = false;
 
     showStep(0);
+    if (liveSuggestion) liveSuggestion.hidden = false;
     syncSuggestion();
     projectWizard.scrollIntoView({ behavior: 'smooth', block: 'start' });
   });
@@ -1374,6 +1404,8 @@ if (projectWizard) {
     if (currentPhase === 'quote') {
       renderPhaseOneResult(formValues, packSugerido);
       projectWizard.hidden = true;
+      if (liveSuggestion) liveSuggestion.hidden = true;
+      showPanel(phaseOneResult);
       return;
     }
 
@@ -1383,9 +1415,12 @@ if (projectWizard) {
 
     syncSuggestion();
     projectWizard.hidden = true;
-    if (successMessage) successMessage.hidden = false;
+    if (liveSuggestion) liveSuggestion.hidden = true;
+    showPanel(successMessage);
   });
 
+  resultPanels.forEach((panel) => hidePanel(panel));
+  if (liveSuggestion) liveSuggestion.hidden = true;
   setPhaseTwoEnabled(false);
   showStep(0);
   syncSuggestion();

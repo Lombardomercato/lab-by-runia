@@ -49,38 +49,31 @@
 
           <form class="project-wizard" data-project-wizard novalidate>
             <fieldset class="wizard-step is-active" data-step="1">
-              <legend>SECCIÓN 1 — NEGOCIO</legend>
-              <div class="field-grid">
-                <label class="field">
-                  <span>Nombre</span>
-                  <input type="text" name="nombre" required />
-                </label>
-                <label class="field">
-                  <span>Nombre del negocio</span>
-                  <input type="text" name="negocio" required />
-                </label>
-                <label class="field">
-                  <span>Rubro</span>
-                  <input type="text" name="rubro" required />
-                </label>
-              </div>
-
-              <div class="field-group phase-two-only">
-                <p>¿Tenés web actualmente?</p>
-                <label><input type="radio" name="web_actual" value="si" required /> Sí</label>
-                <label><input type="radio" name="web_actual" value="no" required /> No</label>
-              </div>
-
-              <div class="field-group phase-two-only">
-                <p>¿Tenés branding definido?</p>
-                <label><input type="radio" name="branding" value="si" required /> Sí</label>
-                <label><input type="radio" name="branding" value="no" required /> No</label>
-                <label><input type="radio" name="branding" value="parcial" required /> Parcial</label>
-              </div>
+              <legend>FASE 1 — COTIZACIÓN RÁPIDA</legend>
+              <label class="field wizard-single-field">
+                <span>¿Cómo te llamás?</span>
+                <input type="text" name="nombre" required />
+              </label>
             </fieldset>
 
             <fieldset class="wizard-step" data-step="2">
-              <legend>SECCIÓN 2 — OBJETIVO</legend>
+              <legend>FASE 1 — COTIZACIÓN RÁPIDA</legend>
+              <label class="field wizard-single-field">
+                <span>¿Cómo se llama tu negocio o marca?</span>
+                <input type="text" name="negocio" required />
+              </label>
+            </fieldset>
+
+            <fieldset class="wizard-step" data-step="3">
+              <legend>FASE 1 — COTIZACIÓN RÁPIDA</legend>
+              <label class="field wizard-single-field">
+                <span>¿En qué rubro estás?</span>
+                <input type="text" name="rubro" required />
+              </label>
+            </fieldset>
+
+            <fieldset class="wizard-step" data-step="4">
+              <legend>FASE 1 — COTIZACIÓN RÁPIDA</legend>
               <div class="field-group">
                 <p>¿Qué querés lograr con la web?</p>
                 <label><input type="checkbox" name="objetivo" value="clientes" /> Conseguir clientes</label>
@@ -90,25 +83,18 @@
               </div>
             </fieldset>
 
-            <fieldset class="wizard-step" data-step="3">
-              <legend>SECCIÓN 3 — ALCANCE</legend>
+            <fieldset class="wizard-step" data-step="5">
+              <legend>FASE 1 — COTIZACIÓN RÁPIDA</legend>
               <div class="field-group">
                 <p>¿Qué tipo de web buscás?</p>
                 <label><input type="radio" name="tipo_web" value="landing" required /> Landing simple</label>
                 <label><input type="radio" name="tipo_web" value="completa" required /> Web completa</label>
                 <label><input type="radio" name="tipo_web" value="premium" required /> Algo premium / diferencial</label>
               </div>
-
-              <div class="field-group phase-two-only">
-                <p>¿Cuántas secciones estimás?</p>
-                <label><input type="radio" name="secciones" value="1" required /> 1</label>
-                <label><input type="radio" name="secciones" value="2-4" required /> 2 a 4</label>
-                <label><input type="radio" name="secciones" value="5+" required /> 5+</label>
-              </div>
             </fieldset>
 
-            <fieldset class="wizard-step" data-step="4">
-              <legend>SECCIÓN 4 — DISEÑO</legend>
+            <fieldset class="wizard-step" data-step="6">
+              <legend>FASE 1 — COTIZACIÓN RÁPIDA</legend>
               <div class="field-group">
                 <p>Nivel de diseño esperado</p>
                 <label><input type="radio" name="nivel_diseno" value="basico" required /> Básico</label>
@@ -117,21 +103,8 @@
               </div>
             </fieldset>
 
-            <fieldset class="wizard-step" data-step="5">
-              <legend>SECCIÓN 5 — FUNCIONALIDADES</legend>
-              <div class="field-group">
-                <p>¿Qué funcionalidades querés incluir?</p>
-                <label><input type="checkbox" name="funcionalidades" value="form-contacto" /> Formulario de contacto</label>
-                <label><input type="checkbox" name="funcionalidades" value="whatsapp" /> Integración WhatsApp</label>
-                <label><input type="checkbox" name="funcionalidades" value="tienda" /> Tienda online</label>
-                <label><input type="checkbox" name="funcionalidades" value="automatizacion" /> Automatización</label>
-                <label><input type="checkbox" name="funcionalidades" value="ia" /> IA / chatbot</label>
-                <label><input type="checkbox" name="funcionalidades" value="interactivo" /> Algo interactivo</label>
-              </div>
-            </fieldset>
-
-            <fieldset class="wizard-step" data-step="6">
-              <legend>SECCIÓN 6 — PRESUPUESTO</legend>
+            <fieldset class="wizard-step" data-step="7">
+              <legend>FASE 1 — COTIZACIÓN RÁPIDA</legend>
               <div class="field-group">
                 <p>Rango de presupuesto</p>
                 <label><input type="radio" name="presupuesto" value="bajo" required /> Menos de USD 500</label>
@@ -141,34 +114,90 @@
               </div>
             </fieldset>
 
-            <fieldset class="wizard-step" data-step="7">
-              <legend>SECCIÓN 7 — TIEMPOS</legend>
+            <fieldset class="wizard-step" data-step="8">
+              <legend>FASE 2 — DETALLES DEL PROYECTO</legend>
               <div class="field-group">
-                <p>¿Para cuándo lo necesitás?</p>
-                <label><input type="radio" name="tiempos" value="urgente" required /> Urgente</label>
-                <label><input type="radio" name="tiempos" value="2-4" required /> 2 a 4 semanas</label>
-                <label><input type="radio" name="tiempos" value="flexible" required /> Flexible</label>
+                <p>¿Tenés branding definido?</p>
+                <label><input type="radio" name="branding" value="si" required disabled /> Sí</label>
+                <label><input type="radio" name="branding" value="no" required disabled /> No</label>
+                <label><input type="radio" name="branding" value="parcial" required disabled /> Parcial</label>
               </div>
             </fieldset>
 
-            <aside class="suggestion-box" aria-live="polite">
+            <fieldset class="wizard-step" data-step="9">
+              <legend>FASE 2 — DETALLES DEL PROYECTO</legend>
+              <div class="field-group">
+                <p>¿Tenés web actualmente?</p>
+                <label><input type="radio" name="web_actual" value="si" required disabled /> Sí</label>
+                <label><input type="radio" name="web_actual" value="no" required disabled /> No</label>
+              </div>
+            </fieldset>
+
+            <fieldset class="wizard-step" data-step="10">
+              <legend>FASE 2 — DETALLES DEL PROYECTO</legend>
+              <div class="field-group">
+                <p>¿Qué funcionalidades querés incluir?</p>
+                <label><input type="checkbox" name="funcionalidades" value="form-contacto" disabled /> Formulario de contacto</label>
+                <label><input type="checkbox" name="funcionalidades" value="whatsapp" disabled /> Integración WhatsApp</label>
+                <label><input type="checkbox" name="funcionalidades" value="tienda" disabled /> Tienda online</label>
+                <label><input type="checkbox" name="funcionalidades" value="automatizacion" disabled /> Automatización</label>
+                <label><input type="checkbox" name="funcionalidades" value="ia" disabled /> IA / chatbot</label>
+                <label><input type="checkbox" name="funcionalidades" value="interactivo" disabled /> Algo interactivo</label>
+              </div>
+            </fieldset>
+
+            <fieldset class="wizard-step" data-step="11">
+              <legend>FASE 2 — DETALLES DEL PROYECTO</legend>
+              <div class="field-group">
+                <p>¿Para cuándo lo necesitás?</p>
+                <label><input type="radio" name="tiempos" value="urgente" required disabled /> Urgente</label>
+                <label><input type="radio" name="tiempos" value="2-4" required disabled /> 2 a 4 semanas</label>
+                <label><input type="radio" name="tiempos" value="flexible" required disabled /> Flexible</label>
+              </div>
+            </fieldset>
+
+            <fieldset class="wizard-step" data-step="12">
+              <legend>FASE 2 — DETALLES DEL PROYECTO</legend>
+              <label class="field wizard-single-field">
+                <span>¿Tenés referencias de estilo o sitios que te gusten?</span>
+                <input type="text" name="referencias" disabled />
+              </label>
+            </fieldset>
+
+            <fieldset class="wizard-step" data-step="13">
+              <legend>FASE 2 — DETALLES DEL PROYECTO</legend>
+              <label class="field wizard-single-field">
+                <span>¿Qué materiales ya tenés listos?</span>
+                <input type="text" name="materiales" disabled />
+              </label>
+            </fieldset>
+
+            <fieldset class="wizard-step" data-step="14">
+              <legend>FASE 2 — DETALLES DEL PROYECTO</legend>
+              <label class="field wizard-single-field">
+                <span>Necesidades de producción o comentarios finales</span>
+                <input type="text" name="necesidades_produccion" disabled />
+              </label>
+            </fieldset>
+
+            <aside class="suggestion-box" aria-live="polite" data-live-suggestion hidden>
               <p class="section-tag">Sugerencia automática_</p>
-              <p class="suggestion-output" data-pack-result>Sugerencia: PACK A MEDIDA</p>
+              <p class="suggestion-output" data-pack-result>Recomendación inicial: WEB PRO</p>
             </aside>
 
             <div class="wizard-actions">
               <button type="button" class="btn btn-ghost" data-prev>Anterior</button>
               <button type="button" class="btn btn-solid" data-next>Siguiente</button>
-              <button type="submit" class="btn btn-solid" data-submit>Enviar proyecto</button>
+              <button type="submit" class="btn btn-solid" data-submit>Ver cotización</button>
             </div>
           </form>
 
 
 
-          <aside class="phase-one-result suggestion-box" data-phase1-result hidden>
+          <aside class="phase-one-result suggestion-box result-panel" data-phase1-result hidden>
             <p class="section-tag">Cotización rápida_</p>
             <h2 class="phase-one-title">Tu proyecto encaja mejor en:</h2>
-            <p class="suggestion-output" data-phase1-pack>PACK A MEDIDA</p>
+            <p class="suggestion-output" data-phase1-pack>WEB PRO</p>
             <p class="final-result-copy" data-phase1-investment>Inversión estimada: USD -</p>
             <p class="final-result-copy" data-phase1-why>-</p>
             <div>
@@ -182,13 +211,13 @@
             </div>
           </aside>
 
-          <div class="form-success" data-success-message hidden>
+          <div class="form-success result-panel" data-success-message hidden>
             <p class="section-tag">Enviado_</p>
             <h2>Gracias. En base a tus respuestas, preparamos una recomendación inicial para tu proyecto.</h2>
 
             <article class="final-result-card suggestion-box" data-final-card hidden>
               <p class="final-result-title">Tu proyecto encaja mejor en:</p>
-              <p class="suggestion-output" data-result-pack>PACK A MEDIDA</p>
+              <p class="suggestion-output" data-result-pack>WEB PRO</p>
 
               <div class="final-result-grid">
                 <div>
