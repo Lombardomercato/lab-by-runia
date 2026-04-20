@@ -382,10 +382,20 @@ h1 {
   margin-top: 0.8rem;
   max-width: 14ch;
   font-size: clamp(2.2rem, 5.3vw, 5rem);
+  color: #f8f3eb;
+  text-shadow: 0 8px 26px rgba(0, 0, 0, 0.34);
 }
 
 h1 span {
   color: #dfd2be;
+}
+
+.hero-highlight {
+  position: relative;
+}
+
+.hero-highlight::selection {
+  background: rgba(207, 170, 118, 0.32);
 }
 
 .motion-title.reveal .word {
@@ -602,17 +612,17 @@ h1 span {
     --highlight-y: 50%;
     --highlight-alpha: 0;
     --highlight-glow-alpha: 0;
-    --highlight-radius: clamp(58px, 7.4vw, 96px);
-    --highlight-saturation: 0.83;
-    --highlight-glow-blur: 2.6px;
-    --highlight-glow-strength: 0.52;
-    --highlight-intensity: 0.74;
+    --highlight-radius: clamp(84px, 10vw, 132px);
+    --highlight-saturation: 1.02;
+    --highlight-glow-blur: 3.4px;
+    --highlight-glow-strength: 0.62;
+    --highlight-intensity: 0.86;
     --highlight-follow: 0.118;
     --highlight-inertia: 0.052;
     --highlight-drag: 0.74;
     --highlight-fade-in: 0.09;
     --highlight-fade-out: 0.068;
-    --highlight-max-alpha: 0.66;
+    --highlight-max-alpha: 0.78;
     --highlight-glow-scale: 0.44;
     --highlight-settle-threshold: 0.14;
     --highlight-wave-x: 0px;
@@ -620,8 +630,8 @@ h1 span {
     --highlight-mask-jitter-x: 0px;
     --highlight-mask-jitter-y: 0px;
     --highlight-offset-opacity: 0;
-    --highlight-channel-shift-x: 1px;
-    --highlight-channel-shift-y: 0.8px;
+    --highlight-channel-shift-x: 0.45px;
+    --highlight-channel-shift-y: 0.35px;
     --highlight-gradient: linear-gradient(
       128deg,
       #00d9ff 0%,
@@ -640,6 +650,9 @@ h1 span {
 
   .interactive-highlight:hover {
     --highlight-offset-opacity: 1;
+    --highlight-saturation: 1.18;
+    --highlight-intensity: 1;
+    --highlight-glow-strength: 0.72;
   }
 
   .interactive-highlight::before,
@@ -649,42 +662,31 @@ h1 span {
     inset: 0;
     pointer-events: none;
     color: transparent;
-    background-image:
-      var(--highlight-gradient),
-      radial-gradient(circle at 18% 22%, rgba(255, 255, 255, 0.18) 0.5px, transparent 1px),
-      radial-gradient(circle at 74% 64%, rgba(0, 0, 0, 0.14) 0.45px, transparent 1px),
-      repeating-linear-gradient(102deg, rgba(255, 255, 255, 0.025) 0 1px, rgba(0, 0, 0, 0.02) 1px 2px, transparent 2px 4px);
-    background-size: 174% 174%, 3px 3px, 4px 4px, 100% 100%;
-    background-position: 24% 50%, 0 0, 1px 2px, 0 0;
-    background-blend-mode: normal, soft-light, multiply, overlay;
+    background-image: var(--highlight-gradient);
+    background-size: 174% 174%;
+    background-position: 24% 50%;
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
     animation: cmyk-shift 19s ease-in-out infinite;
     will-change: opacity, background-position, transform, filter, mask-image, -webkit-mask-image;
     -webkit-mask-image: radial-gradient(
-      118% 94% at calc(var(--highlight-x) + var(--highlight-mask-jitter-x)) calc(var(--highlight-y) + var(--highlight-mask-jitter-y)),
+      circle var(--highlight-radius) at calc(var(--highlight-x) + var(--highlight-mask-jitter-x)) calc(var(--highlight-y) + var(--highlight-mask-jitter-y)),
       rgba(0, 0, 0, 1) 0%,
-      rgba(0, 0, 0, 0.95) 17%,
-      rgba(0, 0, 0, 0.88) 31%,
-      rgba(0, 0, 0, 0.74) 48%,
-      rgba(0, 0, 0, 0.52) 61%,
-      rgba(0, 0, 0, 0.3) 73%,
-      rgba(0, 0, 0, 0.14) 82%,
-      rgba(0, 0, 0, 0.05) 90%,
-      rgba(0, 0, 0, 0) 97%
+      rgba(0, 0, 0, 0.96) 24%,
+      rgba(0, 0, 0, 0.8) 52%,
+      rgba(0, 0, 0, 0.42) 73%,
+      rgba(0, 0, 0, 0.08) 90%,
+      rgba(0, 0, 0, 0) 100%
     );
     mask-image: radial-gradient(
-      118% 94% at calc(var(--highlight-x) + var(--highlight-mask-jitter-x)) calc(var(--highlight-y) + var(--highlight-mask-jitter-y)),
+      circle var(--highlight-radius) at calc(var(--highlight-x) + var(--highlight-mask-jitter-x)) calc(var(--highlight-y) + var(--highlight-mask-jitter-y)),
       rgba(0, 0, 0, 1) 0%,
-      rgba(0, 0, 0, 0.95) 17%,
-      rgba(0, 0, 0, 0.88) 31%,
-      rgba(0, 0, 0, 0.74) 48%,
-      rgba(0, 0, 0, 0.52) 61%,
-      rgba(0, 0, 0, 0.3) 73%,
-      rgba(0, 0, 0, 0.14) 82%,
-      rgba(0, 0, 0, 0.05) 90%,
-      rgba(0, 0, 0, 0) 97%
+      rgba(0, 0, 0, 0.96) 24%,
+      rgba(0, 0, 0, 0.8) 52%,
+      rgba(0, 0, 0, 0.42) 73%,
+      rgba(0, 0, 0, 0.08) 90%,
+      rgba(0, 0, 0, 0) 100%
     );
   }
 
@@ -708,12 +710,12 @@ h1 span {
   }
 
   .hero-highlight {
-    --highlight-radius: clamp(92px, 11.4vw, 132px);
-    --highlight-saturation: 0.9;
-    --highlight-glow-blur: 4.6px;
-    --highlight-glow-strength: 0.58;
-    --highlight-intensity: 0.72;
-    --highlight-max-alpha: 0.62;
+    --highlight-radius: clamp(128px, 16vw, 210px);
+    --highlight-saturation: 1.14;
+    --highlight-glow-blur: 6px;
+    --highlight-glow-strength: 0.72;
+    --highlight-intensity: 0.96;
+    --highlight-max-alpha: 0.88;
     --highlight-follow: 0.114;
     --highlight-inertia: 0.05;
     --highlight-drag: 0.73;
@@ -735,36 +737,21 @@ h1 span {
   }
 
   .hero-highlight.interactive-highlight::before {
-    background-image:
-      var(--highlight-gradient),
-      radial-gradient(ellipse 160px 116px at var(--trail-1-x) var(--trail-1-y), rgba(108, 65, 255, calc(var(--trail-1-alpha) * 0.3)) 0%, rgba(108, 65, 255, 0) 72%),
-      radial-gradient(ellipse 138px 102px at var(--trail-2-x) var(--trail-2-y), rgba(255, 58, 165, calc(var(--trail-2-alpha) * 0.28)) 0%, rgba(255, 58, 165, 0) 74%),
-      radial-gradient(ellipse 120px 90px at var(--trail-3-x) var(--trail-3-y), rgba(0, 225, 255, calc(var(--trail-3-alpha) * 0.24)) 0%, rgba(0, 225, 255, 0) 76%),
-      radial-gradient(circle at 18% 22%, rgba(255, 255, 255, 0.18) 0.5px, transparent 1px),
-      radial-gradient(circle at 74% 64%, rgba(0, 0, 0, 0.14) 0.45px, transparent 1px),
-      repeating-linear-gradient(102deg, rgba(255, 255, 255, 0.025) 0 1px, rgba(0, 0, 0, 0.02) 1px 2px, transparent 2px 4px);
-    background-size: 174% 174%, 100% 100%, 100% 100%, 100% 100%, 3px 3px, 4px 4px, 100% 100%;
-    background-position: 24% 50%, 50% 50%, 50% 50%, 50% 50%, 0 0, 1px 2px, 0 0;
-    filter: blur(calc(var(--highlight-glow-blur) + 0.3px)) saturate(calc(var(--highlight-saturation) + 0.08)) contrast(1.03);
+    background-image: var(--highlight-gradient);
+    background-size: 174% 174%;
+    background-position: 24% 50%;
+    filter: blur(calc(var(--highlight-glow-blur) + 0.6px)) saturate(calc(var(--highlight-saturation) + 0.2)) contrast(1.12);
   }
 
   .hero-highlight.interactive-highlight::after {
-    background-image:
-      var(--highlight-gradient),
-      radial-gradient(ellipse 82px 64px at var(--trail-1-x) var(--trail-1-y), rgba(0, 234, 255, calc(var(--trail-1-alpha) * 0.7)) 0%, rgba(0, 234, 255, 0) 73%),
-      radial-gradient(ellipse 90px 68px at var(--trail-2-x) var(--trail-2-y), rgba(255, 61, 173, calc(var(--trail-2-alpha) * 0.65)) 0%, rgba(255, 61, 173, 0) 74%),
-      radial-gradient(ellipse 98px 72px at var(--trail-3-x) var(--trail-3-y), rgba(96, 88, 255, calc(var(--trail-3-alpha) * 0.6)) 0%, rgba(96, 88, 255, 0) 76%),
-      radial-gradient(ellipse 110px 86px at var(--trail-4-x) var(--trail-4-y), rgba(118, 104, 255, calc(var(--trail-4-alpha) * 0.38)) 0%, rgba(118, 104, 255, 0) 82%),
-      radial-gradient(circle at 18% 22%, rgba(255, 255, 255, 0.18) 0.5px, transparent 1px),
-      radial-gradient(circle at 74% 64%, rgba(0, 0, 0, 0.14) 0.45px, transparent 1px),
-      repeating-linear-gradient(102deg, rgba(255, 255, 255, 0.025) 0 1px, rgba(0, 0, 0, 0.02) 1px 2px, transparent 2px 4px);
-    background-size: 174% 174%, 100% 100%, 100% 100%, 100% 100%, 100% 100%, 3px 3px, 4px 4px, 100% 100%;
-    background-position: 24% 50%, 50% 50%, 50% 50%, 50% 50%, 50% 50%, 0 0, 1px 2px, 0 0;
+    background-image: var(--highlight-gradient);
+    background-size: 174% 174%;
+    background-position: 24% 50%;
     transform: translate3d(var(--highlight-wave-x), var(--highlight-wave-y), 0) scale(calc(1 + (var(--hero-energy) * 0.012)));
-    filter: saturate(calc(var(--highlight-saturation) + 0.12)) contrast(1.07);
+    filter: saturate(calc(var(--highlight-saturation) + 0.24)) contrast(1.14);
     text-shadow:
-      calc(var(--highlight-channel-shift-x) * -1) calc(var(--highlight-channel-shift-y) * -1) 0 rgba(0, 232, 255, calc((var(--highlight-alpha) * 0.45 + var(--trail-1-alpha) * 0.4) * var(--highlight-offset-opacity))),
-      calc(var(--highlight-channel-shift-x) * 1) calc(var(--highlight-channel-shift-y) * 1) 0 rgba(255, 55, 171, calc((var(--highlight-alpha) * 0.43 + var(--trail-2-alpha) * 0.36) * var(--highlight-offset-opacity)));
+      calc(var(--highlight-channel-shift-x) * -1) calc(var(--highlight-channel-shift-y) * -1) 0 rgba(0, 232, 255, calc(var(--highlight-alpha) * var(--highlight-offset-opacity) * 0.46)),
+      calc(var(--highlight-channel-shift-x) * 1) calc(var(--highlight-channel-shift-y) * 1) 0 rgba(255, 55, 171, calc(var(--highlight-alpha) * var(--highlight-offset-opacity) * 0.42));
   }
 
   .section-highlight {
@@ -798,19 +785,19 @@ h1 span {
 
 @keyframes cmyk-shift {
   0% {
-    background-position: 24% 50%, 0 0, 1px 2px, 0 0;
+    background-position: 24% 50%;
   }
   28% {
-    background-position: 62% 47%, 1px 0, 2px 1px, 0 1px;
+    background-position: 62% 47%;
   }
   57% {
-    background-position: 80% 55%, 1px 1px, 0 1px, 0 -1px;
+    background-position: 80% 55%;
   }
   78% {
-    background-position: 58% 48%, 0 1px, 1px 2px, 0 0;
+    background-position: 58% 48%;
   }
   100% {
-    background-position: 24% 50%, 0 0, 1px 2px, 0 0;
+    background-position: 24% 50%;
   }
 }
 
