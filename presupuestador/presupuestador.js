@@ -1,25 +1,38 @@
 const ARS_FORMAT = new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 });
 const USD_FORMAT = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
-const CATALOG_PACKS = [
+const CATALOG_GROUPS = [
   {
-    key: 'landing-pro',
-    name: 'LANDING PRO',
-    description: 'Una página única, clara y efectiva para presentar tu negocio.',
-    priceUsd: 400,
+    category: 'WEB_',
+    subcategory: 'PACKS_',
+    items: [
+      { key: 'web-landing-pro', name: 'LANDING PRO', description: 'Una página única, clara y efectiva para presentar tu negocio.', priceUsd: 400 },
+      { key: 'web-web-pro', name: 'WEB PRO', description: 'Sitio completo con estructura y diseño profesional.', priceUsd: 900 },
+      { key: 'web-web-premium', name: 'WEB PREMIUM', description: 'Experiencia digital de alto nivel, pensada para diferenciarte.', priceUsd: 1500 },
+    ],
   },
   {
-    key: 'web-pro',
-    name: 'WEB PRO',
-    description: 'Sitio completo con estructura y diseño profesional.',
-    priceUsd: 900,
+    category: 'BRANDING_',
+    subcategory: 'MANUAL DE MARCA_',
+    items: [
+      { key: 'branding-starter', name: 'BRANDING STARTER', description: 'Logo, colores y tipografía para una base de marca sólida.', priceUsd: 250 },
+      { key: 'branding-pro', name: 'BRANDING PRO', description: 'Sistema visual completo aplicado a redes y web.', priceUsd: 600 },
+    ],
   },
   {
-    key: 'web-premium',
-    name: 'WEB PREMIUM',
-    description: 'Experiencia digital de alto nivel, pensada para diferenciarte.',
-    priceUsd: 1500,
+    category: 'EXTRAS_',
+    subcategory: 'MÓDULOS_',
+    items: [
+      { key: 'extra-ia-web', name: 'IA PARA TU WEB', description: 'Chatbot o asistente inteligente para atención inicial.', priceUsd: 300 },
+      { key: 'extra-automatizaciones', name: 'AUTOMATIZACIONES', description: 'Captura y seguimiento de clientes automatizado.', priceUsd: 200 },
+      { key: 'extra-experiencias', name: 'EXPERIENCIAS INTERACTIVAS', description: 'Juegos, quizzes o experiencias de alto engagement.', priceUsd: 400 },
+    ],
   },
 ];
+const CATALOG_ITEMS = CATALOG_GROUPS.flatMap((group) => group.items.map((item) => ({
+  ...item,
+  category: group.category,
+  subcategory: group.subcategory,
+})));
 
 const defaultData = {
   clientName: '',
@@ -37,8 +50,8 @@ const defaultData = {
   observations: '',
   closingText: 'Gracias por confiar en LAB_. Diseñamos cada propuesta para potenciar tu posicionamiento y tus resultados.',
   items: [
-    { catalogPackKey: 'landing-pro', name: 'LANDING PRO', description: 'Una página única, clara y efectiva para presentar tu negocio.', priceUsd: 400 },
-    { catalogPackKey: '', name: 'Branding Starter', description: 'Lineamientos visuales y piezas base para una marca sólida.', priceUsd: 250 },
+    { catalogPackKey: 'web-landing-pro', name: 'LANDING PRO', description: 'Una página única, clara y efectiva para presentar tu negocio.', priceUsd: 400 },
+    { catalogPackKey: 'branding-starter', name: 'BRANDING STARTER', description: 'Logo, colores y tipografía para una base de marca sólida.', priceUsd: 250 },
   ],
 };
 
@@ -156,7 +169,12 @@ const renderItemsEditor = () => {
   state.items.forEach((item, index) => {
     const packOptions = [
       '<option value="">Personalizado</option>',
-      ...CATALOG_PACKS.map((pack) => `<option value="${pack.key}" ${item.catalogPackKey === pack.key ? 'selected' : ''}>${pack.name}</option>`),
+      ...CATALOG_GROUPS.map((group) => {
+        const options = group.items
+          .map((catalogItem) => `<option value="${catalogItem.key}" ${item.catalogPackKey === catalogItem.key ? 'selected' : ''}>${group.subcategory} · ${catalogItem.name}</option>`)
+          .join('');
+        return `<optgroup label="${group.category}">${options}</optgroup>`;
+      }),
     ].join('');
 
     const wrapper = document.createElement('article');
@@ -167,7 +185,7 @@ const renderItemsEditor = () => {
         <button type="button" class="item-remove" data-remove-index="${index}">Eliminar</button>
       </div>
       <div class="item-row">
-        <select data-item-index="${index}" data-item-key="catalogPackKey" aria-label="Pack del catálogo">${packOptions}</select>
+        <select data-item-index="${index}" data-item-key="catalogPackKey" aria-label="Packs del catálogo por categoría">${packOptions}</select>
         <input type="text" data-item-index="${index}" data-item-key="name" value="${escapeAttribute(item.name)}" placeholder="Nombre del ítem" />
         <input type="text" data-item-index="${index}" data-item-key="description" value="${escapeAttribute(item.description || '')}" placeholder="Descripción opcional" />
         <input type="number" min="0" step="1" data-item-index="${index}" data-item-key="priceUsd" value="${item.priceUsd}" placeholder="USD" />
@@ -330,7 +348,7 @@ dom.form.addEventListener('input', (event) => {
 
     if (key === 'catalogPackKey') {
       state.items[index].catalogPackKey = target.value;
-      const selectedPack = CATALOG_PACKS.find((pack) => pack.key === target.value);
+      const selectedPack = CATALOG_ITEMS.find((pack) => pack.key === target.value);
       if (selectedPack) {
         state.items[index].name = selectedPack.name;
         state.items[index].description = selectedPack.description;
