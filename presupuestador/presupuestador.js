@@ -1,5 +1,25 @@
 const ARS_FORMAT = new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 });
 const USD_FORMAT = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+const CATALOG_PACKS = [
+  {
+    key: 'landing-pro',
+    name: 'LANDING PRO',
+    description: 'Una página única, clara y efectiva para presentar tu negocio.',
+    priceUsd: 400,
+  },
+  {
+    key: 'web-pro',
+    name: 'WEB PRO',
+    description: 'Sitio completo con estructura y diseño profesional.',
+    priceUsd: 900,
+  },
+  {
+    key: 'web-premium',
+    name: 'WEB PREMIUM',
+    description: 'Experiencia digital de alto nivel, pensada para diferenciarte.',
+    priceUsd: 1500,
+  },
+];
 
 const defaultData = {
   clientName: '',
@@ -17,8 +37,8 @@ const defaultData = {
   observations: '',
   closingText: 'Gracias por confiar en LAB_. Diseñamos cada propuesta para potenciar tu posicionamiento y tus resultados.',
   items: [
-    { name: 'Landing Pro', description: 'Landing premium enfocada en conversión y presencia de alto nivel.', priceUsd: 400 },
-    { name: 'Branding Starter', description: 'Lineamientos visuales y piezas base para una marca sólida.', priceUsd: 250 },
+    { catalogPackKey: 'landing-pro', name: 'LANDING PRO', description: 'Una página única, clara y efectiva para presentar tu negocio.', priceUsd: 400 },
+    { catalogPackKey: '', name: 'Branding Starter', description: 'Lineamientos visuales y piezas base para una marca sólida.', priceUsd: 250 },
   ],
 };
 
@@ -74,6 +94,7 @@ const formatInputDate = (value) => {
 };
 
 const sanitizeFileName = (name) => (name || 'Cliente').normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_]/g, '');
+const escapeAttribute = (value) => String(value ?? '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
 
 const readQueryPrefill = () => {
   const params = new URLSearchParams(window.location.search);
@@ -133,6 +154,11 @@ const renderItemsEditor = () => {
   dom.itemsList.innerHTML = '';
 
   state.items.forEach((item, index) => {
+    const packOptions = [
+      '<option value="">Personalizado</option>',
+      ...CATALOG_PACKS.map((pack) => `<option value="${pack.key}" ${item.catalogPackKey === pack.key ? 'selected' : ''}>${pack.name}</option>`),
+    ].join('');
+
     const wrapper = document.createElement('article');
     wrapper.className = 'item-card';
     wrapper.innerHTML = `
@@ -141,8 +167,9 @@ const renderItemsEditor = () => {
         <button type="button" class="item-remove" data-remove-index="${index}">Eliminar</button>
       </div>
       <div class="item-row">
-        <input type="text" data-item-index="${index}" data-item-key="name" value="${item.name}" placeholder="Nombre del ítem" />
-        <input type="text" data-item-index="${index}" data-item-key="description" value="${item.description || ''}" placeholder="Descripción opcional" />
+        <select data-item-index="${index}" data-item-key="catalogPackKey" aria-label="Pack del catálogo">${packOptions}</select>
+        <input type="text" data-item-index="${index}" data-item-key="name" value="${escapeAttribute(item.name)}" placeholder="Nombre del ítem" />
+        <input type="text" data-item-index="${index}" data-item-key="description" value="${escapeAttribute(item.description || '')}" placeholder="Descripción opcional" />
         <input type="number" min="0" step="1" data-item-index="${index}" data-item-key="priceUsd" value="${item.priceUsd}" placeholder="USD" />
       </div>
     `;
@@ -196,7 +223,7 @@ const render = () => {
 };
 
 const addItem = () => {
-  state.items.push({ name: '', description: '', priceUsd: 0 });
+  state.items.push({ catalogPackKey: '', name: '', description: '', priceUsd: 0 });
   render();
 };
 
@@ -296,11 +323,23 @@ const exportPdf = async () => {
 dom.form.addEventListener('input', (event) => {
   const target = event.target;
 
-  if (target.matches('[data-item-index]')) {
+  if (target.matches('[data-item-index][data-item-key]')) {
     const index = Number(target.dataset.itemIndex);
     const key = target.dataset.itemKey;
     if (!state.items[index]) return;
-    state.items[index][key] = key === 'priceUsd' ? Number(target.value) || 0 : target.value;
+
+    if (key === 'catalogPackKey') {
+      state.items[index].catalogPackKey = target.value;
+      const selectedPack = CATALOG_PACKS.find((pack) => pack.key === target.value);
+      if (selectedPack) {
+        state.items[index].name = selectedPack.name;
+        state.items[index].description = selectedPack.description;
+        state.items[index].priceUsd = selectedPack.priceUsd;
+      }
+    } else {
+      state.items[index][key] = key === 'priceUsd' ? Number(target.value) || 0 : target.value;
+    }
+
     render();
     return;
   }
@@ -314,7 +353,7 @@ dom.form.addEventListener('click', (event) => {
   const index = Number(removeButton.dataset.removeIndex);
   state.items.splice(index, 1);
   if (!state.items.length) {
-    state.items.push({ name: '', description: '', priceUsd: 0 });
+    state.items.push({ catalogPackKey: '', name: '', description: '', priceUsd: 0 });
   }
   render();
 });
