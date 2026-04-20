@@ -1203,6 +1203,7 @@ if (projectWizard) {
   let activeSequence = phaseOneSequence;
   let currentIndex = 0;
   let latestSummary = '';
+  const resultPanels = [phaseOneResult, successMessage].filter(Boolean);
 
   const setPhaseTwoEnabled = (enabled) => {
     phaseTwoInputs.forEach((input) => {
@@ -1250,6 +1251,21 @@ if (projectWizard) {
     }
 
     phaseOneResult.hidden = false;
+  };
+
+  const hidePanel = (panel) => {
+    if (!panel) return;
+    panel.classList.remove('is-visible');
+    panel.hidden = true;
+  };
+
+  const showPanel = (panel) => {
+    resultPanels.forEach((item) => hidePanel(item));
+    if (!panel) return;
+    panel.hidden = false;
+    requestAnimationFrame(() => {
+      panel.classList.add('is-visible');
+    });
   };
 
   const renderFinalCard = (values, packSugerido) => {
@@ -1365,7 +1381,7 @@ if (projectWizard) {
     activeSequence = phaseTwoSequence;
     setPhaseTwoEnabled(true);
 
-    if (phaseOneResult) phaseOneResult.hidden = true;
+    hidePanel(phaseOneResult);
     projectWizard.hidden = false;
 
     showStep(0);
@@ -1389,6 +1405,7 @@ if (projectWizard) {
       renderPhaseOneResult(formValues, packSugerido);
       projectWizard.hidden = true;
       if (liveSuggestion) liveSuggestion.hidden = true;
+      showPanel(phaseOneResult);
       return;
     }
 
@@ -1399,11 +1416,10 @@ if (projectWizard) {
     syncSuggestion();
     projectWizard.hidden = true;
     if (liveSuggestion) liveSuggestion.hidden = true;
-    if (successMessage) successMessage.hidden = false;
+    showPanel(successMessage);
   });
 
-  if (phaseOneResult) phaseOneResult.hidden = true;
-  if (successMessage) successMessage.hidden = true;
+  resultPanels.forEach((panel) => hidePanel(panel));
   if (liveSuggestion) liveSuggestion.hidden = true;
   setPhaseTwoEnabled(false);
   showStep(0);
