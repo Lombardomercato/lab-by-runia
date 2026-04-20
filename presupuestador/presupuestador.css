@@ -213,15 +213,25 @@
     radial-gradient(circle at 88% 9%, rgba(218, 202, 174, 0.17), transparent 28%),
     radial-gradient(circle at 12% 100%, rgba(185, 164, 132, 0.11), transparent 33%),
     linear-gradient(170deg, rgba(15, 15, 15, 0.95), rgba(10, 10, 10, 0.98));
-  padding: 1.35rem;
+  padding: 0.72rem;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+}
+
+.proposal-inner-frame {
+  border: 1px solid rgba(236, 226, 208, 0.15);
+  border-radius: 1rem;
+  padding: 1.12rem;
+  background: linear-gradient(165deg, rgba(13, 13, 13, 0.86), rgba(10, 10, 10, 0.78));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.04),
+    inset 0 -18px 34px rgba(0, 0, 0, 0.2);
 }
 
 .proposal-header {
   display: flex;
   justify-content: space-between;
   gap: 1rem;
-  margin-bottom: 1.1rem;
+  margin-bottom: 1rem;
 }
 
 .proposal-brand {
@@ -269,7 +279,7 @@
 }
 
 .preview-summary {
-  margin-top: 1rem;
+  margin-top: 0.9rem;
   border: 1px solid var(--line);
   border-radius: 1rem;
   padding: 1rem;
@@ -312,7 +322,7 @@
 }
 
 .preview-terms {
-  margin-top: 1.1rem;
+  margin-top: 0.95rem;
   border: 1px solid var(--line);
   border-radius: 1rem;
   padding: 0.95rem;
@@ -328,7 +338,7 @@
 
 .notes,
 .preview-footer {
-  margin-top: 0.75rem;
+  margin-top: 0.68rem;
   font-size: 0.9rem;
   color: var(--muted);
 }
