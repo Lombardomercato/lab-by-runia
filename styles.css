@@ -515,6 +515,67 @@ h1 span {
   isolation: isolate;
 }
 
+.contrast-break {
+  --light-bg: #ece5d8;
+  --light-text: #161513;
+  position: relative;
+  padding-block: clamp(5.5rem, 12vw, 8.5rem);
+  background: linear-gradient(180deg, #f1eadf 0%, var(--light-bg) 100%);
+  color: var(--light-text);
+  overflow: hidden;
+}
+
+.contrast-break::before,
+.contrast-break::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: clamp(4rem, 9vw, 7rem);
+  pointer-events: none;
+}
+
+.contrast-break::before {
+  top: 0;
+  background: linear-gradient(180deg, rgba(7, 7, 7, 0.92) 0%, rgba(7, 7, 7, 0) 100%);
+}
+
+.contrast-break::after {
+  bottom: 0;
+  background: linear-gradient(180deg, rgba(236, 229, 216, 0) 0%, rgba(7, 7, 7, 0.8) 100%);
+}
+
+.contrast-break .container {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: 1rem;
+}
+
+.contrast-tag {
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.13em;
+  font-size: 0.72rem;
+  color: color-mix(in srgb, var(--light-text) 62%, #746f67);
+}
+
+.contrast-claim {
+  margin: 0;
+  max-width: 17ch;
+  font-size: clamp(2.05rem, 4.8vw, 4.4rem);
+  line-height: 1.04;
+  letter-spacing: -0.02em;
+  color: var(--light-text);
+  text-wrap: balance;
+}
+
+.contrast-claim span {
+  display: block;
+  margin-top: 0.45rem;
+  color: color-mix(in srgb, var(--light-text) 88%, #3a342d);
+}
+
 .showcase {
   position: relative;
   width: 100vw;
@@ -845,6 +906,12 @@ h1 span {
   z-index: -1;
   transform: translate3d(0, var(--section-shift, 0px), 0);
   pointer-events: none;
+}
+
+.contrast-break.section::before {
+  background:
+    radial-gradient(58rem 30rem at 18% 24%, rgba(116, 104, 84, 0.07), transparent 72%),
+    radial-gradient(50rem 28rem at 82% 80%, rgba(124, 109, 87, 0.05), transparent 72%);
 }
 
 #services::before {
