@@ -1,0 +1,48 @@
+#letter-glitch-root {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: 1.75rem;
+  overflow: hidden;
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.hero-visual {
+  position: relative;
+  isolation: isolate;
+}
+
+.hero-visual .float-card {
+  position: relative;
+  z-index: 1;
+}
+
+.letter-glitch {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background-color: #000;
+  overflow: hidden;
+}
+
+.letter-glitch__canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.letter-glitch__outer-vignette,
+.letter-glitch__center-vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.letter-glitch__outer-vignette {
+  background: radial-gradient(circle, rgba(0, 0, 0, 0) 60%, rgba(0, 0, 0, 1) 100%);
+}
+
+.letter-glitch__center-vignette {
+  background: radial-gradient(circle, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0) 60%);
+}
