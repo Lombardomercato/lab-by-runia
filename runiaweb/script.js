@@ -8,6 +8,102 @@ const updateHeader = () => {
 updateHeader();
 window.addEventListener("scroll", updateHeader, { passive: true });
 
+const cardSwap = document.querySelector(".runia-card-swap");
+const swapCards = cardSwap ? Array.from(cardSwap.querySelectorAll(".runia-swap-card")) : [];
+const isCompactCardStack = window.matchMedia("(max-width: 520px)").matches;
+const swapConfig = {
+  cardDistance: isCompactCardStack ? 24 : 40,
+  verticalDistance: isCompactCardStack ? 28 : 42,
+  delay: 3400,
+  skewAmount: 2.5,
+  dropDistance: isCompactCardStack ? 240 : 340,
+  dropDuration: 820,
+  moveDelay: 260,
+  returnDelay: 460
+};
+
+const makeSwapSlot = (index, total) => ({
+  x: index * swapConfig.cardDistance,
+  y: -index * swapConfig.verticalDistance,
+  z: -index * swapConfig.cardDistance * 1.5,
+  zIndex: total - index
+});
+
+const placeSwapCard = (card, slot, opacity = 1) => {
+  card.style.zIndex = String(slot.zIndex);
+  card.style.opacity = String(opacity);
+  card.style.filter = `saturate(${Math.max(0.84, 1 - (swapCards.length - slot.zIndex) * 0.035)}) brightness(${Math.max(0.88, 1 - (swapCards.length - slot.zIndex) * 0.025)})`;
+  card.style.transform = `translate(-50%, -50%) translate3d(${slot.x}px, ${slot.y}px, ${slot.z}px) skewY(${swapConfig.skewAmount}deg)`;
+};
+
+const renderSwapCards = () => {
+  swapCards.forEach((card, index) => {
+    const opacity = Math.max(0.46, 1 - index * 0.12);
+    placeSwapCard(card, makeSwapSlot(index, swapCards.length), opacity);
+  });
+};
+
+if (cardSwap && swapCards.length) {
+  renderSwapCards();
+
+  if (!prefersReducedMotion) {
+    let swapTimer;
+    let isPaused = false;
+    let isSwapping = false;
+
+    const advanceSwap = () => {
+      if (isPaused || isSwapping || swapCards.length < 2) return;
+      isSwapping = true;
+      const first = swapCards.shift();
+      const rest = [...swapCards];
+      const backSlot = makeSwapSlot(swapCards.length, swapCards.length + 1);
+
+      first.classList.add("is-exiting");
+      first.style.transform = `translate(-50%, -50%) translate3d(0px, ${swapConfig.dropDistance}px, 80px) skewY(${swapConfig.skewAmount}deg)`;
+
+      window.setTimeout(() => {
+        rest.forEach((card, index) => {
+          const opacity = Math.max(0.46, 1 - index * 0.12);
+          placeSwapCard(card, makeSwapSlot(index, rest.length + 1), opacity);
+        });
+      }, swapConfig.moveDelay);
+
+      window.setTimeout(() => {
+        first.style.zIndex = String(backSlot.zIndex);
+        first.style.opacity = "0.46";
+        first.style.filter = "saturate(0.86) brightness(0.9)";
+        first.style.transform = `translate(-50%, -50%) translate3d(${backSlot.x}px, ${backSlot.y}px, ${backSlot.z}px) skewY(${swapConfig.skewAmount}deg)`;
+      }, swapConfig.returnDelay);
+
+      window.setTimeout(() => {
+        first.classList.remove("is-exiting");
+        swapCards.push(first);
+        renderSwapCards();
+        isSwapping = false;
+      }, swapConfig.dropDuration);
+    };
+
+    window.setTimeout(advanceSwap, 450);
+    swapTimer = window.setInterval(advanceSwap, swapConfig.delay);
+
+    cardSwap.addEventListener("mouseenter", () => {
+      isPaused = true;
+    });
+
+    cardSwap.addEventListener("mouseleave", () => {
+      isPaused = false;
+    });
+
+    cardSwap.addEventListener("focusin", () => {
+      isPaused = true;
+    });
+
+    cardSwap.addEventListener("focusout", () => {
+      isPaused = false;
+    });
+  }
+}
+
 const revealTargets = document.querySelectorAll(
   ".speed-panel, .speed-cards article, .problem-list article, .system-board article, .result-strip article, .runia-panel, .timeline li, .compare-grid article, .plans article, .final-panel"
 );
