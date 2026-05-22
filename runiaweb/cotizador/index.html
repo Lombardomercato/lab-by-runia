@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Cotizador | Runia Web</title>
+    <meta name="description" content="Cotizador público de Runia Web para estimar el punto de partida ideal." />
+    <meta name="theme-color" content="#f7f4ef" />
+    <link rel="icon" type="image/png" href="https://www.runia.ar/images/logo-runia-ico.png" />
+    <link rel="stylesheet" href="../styles.css" />
+    <link rel="stylesheet" href="../tools.css" />
+  </head>
+  <body class="tool-page">
+    <header class="header">
+      <nav class="nav container" aria-label="Principal">
+        <a href="../" class="brand" aria-label="RUNIA Web">
+          <img src="https://www.runia.ar/images/runialogo.png" alt="Runia" />
+          <span>Web</span>
+        </a>
+        <div class="nav-links">
+          <a href="../cotizador/">Cotizador</a>
+          <a href="../brief/">Brief</a>
+          <a href="../catalogo/">Catálogo</a>
+          <a href="../presupuestador/">Presupuesto</a>
+        </div>
+        <a class="button button-dark nav-button" href="../brief/">Armar brief</a>
+      </nav>
+    </header>
+
+    <main class="tool-main">
+      <section class="tool-hero">
+        <div class="container tool-hero-grid">
+          <div>
+            <p class="eyebrow"><span></span> Cotizador público</p>
+            <h1 class="tool-title">
+              <span>Calculá tu web</span>
+              <span class="muted">en</span>
+              <span class="accent">1 minuto.</span>
+            </h1>
+            <p class="tool-lead">
+              Respondé algunas preguntas y te mostramos qué tipo de web necesitás para salir online rápido.
+            </p>
+          </div>
+          <aside class="tool-status-card">
+            <p class="tool-label">Flujo comercial</p>
+            <strong>Web → Sistema</strong>
+            <p>Primero ordenamos presencia y captación. Después escalamos con automatización, CRM o IA cuando tenga sentido.</p>
+          </aside>
+        </div>
+      </section>
+
+      <section class="tool-section">
+        <div class="container tool-grid">
+          <form class="tool-panel tool-form" data-quote-form>
+            <label class="tool-field">
+              <span>Nombre</span>
+              <input name="name" placeholder="Tu nombre" />
+            </label>
+
+            <label class="tool-field">
+              <span>Empresa</span>
+              <input name="business" placeholder="Ej: Clínica Norte" />
+            </label>
+
+            <label class="tool-field">
+              <span>Rubro</span>
+              <input name="industry" placeholder="Ej: salud, real estate, educación" />
+            </label>
+
+            <label class="tool-field">
+              <span>WhatsApp</span>
+              <input name="whatsapp" inputmode="tel" placeholder="Ej: +54 9 11 0000 0000" />
+            </label>
+
+            <fieldset class="tool-fieldset">
+              <legend>¿Qué necesitás?</legend>
+              <div class="tool-options">
+                <label class="tool-option"><input type="radio" name="need" value="48hs" checked /> Landing 48hs</label>
+                <label class="tool-option"><input type="radio" name="need" value="institucional" /> Web institucional</label>
+                <label class="tool-option"><input type="radio" name="need" value="comercial" /> Web comercial</label>
+                <label class="tool-option"><input type="radio" name="need" value="sistema" /> Web + sistema</label>
+              </div>
+            </fieldset>
+
+            <fieldset class="tool-fieldset">
+              <legend>Materiales listos</legend>
+              <div class="tool-options">
+                <label class="tool-option"><input type="checkbox" name="assets" value="logo" /> Tengo logo</label>
+                <label class="tool-option"><input type="checkbox" name="assets" value="textos" /> Tengo textos</label>
+                <label class="tool-option"><input type="checkbox" name="assets" value="fotos" /> Tengo fotos</label>
+              </div>
+            </fieldset>
+
+            <fieldset class="tool-fieldset">
+              <legend>Funcionalidades</legend>
+              <div class="tool-options">
+                <label class="tool-option"><input type="checkbox" name="features" value="formulario" /> Necesito formulario</label>
+                <label class="tool-option"><input type="checkbox" name="features" value="whatsapp" /> WhatsApp integrado</label>
+                <label class="tool-option"><input type="checkbox" name="features" value="catalogo" /> Catálogo / productos</label>
+                <label class="tool-option"><input type="checkbox" name="features" value="automatizacion" /> Automatización o IA más adelante</label>
+              </div>
+            </fieldset>
+          </form>
+
+          <aside class="tool-result" aria-live="polite">
+            <p class="result-kicker">Resultado</p>
+            <h2 data-quote-name>Web Comercial</h2>
+            <p class="catalog-price" data-quote-range>Precio estimado: desde USD 850</p>
+            <p data-quote-time>Tiempo estimado: desde 48hs</p>
+            <p data-quote-text></p>
+            <ul class="tool-result-list" data-quote-list></ul>
+            <div class="tool-actions">
+              <a class="button button-soft" data-quote-whatsapp href="#" target="_blank" rel="noopener noreferrer">Enviar por WhatsApp</a>
+              <a class="button button-dark" data-quote-budget href="../presupuestador/">Generar presupuesto</a>
+              <a class="button button-soft" data-quote-brief href="../brief/">Completar brief</a>
+            </div>
+          </aside>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="container footer-inner">
+        <a href="../" class="brand" aria-label="RUNIA Web">
+          <img src="https://www.runia.ar/images/runialogo.png" alt="Runia" />
+          <span>Web</span>
+        </a>
+        <div class="footer-links">
+          <a href="../cotizador/">Cotizador</a>
+          <a href="../brief/">Brief</a>
+          <a href="../catalogo/">Catálogo</a>
+          <a href="../presupuestador/">Presupuesto</a>
+        </div>
+        <p>Sistema comercial de Runia Web.</p>
+      </div>
+    </footer>
+
+    <script src="../script.js"></script>
+    <script src="../tools.js"></script>
+  </body>
+</html>
