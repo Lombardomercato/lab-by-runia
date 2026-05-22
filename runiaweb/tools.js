@@ -24,19 +24,19 @@ const PACKS = {
     bullets: ["Estructura comercial", "Formularios", "Copy base"]
   },
   sistema: {
-    name: "Web + Sistema",
+    name: "Web Escalable",
     price: 1500,
     time: "según alcance",
-    description: "Para tu caso recomendamos: Web + Sistema. Ideal si querés dejar la base preparada para automatización, CRM o IA.",
-    bullets: ["Web comercial", "Seguimiento inicial", "Escalable con Runia Systems"]
+    description: "Para tu caso recomendamos: Web Escalable. Ideal si querés una web preparada para crecer sin rehacer todo.",
+    bullets: ["Web comercial", "Secciones ampliables", "Base lista para campañas"]
   }
 };
 
 const ADDONS = {
   formulario: { name: "Formulario simple", price: 90 },
   whatsapp: { name: "WhatsApp integrado", price: 90 },
-  catalogo: { name: "Catálogo / productos", price: 280 },
-  automatizacion: { name: "Automatización o IA futura", price: 350 }
+  catalogo: { name: "Productos o servicios", price: 280 },
+  automatizacion: { name: "Base preparada para crecer", price: 350 }
 };
 
 const getCheckedValues = (form, name) => Array.from(form.querySelectorAll(`[name="${name}"]:checked`)).map((input) => input.value);
@@ -105,7 +105,7 @@ const initQuote = () => {
       nombre: values.name || "",
       whatsapp: values.whatsapp || ""
     });
-    briefLink.href = `../brief/?${params.toString()}`;
+    if (briefLink) briefLink.href = `../brief/?${params.toString()}`;
     if (budgetLink) budgetLink.href = `../presupuestador/?${params.toString()}`;
 
     const message = `Hola Runia Web. Quiero cotizar mi web.

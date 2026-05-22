@@ -18,12 +18,14 @@
           <span>Web</span>
         </a>
         <div class="nav-links">
+          <a href="../#inicio">Web</a>
+          <a href="../#48horas">48 horas</a>
+          <a href="../#sistema">Qué hacemos</a>
+          <a href="../#planes">Planes</a>
           <a href="../cotizador/">Cotizador</a>
-          <a href="../brief/">Brief</a>
-          <a href="../catalogo/">Catálogo</a>
-          <a href="../presupuestador/">Presupuesto</a>
+          <a href="../#contacto">Contacto</a>
         </div>
-        <a class="button button-dark nav-button" href="../brief/">Armar brief</a>
+        <a class="button button-dark nav-button" href="#cotizador">Cotizar</a>
       </nav>
     </header>
 
@@ -34,7 +36,7 @@
             <p class="eyebrow"><span></span> Cotizador público</p>
             <h1 class="tool-title">
               <span>Calculá tu web</span>
-              <span class="muted">en</span>
+              <span class="muted">en solo</span>
               <span class="accent">1 minuto.</span>
             </h1>
             <p class="tool-lead">
@@ -42,14 +44,14 @@
             </p>
           </div>
           <aside class="tool-status-card">
-            <p class="tool-label">Flujo comercial</p>
-            <strong>Web → Sistema</strong>
-            <p>Primero ordenamos presencia y captación. Después escalamos con automatización, CRM o IA cuando tenga sentido.</p>
+            <p class="tool-label">Resultado inmediato</p>
+            <strong>Precio desde</strong>
+            <p>Te orientamos con el tipo de web, tiempo estimado y próximo paso para pedirla fácil.</p>
           </aside>
         </div>
       </section>
 
-      <section class="tool-section">
+      <section class="tool-section" id="cotizador">
         <div class="container tool-grid">
           <form class="tool-panel tool-form" data-quote-form>
             <label class="tool-field">
@@ -75,34 +77,34 @@
             <fieldset class="tool-fieldset">
               <legend>¿Qué necesitás?</legend>
               <div class="tool-options">
-                <label class="tool-option"><input type="radio" name="need" value="48hs" checked /> Landing 48hs</label>
-                <label class="tool-option"><input type="radio" name="need" value="institucional" /> Web institucional</label>
-                <label class="tool-option"><input type="radio" name="need" value="comercial" /> Web comercial</label>
-                <label class="tool-option"><input type="radio" name="need" value="sistema" /> Web + sistema</label>
+                <label class="tool-option" data-icon="↗"><input type="radio" name="need" value="48hs" checked /> <span>Landing 48hs</span></label>
+                <label class="tool-option" data-icon="▣"><input type="radio" name="need" value="institucional" /> <span>Web institucional</span></label>
+                <label class="tool-option" data-icon="+"><input type="radio" name="need" value="comercial" /> <span>Web comercial</span></label>
+                <label class="tool-option" data-icon="∞"><input type="radio" name="need" value="sistema" /> <span>Web escalable</span></label>
               </div>
             </fieldset>
 
             <fieldset class="tool-fieldset">
               <legend>Materiales listos</legend>
               <div class="tool-options">
-                <label class="tool-option"><input type="checkbox" name="assets" value="logo" /> Tengo logo</label>
-                <label class="tool-option"><input type="checkbox" name="assets" value="textos" /> Tengo textos</label>
-                <label class="tool-option"><input type="checkbox" name="assets" value="fotos" /> Tengo fotos</label>
+                <label class="tool-option" data-icon="◎"><input type="checkbox" name="assets" value="logo" /> <span>Tengo logo</span></label>
+                <label class="tool-option" data-icon="≡"><input type="checkbox" name="assets" value="textos" /> <span>Tengo textos</span></label>
+                <label class="tool-option" data-icon="◌"><input type="checkbox" name="assets" value="fotos" /> <span>Tengo fotos</span></label>
               </div>
             </fieldset>
 
             <fieldset class="tool-fieldset">
               <legend>Funcionalidades</legend>
               <div class="tool-options">
-                <label class="tool-option"><input type="checkbox" name="features" value="formulario" /> Necesito formulario</label>
-                <label class="tool-option"><input type="checkbox" name="features" value="whatsapp" /> WhatsApp integrado</label>
-                <label class="tool-option"><input type="checkbox" name="features" value="catalogo" /> Catálogo / productos</label>
-                <label class="tool-option"><input type="checkbox" name="features" value="automatizacion" /> Automatización o IA más adelante</label>
+                <label class="tool-option" data-icon="□"><input type="checkbox" name="features" value="formulario" /> <span>Necesito formulario</span></label>
+                <label class="tool-option" data-icon="↗"><input type="checkbox" name="features" value="whatsapp" /> <span>WhatsApp integrado</span></label>
+                <label class="tool-option" data-icon="▦"><input type="checkbox" name="features" value="catalogo" /> <span>Productos o servicios</span></label>
+                <label class="tool-option" data-icon="↑"><input type="checkbox" name="features" value="automatizacion" /> <span>Preparada para crecer</span></label>
               </div>
             </fieldset>
           </form>
 
-          <aside class="tool-result" aria-live="polite">
+          <aside class="tool-result quote-result" aria-live="polite">
             <p class="result-kicker">Resultado</p>
             <h2 data-quote-name>Web Comercial</h2>
             <p class="catalog-price" data-quote-range>Precio estimado: desde USD 850</p>
@@ -110,9 +112,8 @@
             <p data-quote-text></p>
             <ul class="tool-result-list" data-quote-list></ul>
             <div class="tool-actions">
-              <a class="button button-soft" data-quote-whatsapp href="#" target="_blank" rel="noopener noreferrer">Enviar por WhatsApp</a>
-              <a class="button button-dark" data-quote-budget href="../presupuestador/">Generar presupuesto</a>
-              <a class="button button-soft" data-quote-brief href="../brief/">Completar brief</a>
+              <a class="button button-light" data-quote-whatsapp href="#" target="_blank" rel="noopener noreferrer">Enviar por WhatsApp</a>
+              <a class="button button-soft" href="../#planes">Ver planes</a>
             </div>
           </aside>
         </div>
@@ -126,12 +127,13 @@
           <span>Web</span>
         </a>
         <div class="footer-links">
+          <a href="../#48horas">48 horas</a>
+          <a href="../#sistema">Qué hacemos</a>
+          <a href="../#planes">Planes</a>
           <a href="../cotizador/">Cotizador</a>
-          <a href="../brief/">Brief</a>
-          <a href="../catalogo/">Catálogo</a>
-          <a href="../presupuestador/">Presupuesto</a>
+          <a href="../#contacto">Contacto</a>
         </div>
-        <p>Sistema comercial de Runia Web.</p>
+        <p>Webs comerciales claras, rápidas y fáciles de pedir.</p>
       </div>
     </footer>
 

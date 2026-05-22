@@ -45,8 +45,9 @@
 
 .tool-title .accent {
   color: var(--orange);
-  font-size: 1.04em;
-  font-weight: 370;
+  font-size: 1.32em;
+  font-weight: 380;
+  line-height: 0.82;
 }
 
 .tool-lead {
@@ -206,6 +207,7 @@
 }
 
 .tool-option {
+  position: relative;
   min-height: 4.5rem;
   padding: 0.9rem;
   border: 1px solid rgba(27, 25, 22, 0.1);
@@ -218,15 +220,46 @@
   transition: border-color 180ms ease, background-color 180ms ease;
 }
 
+.tool-option::before {
+  content: attr(data-icon);
+  width: 1.85rem;
+  height: 1.85rem;
+  border: 1px solid rgba(27, 25, 22, 0.12);
+  background: rgba(255, 253, 249, 0.7);
+  color: rgba(27, 25, 22, 0.68);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.9rem;
+  line-height: 1;
+  transition: border-color 180ms ease, background-color 180ms ease, color 180ms ease, transform 180ms ease;
+}
+
 .tool-option:hover,
 .tool-option:has(input:checked) {
   border-color: rgba(237, 154, 38, 0.45);
   background: rgba(255, 253, 249, 0.92);
 }
 
+.tool-option:hover::before,
+.tool-option:has(input:checked)::before {
+  border-color: rgba(237, 154, 38, 0.45);
+  background: rgba(237, 154, 38, 0.12);
+  color: #9a6118;
+  transform: translateY(-1px);
+}
+
 .tool-option input {
-  margin-top: 0.2rem;
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
   accent-color: var(--orange);
+}
+
+.tool-option span {
+  padding-top: 0.15rem;
 }
 
 .tool-actions {
@@ -239,6 +272,34 @@
 .tool-result {
   position: sticky;
   top: 6rem;
+}
+
+.quote-result {
+  border-color: rgba(247, 244, 239, 0.14);
+  background:
+    linear-gradient(rgba(247, 244, 239, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(247, 244, 239, 0.045) 1px, transparent 1px),
+    var(--dark);
+  background-size: 54px 54px, 54px 54px, auto;
+  color: var(--bg);
+}
+
+.quote-result h2 {
+  color: var(--bg);
+}
+
+.quote-result p,
+.quote-result .tool-result-list li {
+  color: rgba(247, 244, 239, 0.72);
+}
+
+.quote-result .result-kicker,
+.quote-result .catalog-price {
+  color: var(--orange);
+}
+
+.quote-result .tool-result-list li {
+  border-bottom-color: rgba(247, 244, 239, 0.12);
 }
 
 .tool-result h2,
@@ -334,6 +395,13 @@
   font-size: clamp(1.35rem, 2.4vw, 2.1rem);
   line-height: 1;
   font-weight: 390;
+}
+
+.tool-result [data-quote-range] {
+  max-width: 100%;
+  font-size: clamp(1.15rem, 2vw, 1.75rem);
+  line-height: 1.12;
+  text-wrap: balance;
 }
 
 .featured-tool-card {
