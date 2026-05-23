@@ -5,38 +5,42 @@ const PACKS = {
   "48hs": {
     name: "Web 48hs",
     price: 450,
-    time: "desde 48hs",
-    description: "Para tu caso recomendamos: Web 48hs. Ideal para salir online rápido con una landing clara y profesional.",
-    bullets: ["Landing one page", "WhatsApp y CTA", "Formulario simple"]
-  },
-  institucional: {
-    name: "Web Institucional",
-    price: 650,
-    time: "desde 72hs",
-    description: "Para tu caso recomendamos: Web Institucional. Ideal para explicar quiénes son, qué ofrecen y generar confianza.",
-    bullets: ["Secciones institucionales", "Diseño responsive", "Contacto directo"]
+    priceLabel: "USD 450",
+    description: "Para empresas que necesitan salir online rápido.",
+    bullets: ["Landing one page", "Diseño responsive", "WhatsApp integrado", "Formulario simple", "CTA principal", "Estructura comercial base", "Entrega express 48hs"]
   },
   comercial: {
     name: "Web Comercial",
     price: 850,
-    time: "desde 48hs",
-    description: "Para tu caso recomendamos: Web Comercial. Ideal para captar consultas y ordenar el recorrido de venta.",
-    bullets: ["Estructura comercial", "Formularios", "Copy base"]
+    priceLabel: "USD 850",
+    description: "Para empresas que quieren captar más consultas y vender mejor.",
+    bullets: ["Web con estructura comercial", "Secciones estratégicas", "Copy base", "WhatsApp y formularios", "Optimización mobile", "Base lista para campañas", "Mejor jerarquía visual y recorrido comercial"]
   },
   sistema: {
-    name: "Web Escalable",
+    name: "Web + Sistema",
     price: 1500,
-    time: "según alcance",
-    description: "Para tu caso recomendamos: Web Escalable. Ideal si querés una web preparada para crecer sin rehacer todo.",
-    bullets: ["Web comercial", "Secciones ampliables", "Base lista para campañas"]
+    priceLabel: "desde USD 1.500",
+    description: "Para empresas que quieren conectar su web con automatización o seguimiento.",
+    bullets: ["Web comercial", "CRM o pipeline simple", "Automatización inicial", "Seguimiento de consultas", "Dashboards básicos", "Integración futura con Runia"]
   }
 };
 
 const ADDONS = {
-  formulario: { name: "Formulario simple", price: 90 },
-  whatsapp: { name: "WhatsApp integrado", price: 90 },
-  catalogo: { name: "Productos o servicios", price: 280 },
-  automatizacion: { name: "Base preparada para crecer", price: 350 }
+  whatsapp: { name: "WhatsApp integrado" },
+  formulario: { name: "Formulario de contacto" },
+  mapa: { name: "Mapa / ubicación" },
+  catalogo: { name: "Catálogo de servicios o productos" },
+  secciones: { name: "Secciones comerciales" },
+  automatizacion: { name: "Automatización futura" }
+};
+
+const QUOTE_EXTRAS = {
+  brandingBasic: { name: "Branding básico", detail: "USD 250 · Logo simple, paleta de colores, tipografías y guía visual básica." },
+  brandingPro: { name: "Branding pro", detail: "USD 650 · Logo, variantes, paleta, tipografías, mini manual de marca y aplicaciones básicas." },
+  copywriting: { name: "Copywriting avanzado", detail: "USD 250" },
+  productsLoad: { name: "Carga de productos/servicios", detail: "desde USD 150" },
+  maintenance: { name: "Mantenimiento mensual", detail: "desde USD 80/mes" },
+  automationExtra: { name: "Automatización / IA", detail: "a cotizar" }
 };
 
 const getCheckedValues = (form, name) => Array.from(form.querySelectorAll(`[name="${name}"]:checked`)).map((input) => input.value);
@@ -45,11 +49,10 @@ const priceText = (price) => `desde USD ${Number(price || 0).toLocaleString("en-
 const escapeHtml = (value) => String(value ?? "").replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" })[char]);
 
 const recommendPack = (values, features = []) => {
-  const need = values.need || "48hs";
+  const need = values.need || "rapido";
 
   if (need === "sistema" || features.includes("automatizacion")) return "sistema";
-  if (need === "comercial" || features.includes("catalogo")) return "comercial";
-  if (need === "institucional") return "institucional";
+  if (need === "consultas" || need === "productos" || need === "imagen" || features.includes("catalogo") || features.includes("secciones")) return "comercial";
   return "48hs";
 };
 
@@ -64,6 +67,20 @@ const renderResultList = (node, items) => {
   node.innerHTML = items.map((item) => `<li>${escapeHtml(item)}</li>`).join("");
 };
 
+const renderQuoteExtras = (node, items) => {
+  if (!node) return;
+  if (!items.length) {
+    node.innerHTML = "";
+    return;
+  }
+  node.innerHTML = `
+    <p class="tool-label">Extras opcionales</p>
+    <ul class="tool-result-list">
+      ${items.map((item) => `<li><strong>${escapeHtml(item.name)}</strong><span>${escapeHtml(item.detail)}</span></li>`).join("")}
+    </ul>
+  `;
+};
+
 const initQuote = () => {
   const form = document.querySelector("[data-quote-form]");
   if (!form) return;
@@ -73,52 +90,51 @@ const initQuote = () => {
   const resultTime = document.querySelector("[data-quote-time]");
   const resultText = document.querySelector("[data-quote-text]");
   const resultList = document.querySelector("[data-quote-list]");
-  const briefLink = document.querySelector("[data-quote-brief]");
-  const budgetLink = document.querySelector("[data-quote-budget]");
-  const whatsappLink = document.querySelector("[data-quote-whatsapp]");
+  const resultExtras = document.querySelector("[data-quote-extras]");
+  const whatsappLinks = document.querySelectorAll("[data-quote-whatsapp]");
 
   const update = () => {
     const values = getFormObject(form);
     const features = getCheckedValues(form, "features");
     const assets = getCheckedValues(form, "assets");
+    const extrasKeys = getCheckedValues(form, "extras");
     const packKey = recommendPack(values, features);
     const pack = PACKS[packKey];
-    const estimate = estimatePrice(packKey, features);
-    const extras = features.map((key) => ADDONS[key]?.name).filter(Boolean);
+    const featuresText = features.map((key) => ADDONS[key]?.name).filter(Boolean);
+    const extras = extrasKeys.map((key) => QUOTE_EXTRAS[key]).filter(Boolean);
 
     resultName.textContent = pack.name;
-    resultRange.textContent = `Precio estimado: ${priceText(estimate)}`;
-    if (resultTime) resultTime.textContent = `Tiempo estimado: ${pack.time}`;
+    resultRange.textContent = `Precio: ${pack.priceLabel}`;
+    if (resultTime) resultTime.textContent = "";
     resultText.textContent = pack.description;
-    renderResultList(resultList, [
-      ...pack.bullets,
-      ...extras,
-      `Próximo paso: enviarnos la información para armar tu propuesta.`,
-      assets.length ? `Materiales listos: ${assets.join(", ")}` : "Materiales pendientes: logo, textos o fotos"
-    ]);
+    renderResultList(resultList, pack.bullets);
+    renderQuoteExtras(resultExtras, extras);
 
     const params = new URLSearchParams({
       pack: pack.name,
-      rango: priceText(estimate),
+      precio: pack.priceLabel,
       objetivo: values.need || "",
       negocio: values.business || "",
       nombre: values.name || "",
-      whatsapp: values.whatsapp || ""
+      whatsapp: values.whatsapp || "",
+      email: values.email || ""
     });
-    if (briefLink) briefLink.href = `../brief/?${params.toString()}`;
-    if (budgetLink) budgetLink.href = `../presupuestador/?${params.toString()}`;
 
     const message = `Hola Runia Web. Quiero cotizar mi web.
 Nombre: ${values.name || "-"}
 Empresa: ${values.business || "-"}
 Rubro: ${values.industry || "-"}
 WhatsApp: ${values.whatsapp || "-"}
-Recomendación: ${pack.name}
-Tiempo estimado: ${pack.time}
-Precio estimado: ${priceText(estimate)}
+Email: ${values.email || "-"}
+Plan recomendado: ${pack.name}
+Precio: ${pack.priceLabel}
 Necesito: ${values.need || "-"}
-Funcionalidades: ${extras.join(", ") || "-"}`;
-    whatsappLink.href = `https://api.whatsapp.com/send?text=${encodeURIComponent(message)}`;
+Funcionalidades: ${featuresText.join(", ") || "-"}
+Materiales: ${assets.join(", ") || "-"}
+Extras: ${extras.map((extra) => `${extra.name} (${extra.detail})`).join(", ") || "-"}`;
+    whatsappLinks.forEach((link) => {
+      link.href = `https://api.whatsapp.com/send?text=${encodeURIComponent(message)}`;
+    });
   };
 
   form.addEventListener("input", update);
@@ -137,18 +153,18 @@ const initBudget = () => {
   const exportButton = document.querySelector("[data-export-pdf]");
 
   const webTypes = {
-    web48: { name: "Web 48hs", price: 450, detail: "Landing one page, diseño responsive, WhatsApp, CTA y formulario simple." },
-    comercial: { name: "Web Comercial", price: 850, detail: "Estructura comercial, secciones estratégicas, formularios, WhatsApp y copy base." },
-    sistema: { name: "Web + Sistema", price: 1500, detail: "Web comercial con automatización inicial, CRM o seguimiento y base para Runia Systems." }
+    web48: { name: "Web 48hs", price: 450, detail: "Para empresas que necesitan salir online rápido. Incluye landing one page, diseño responsive, WhatsApp integrado, formulario simple, CTA principal, estructura comercial base y entrega express 48hs." },
+    comercial: { name: "Web Comercial", price: 850, detail: "Para empresas que quieren captar más consultas y vender mejor. Incluye web con estructura comercial, secciones estratégicas, copy base, WhatsApp y formularios, optimización mobile, base lista para campañas y mejor jerarquía visual y recorrido comercial." },
+    sistema: { name: "Web + Sistema", price: 1500, detail: "Web comercial, CRM o pipeline simple, automatización inicial, seguimiento de consultas, dashboards básicos e integración futura con Runia." }
   };
 
   const budgetExtras = {
-    copy: { name: "Copywriting avanzado", price: 180 },
-    brand: { name: "Diseño de marca básico", price: 250 },
-    products: { name: "Carga de productos", price: 220 },
-    catalog: { name: "Catálogo", price: 280 },
-    automation: { name: "Automatización", price: 350 },
-    dashboard: { name: "Dashboard", price: 380 }
+    brandingBasic: { name: "Branding básico", price: 250 },
+    brandingPro: { name: "Branding pro", price: 650 },
+    copywriting: { name: "Copywriting avanzado", price: 250 },
+    productsLoad: { name: "Carga de productos o servicios", price: 150 },
+    maintenance: { name: "Mantenimiento mensual", price: 80 },
+    automationAI: { name: "Automatización / IA", price: 0, displayPrice: "a cotizar" }
   };
 
   const getBudget = () => {
@@ -207,7 +223,7 @@ const initBudget = () => {
           <p class="tool-label">Detalle de ítems</p>
           <ul class="proposal-items">
             <li><strong>${escapeHtml(selectedType.name)}</strong> · ${escapeHtml(selectedType.detail)} · ${MONEY_USD.format(base)}</li>
-            ${extras.map((item) => `<li><strong>${escapeHtml(item.name)}</strong> · Extra solicitado · ${MONEY_USD.format(item.price)}</li>`).join("")}
+            ${extras.map((item) => `<li><strong>${escapeHtml(item.name)}</strong> · Extra solicitado · ${item.displayPrice ? escapeHtml(item.displayPrice) : MONEY_USD.format(item.price)}</li>`).join("")}
           </ul>
         </div>
         <div class="proposal-frame">

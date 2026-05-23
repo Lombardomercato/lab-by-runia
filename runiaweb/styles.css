@@ -1795,6 +1795,14 @@ h2 {
   line-height: 1.62;
 }
 
+.plans .plan-price {
+  margin-top: 0.55rem;
+  color: var(--orange);
+  font-size: clamp(1.2rem, 1.7vw, 1.55rem);
+  line-height: 1;
+  font-weight: 430;
+}
+
 .plans ul {
   margin-top: 1.6rem;
   list-style: none;

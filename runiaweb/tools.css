@@ -157,6 +157,13 @@
   gap: 0.58rem;
 }
 
+.tool-fieldset {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
 .tool-field span,
 .tool-fieldset legend,
 .tool-label {
@@ -204,6 +211,54 @@
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 0.75rem;
+}
+
+.quote-page .tool-section {
+  padding-top: 3rem;
+}
+
+.quote-page .tool-grid {
+  grid-template-columns: minmax(0, 1fr) minmax(360px, 0.78fr);
+}
+
+.quote-form-panel {
+  border-color: rgba(247, 244, 239, 0.16);
+  background:
+    linear-gradient(rgba(247, 244, 239, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(247, 244, 239, 0.04) 1px, transparent 1px),
+    var(--dark);
+  background-size: 54px 54px, 54px 54px, auto;
+  color: var(--bg);
+}
+
+.quote-form-panel .tool-field span,
+.quote-form-panel .tool-fieldset legend {
+  color: rgba(247, 244, 239, 0.64);
+}
+
+.quote-form-panel .tool-fieldset legend {
+  margin-bottom: 0.1rem;
+}
+
+.quote-form-panel .tool-field input,
+.quote-form-panel .tool-field select,
+.quote-form-panel .tool-field textarea {
+  border-color: rgba(247, 244, 239, 0.22);
+  background: rgba(247, 244, 239, 0.075);
+  color: var(--bg);
+}
+
+.quote-form-panel .tool-field input::placeholder,
+.quote-form-panel .tool-field textarea::placeholder {
+  color: rgba(247, 244, 239, 0.38);
+}
+
+.quote-form-panel .tool-field input:focus,
+.quote-form-panel .tool-field select:focus,
+.quote-form-panel .tool-field textarea:focus {
+  border-color: rgba(237, 154, 38, 0.68);
+  background: rgba(247, 244, 239, 0.105);
+  box-shadow: 0 0 0 3px rgba(237, 154, 38, 0.14);
 }
 
 .tool-option {
@@ -262,6 +317,45 @@
   padding-top: 0.15rem;
 }
 
+.quote-form-panel .tool-options {
+  gap: 1px;
+  border: 1px solid rgba(247, 244, 239, 0.14);
+  background: rgba(247, 244, 239, 0.14);
+}
+
+.quote-form-panel .tool-option {
+  min-height: 4.2rem;
+  border: 0;
+  background: rgba(247, 244, 239, 0.045);
+  color: rgba(247, 244, 239, 0.82);
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.quote-form-panel .tool-option::before {
+  content: "";
+  width: 0.45rem;
+  height: 0.45rem;
+  border: 0;
+  background: rgba(247, 244, 239, 0.28);
+}
+
+.quote-form-panel .tool-option:hover,
+.quote-form-panel .tool-option:has(input:checked) {
+  background: rgba(247, 244, 239, 0.095);
+  color: var(--bg);
+}
+
+.quote-form-panel .tool-option:hover::before,
+.quote-form-panel .tool-option:has(input:checked)::before {
+  background: var(--orange);
+  transform: none;
+}
+
+.quote-form-panel .wide-option {
+  grid-column: 1 / -1;
+}
+
 .tool-actions {
   display: flex;
   flex-wrap: wrap;
@@ -275,31 +369,51 @@
 }
 
 .quote-result {
-  border-color: rgba(247, 244, 239, 0.14);
-  background:
-    linear-gradient(rgba(247, 244, 239, 0.045) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(247, 244, 239, 0.045) 1px, transparent 1px),
-    var(--dark);
-  background-size: 54px 54px, 54px 54px, auto;
-  color: var(--bg);
+  border-color: rgba(27, 25, 22, 0.14);
+  background: rgba(255, 253, 249, 0.92);
+  color: var(--ink);
+  box-shadow: 0 24px 70px rgba(27, 25, 22, 0.08);
 }
 
 .quote-result h2 {
-  color: var(--bg);
+  color: var(--ink);
 }
 
-.quote-result p,
+.quote-result .result-subtitle {
+  margin-top: 1.75rem;
+  color: rgba(27, 25, 22, 0.58);
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.78rem;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
 .quote-result .tool-result-list li {
-  color: rgba(247, 244, 239, 0.72);
+  display: grid;
+  gap: 0.28rem;
 }
 
-.quote-result .result-kicker,
-.quote-result .catalog-price {
-  color: var(--orange);
+.quote-result .tool-result-list strong {
+  color: var(--ink);
+  font-weight: 520;
 }
 
-.quote-result .tool-result-list li {
-  border-bottom-color: rgba(247, 244, 239, 0.12);
+.quote-result .tool-result-list span {
+  color: var(--muted);
+}
+
+.quote-result .quote-extras {
+  margin-top: 1.55rem;
+  padding-top: 1.2rem;
+  border-top: 1px solid rgba(27, 25, 22, 0.1);
+}
+
+.quote-result .quote-secondary {
+  background: transparent;
+}
+
+.quote-result .tool-actions {
+  margin-top: 1.75rem;
 }
 
 .tool-result h2,
@@ -490,6 +604,10 @@
 @media (max-width: 980px) {
   .tool-hero-grid,
   .tool-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .quote-page .tool-grid {
     grid-template-columns: 1fr;
   }
 

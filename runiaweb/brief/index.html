@@ -23,7 +23,7 @@
           <a href="../catalogo/">Catálogo</a>
           <a href="../presupuestador/">Presupuesto</a>
         </div>
-        <a class="button button-dark nav-button" href="../cotizador/">Cotizar</a>
+        <a class="button button-dark nav-button" href="#brief">Producción</a>
       </nav>
     </header>
 
@@ -49,9 +49,9 @@
         </div>
       </section>
 
-      <section class="tool-section">
+      <section class="tool-section" id="brief">
         <div class="container tool-grid">
-          <form class="tool-panel tool-form" data-brief-form>
+          <form class="tool-panel tool-form quote-form-panel" data-brief-form>
             <p class="tool-label">1. Datos del negocio</p>
             <label class="tool-field"><span>Nombre del negocio</span><input name="business" placeholder="Nombre de empresa o marca" /></label>
             <div class="tool-options">
@@ -137,7 +137,6 @@
             </label>
             <div class="tool-actions">
               <button class="button button-dark" type="button" data-copy-brief>Copiar prompt</button>
-              <a class="button button-soft" href="../presupuestador/">Generar presupuesto</a>
             </div>
           </aside>
         </div>

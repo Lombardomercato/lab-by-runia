@@ -51,7 +51,7 @@
 
       <section class="tool-section">
         <div class="container tool-grid">
-          <form class="tool-panel tool-form" data-budget-form>
+          <form class="tool-panel tool-form quote-form-panel" data-budget-form>
             <div class="tool-options">
               <label class="tool-field"><span>Cliente</span><input name="client" placeholder="Nombre del cliente" /></label>
               <label class="tool-field"><span>Empresa</span><input name="company" placeholder="Empresa / marca" /></label>
@@ -64,9 +64,9 @@
               <label class="tool-field">
                 <span>Tipo de web</span>
                 <select name="webType">
-                  <option value="web48">Web 48hs</option>
-                  <option value="comercial" selected>Web Comercial</option>
-                  <option value="sistema">Web + Sistema</option>
+                  <option value="web48">Web 48hs · USD 450</option>
+                  <option value="comercial" selected>Web Comercial · USD 850</option>
+                  <option value="sistema">Web + Sistema · desde USD 1.500</option>
                 </select>
               </label>
               <label class="tool-field"><span>Precio base USD</span><input name="basePrice" type="number" min="0" value="850" /></label>
@@ -74,12 +74,12 @@
             <fieldset class="tool-fieldset">
               <legend>Extras</legend>
               <div class="tool-options">
-                <label class="tool-option"><input type="checkbox" name="budgetExtras" value="copy" /> Copywriting avanzado</label>
-                <label class="tool-option"><input type="checkbox" name="budgetExtras" value="brand" /> Diseño de marca básico</label>
-                <label class="tool-option"><input type="checkbox" name="budgetExtras" value="products" /> Carga de productos</label>
-                <label class="tool-option"><input type="checkbox" name="budgetExtras" value="catalog" /> Catálogo</label>
-                <label class="tool-option"><input type="checkbox" name="budgetExtras" value="automation" /> Automatización</label>
-                <label class="tool-option"><input type="checkbox" name="budgetExtras" value="dashboard" /> Dashboard</label>
+                <label class="tool-option"><input type="checkbox" name="budgetExtras" value="brandingBasic" /> Branding básico · USD 250</label>
+                <label class="tool-option"><input type="checkbox" name="budgetExtras" value="brandingPro" /> Branding pro · USD 650</label>
+                <label class="tool-option"><input type="checkbox" name="budgetExtras" value="copywriting" /> Copywriting avanzado · USD 250</label>
+                <label class="tool-option"><input type="checkbox" name="budgetExtras" value="productsLoad" /> Carga de productos o servicios · desde USD 150</label>
+                <label class="tool-option"><input type="checkbox" name="budgetExtras" value="maintenance" /> Mantenimiento mensual · desde USD 80/mes</label>
+                <label class="tool-option"><input type="checkbox" name="budgetExtras" value="automationAI" /> Automatización / IA · a cotizar</label>
               </div>
             </fieldset>
             <div class="tool-options">
