@@ -231,9 +231,34 @@
   color: var(--bg);
 }
 
+.quote-page .quote-form-panel {
+  padding: clamp(1.25rem, 2.4vw, 2rem);
+  border-color: rgba(247, 244, 239, 0.22);
+  background:
+    linear-gradient(rgba(247, 244, 239, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(247, 244, 239, 0.035) 1px, transparent 1px),
+    #0b0f0d;
+  background-size: 52px 52px, 52px 52px, auto;
+  box-shadow: 0 28px 80px rgba(10, 12, 10, 0.18);
+}
+
+.quote-page .quote-form-panel .tool-field,
+.quote-page .quote-form-panel .tool-fieldset {
+  margin-bottom: 1.15rem;
+}
+
+.quote-page .quote-form-panel .tool-fieldset {
+  padding-top: 0.25rem;
+}
+
 .quote-form-panel .tool-field span,
 .quote-form-panel .tool-fieldset legend {
   color: rgba(247, 244, 239, 0.64);
+}
+
+.quote-page .quote-form-panel .tool-field span,
+.quote-page .quote-form-panel .tool-fieldset legend {
+  color: rgba(247, 244, 239, 0.82);
 }
 
 .quote-form-panel .tool-fieldset legend {
@@ -246,6 +271,13 @@
   border-color: rgba(247, 244, 239, 0.22);
   background: rgba(247, 244, 239, 0.075);
   color: var(--bg);
+}
+
+.quote-page .quote-form-panel .tool-field input,
+.quote-page .quote-form-panel .tool-field select,
+.quote-page .quote-form-panel .tool-field textarea {
+  border-color: rgba(247, 244, 239, 0.3);
+  background: rgba(247, 244, 239, 0.105);
 }
 
 .quote-form-panel .tool-field input::placeholder,
@@ -323,6 +355,12 @@
   background: rgba(247, 244, 239, 0.14);
 }
 
+.quote-page .quote-form-panel .tool-options {
+  gap: 0.5rem;
+  border: 0;
+  background: transparent;
+}
+
 .quote-form-panel .tool-option {
   min-height: 4.2rem;
   border: 0;
@@ -330,6 +368,11 @@
   color: rgba(247, 244, 239, 0.82);
   align-items: center;
   gap: 0.75rem;
+}
+
+.quote-page .quote-form-panel .tool-option {
+  border: 1px solid rgba(247, 244, 239, 0.18);
+  background: rgba(247, 244, 239, 0.065);
 }
 
 .quote-form-panel .tool-option::before {
@@ -594,6 +637,19 @@
 
 .brief-output-block p {
   margin-top: 0.35rem;
+}
+
+.brief-public-card {
+  align-self: start;
+}
+
+.brief-confirmation {
+  margin-top: 1.5rem;
+  padding: 1.1rem;
+  border: 1px solid rgba(237, 154, 38, 0.32);
+  background: rgba(237, 154, 38, 0.1);
+  color: var(--ink);
+  line-height: 1.7;
 }
 
 .copy-box {

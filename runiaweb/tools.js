@@ -6,21 +6,21 @@ const PACKS = {
     name: "Web 48hs",
     price: 450,
     priceLabel: "USD 450",
-    description: "Para empresas que necesitan salir online rápido.",
+    description: "Ideal para empresas que necesitan salir online rápido con una landing clara, moderna y profesional.",
     bullets: ["Landing one page", "Diseño responsive", "WhatsApp integrado", "Formulario simple", "CTA principal", "Estructura comercial base", "Entrega express 48hs"]
   },
   comercial: {
     name: "Web Comercial",
     price: 850,
     priceLabel: "USD 850",
-    description: "Para empresas que quieren captar más consultas y vender mejor.",
+    description: "Ideal para empresas que quieren captar más consultas y comunicar mejor sus servicios.",
     bullets: ["Web con estructura comercial", "Secciones estratégicas", "Copy base", "WhatsApp y formularios", "Optimización mobile", "Base lista para campañas", "Mejor jerarquía visual y recorrido comercial"]
   },
   sistema: {
     name: "Web + Sistema",
     price: 1500,
     priceLabel: "desde USD 1.500",
-    description: "Para empresas que quieren conectar su web con automatización o seguimiento.",
+    description: "Ideal para empresas que quieren conectar su web con seguimiento, CRM o automatización.",
     bullets: ["Web comercial", "CRM o pipeline simple", "Automatización inicial", "Seguimiento de consultas", "Dashboards básicos", "Integración futura con Runia"]
   }
 };
@@ -285,51 +285,19 @@ const initBudget = () => {
 const initBrief = () => {
   const form = document.querySelector("[data-brief-form]");
   if (!form) return;
-  const output = document.querySelector("[data-brief-output]");
-  const summaryNode = document.querySelector("[data-brief-summary]");
-  const missingNode = document.querySelector("[data-brief-missing]");
-  const structureNode = document.querySelector("[data-brief-structure]");
-  const copyButton = document.querySelector("[data-copy-brief]");
+  const confirmation = document.querySelector("[data-brief-confirmation]");
   const params = new URLSearchParams(window.location.search);
 
-  if (params.get("negocio")) form.querySelector('[name="business"]').value = params.get("negocio");
-  if (params.get("whatsapp")) form.querySelector('[name="whatsapp"]').value = params.get("whatsapp");
+  if (params.get("negocio") && form.querySelector('[name="business"]')) form.querySelector('[name="business"]').value = params.get("negocio");
+  if (params.get("whatsapp") && form.querySelector('[name="whatsapp"]')) form.querySelector('[name="whatsapp"]').value = params.get("whatsapp");
 
-  const getMulti = (name) => getCheckedValues(form, name);
-
-  const buildStructure = (values, objectives, features, sections) => {
-    const base = sections.length ? sections : ["inicio", "servicios", "contacto"];
-    const recommended = [...new Set([
-      "inicio",
-      objectives.includes("captar consultas") ? "problema / oportunidad" : "",
-      ...base,
-      features.includes("catálogo") ? "catálogo / productos" : "",
-      features.includes("mapa") ? "ubicación / mapa" : "",
-      features.includes("agenda") ? "agenda / reserva" : "",
-      "llamado a la acción final"
-    ].filter(Boolean))];
-    return recommended;
-  };
-
-  const build = () => {
+  const buildInternalSummary = () => {
     const v = getFormObject(form);
-    const objectives = getMulti("objective");
-    const materials = getMulti("materials");
-    const features = getMulti("features");
-    const sections = getMulti("sections");
-    const requiredMaterials = ["logo", "fotos", "links", "archivos"];
-    const missing = requiredMaterials.filter((item) => !materials.includes(item));
-    const structure = buildStructure(v, objectives, features, sections);
+    const objectives = getCheckedValues(form, "objective");
+    const brandAssets = getCheckedValues(form, "brandAssets");
+    const features = getCheckedValues(form, "features");
 
-    summaryNode.innerHTML = `
-      <p><strong>${escapeHtml(v.business || "Empresa sin nombre")}</strong> · ${escapeHtml(v.industry || "Rubro pendiente")}</p>
-      <p>Objetivo: ${escapeHtml(objectives.join(", ") || "pendiente")}</p>
-      <p>Contacto: ${escapeHtml(v.whatsapp || "-")} · ${escapeHtml(v.email || "-")}</p>
-    `;
-    renderResultList(missingNode, missing.length ? missing.map((item) => `Falta confirmar/enviar: ${item}`) : ["Materiales principales cargados o confirmados."]);
-    renderResultList(structureNode, structure);
-
-    const prompt = `Crear una web para ${v.business || "[empresa]"}, rubro ${v.industry || "[rubro]"}, usando la plantilla base Runia Web. Mantener estructura, estética y componentes del sistema. Personalizar copy, imágenes, servicios, CTA, WhatsApp, colores secundarios y secciones según este brief.
+    return `BRIEF DE ARMADO - RUNIA WEB
 
 DATOS DEL NEGOCIO
 Nombre: ${v.business || "-"}
@@ -337,49 +305,54 @@ Rubro: ${v.industry || "-"}
 Ubicación: ${v.location || "-"}
 WhatsApp: ${v.whatsapp || "-"}
 Email: ${v.email || "-"}
-Redes: ${v.socials || "-"}
+Instagram: ${v.instagram || "-"}
+Web actual: ${v.currentWebsite || "-"}
 Dominio: ${v.domain || "-"}
 
 OBJETIVO DE LA WEB
 ${objectives.join(", ") || "-"}
 
-CONTENIDO
+SERVICIOS / PRODUCTOS
+Qué ofrece la empresa: ${v.offer || "-"}
 Servicios principales: ${v.services || "-"}
-Textos actuales: ${v.currentTexts || "-"}
-Tono de comunicación: ${v.tone || "-"}
+Productos principales: ${v.products || "-"}
 Diferencial del negocio: ${v.differential || "-"}
-Clientes ideales: ${v.audience || "-"}
+Cliente ideal: ${v.audience || "-"}
 
 ESTÉTICA
-Colores: ${v.colors || "-"}
-Referencias: ${v.references || "-"}
-Estilo deseado: ${v.style || "-"}
-Cosas que NO quiere: ${v.donts || "-"}
+Colores actuales: ${v.colors || "-"}
+Marca disponible: ${brandAssets.join(", ") || "-"}
+Referencias visuales: ${v.references || "-"}
+Estilos que NO quiere: ${v.donts || "-"}
 
-MATERIALES DISPONIBLES
-${materials.join(", ") || "-"}
+MATERIALES
+Links a fotos: ${v.photoLinks || "-"}
+Links a logo: ${v.logoLinks || "-"}
+Textos existentes: ${v.currentTexts || "-"}
+Videos: ${v.videos || "-"}
+Redes sociales: ${v.socials || "-"}
+Otros archivos: ${v.otherFiles || "-"}
 
 FUNCIONALIDADES
-${features.join(", ") || "-"}
-
-SECCIONES RECOMENDADAS
-${structure.join(" · ")}
-
-CHECKLIST DE MATERIALES FALTANTES
-${missing.length ? missing.join(" · ") : "Sin faltantes principales"}
-
-INSTRUCCIONES DE EJECUCIÓN
-Crear una web clara, moderna, responsive y alineada a Runia Web. Priorizar jerarquía visual, conversión, velocidad de entrega, CTAs visibles y WhatsApp. No cambiar la identidad base de Runia Web salvo colores secundarios o detalles menores definidos por el brief.`;
-    output.value = prompt;
+${features.join(", ") || "-"}`;
   };
 
-  form.addEventListener("input", build);
-  copyButton?.addEventListener("click", async () => {
-    await navigator.clipboard.writeText(output.value);
-    copyButton.textContent = "Brief copiado";
-    window.setTimeout(() => { copyButton.textContent = "Copiar prompt"; }, 1300);
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const summary = buildInternalSummary();
+
+    try {
+      await navigator.clipboard.writeText(summary);
+    } catch (error) {
+      const mail = `mailto:?subject=${encodeURIComponent("Brief de armado Runia Web")}&body=${encodeURIComponent(summary)}`;
+      window.location.href = mail;
+    }
+
+    if (confirmation) {
+      confirmation.hidden = false;
+      confirmation.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
   });
-  build();
 };
 
 const initCatalog = () => {

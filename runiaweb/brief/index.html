@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>Brief | Runia Web</title>
-    <meta name="description" content="Formulario de armado de web para convertir el diagnóstico en prompt de implementación." />
+    <meta name="description" content="Brief postventa de Runia Web para ordenar contenido, estética, datos de contacto y materiales." />
     <meta name="theme-color" content="#f7f4ef" />
     <link rel="icon" type="image/png" href="https://www.runia.ar/images/logo-runia-ico.png" />
     <link rel="stylesheet" href="../styles.css" />
@@ -18,12 +18,9 @@
           <span>Web</span>
         </a>
         <div class="nav-links">
-          <a href="../cotizador/">Cotizador</a>
-          <a href="../brief/">Brief</a>
-          <a href="../catalogo/">Catálogo</a>
-          <a href="../presupuestador/">Presupuesto</a>
+          <a href="../">Volver a Runia Web</a>
         </div>
-        <a class="button button-dark nav-button" href="#brief">Producción</a>
+        <a class="button button-dark nav-button" href="../">Volver</a>
       </nav>
     </header>
 
@@ -31,20 +28,20 @@
       <section class="tool-hero">
         <div class="container tool-hero-grid">
           <div>
-            <p class="eyebrow"><span></span> Brief de implementación</p>
+            <p class="eyebrow"><span></span> Postventa</p>
             <h1 class="tool-title">
-              <span>Pasamos la idea</span>
-              <span class="muted">a un prompt</span>
-              <span class="accent">accionable.</span>
+              <span>Brief</span>
+              <span class="muted">de</span>
+              <span class="accent">armado.</span>
             </h1>
             <p class="tool-lead">
-              Formulario post-seña para juntar todo lo necesario y producir la web sobre la plantilla Runia Web en menos tiempo.
+              Completá esta información para que podamos preparar tu web con mayor velocidad y precisión.
             </p>
           </div>
           <aside class="tool-status-card">
-            <p class="tool-label">Salida</p>
-            <strong>Prompt Codex</strong>
-            <p>Un resumen listo para producir la web con la lógica comercial y visual de Runia Web.</p>
+            <p class="tool-label">Importante</p>
+            <strong>Después de avanzar</strong>
+            <p>Este formulario se completa después de avanzar con el proyecto. Nos ayuda a ordenar contenido, estética, datos de contacto y materiales necesarios.</p>
           </aside>
         </div>
       </section>
@@ -62,40 +59,43 @@
               <label class="tool-field"><span>WhatsApp</span><input name="whatsapp" placeholder="+54 9..." /></label>
               <label class="tool-field"><span>Email</span><input name="email" type="email" placeholder="hola@empresa.com" /></label>
             </div>
-            <label class="tool-field"><span>Redes</span><input name="socials" placeholder="Instagram, LinkedIn, TikTok..." /></label>
+            <label class="tool-field"><span>Instagram</span><input name="instagram" placeholder="@empresa" /></label>
+            <label class="tool-field"><span>Web actual si tiene</span><input name="currentWebsite" placeholder="www.empresa.com o link actual" /></label>
             <label class="tool-field"><span>Dominio si tiene</span><input name="domain" placeholder="www.empresa.com" /></label>
 
             <p class="tool-label">2. Objetivo de la web</p>
             <div class="tool-options">
-              <label class="tool-option"><input type="checkbox" name="objective" value="presencia" /> Presencia</label>
+              <label class="tool-option"><input type="checkbox" name="objective" value="presencia profesional" /> Presencia profesional</label>
               <label class="tool-option"><input type="checkbox" name="objective" value="captar consultas" /> Captar consultas</label>
-              <label class="tool-option"><input type="checkbox" name="objective" value="vender" /> Vender</label>
               <label class="tool-option"><input type="checkbox" name="objective" value="mostrar servicios" /> Mostrar servicios</label>
-              <label class="tool-option"><input type="checkbox" name="objective" value="mostrar propiedades/productos" /> Mostrar propiedades/productos</label>
+              <label class="tool-option"><input type="checkbox" name="objective" value="mostrar productos" /> Mostrar productos</label>
+              <label class="tool-option"><input type="checkbox" name="objective" value="vender" /> Vender</label>
               <label class="tool-option"><input type="checkbox" name="objective" value="otro" /> Otro</label>
             </div>
 
-            <p class="tool-label">3. Contenido</p>
-            <label class="tool-field"><span>Servicios principales</span><textarea name="services" placeholder="Lista de servicios o productos principales"></textarea></label>
-            <label class="tool-field"><span>Textos actuales</span><textarea name="currentTexts" placeholder="Pegá textos actuales o indicá dónde están"></textarea></label>
-            <label class="tool-field"><span>Tono de comunicación</span><textarea name="tone" placeholder="Cercano, premium, técnico, simple..."></textarea></label>
+            <p class="tool-label">3. Servicios / productos</p>
+            <label class="tool-field"><span>Qué ofrece la empresa</span><textarea name="offer" placeholder="Contanos en simple qué vende o qué servicio presta"></textarea></label>
+            <label class="tool-field"><span>Servicios principales</span><textarea name="services" placeholder="Lista de servicios principales"></textarea></label>
+            <label class="tool-field"><span>Productos principales</span><textarea name="products" placeholder="Lista de productos principales si aplica"></textarea></label>
             <label class="tool-field"><span>Diferencial del negocio</span><textarea name="differential" placeholder="Por qué deberían elegirte"></textarea></label>
-            <label class="tool-field"><span>Clientes ideales</span><textarea name="audience" placeholder="Quién compra, qué necesita, qué objeciones tiene"></textarea></label>
+            <label class="tool-field"><span>Cliente ideal</span><textarea name="audience" placeholder="Quién compra, qué necesita, qué objeciones tiene"></textarea></label>
 
             <p class="tool-label">4. Estética</p>
-            <label class="tool-field"><span>Colores</span><input name="colors" placeholder="Colores de marca o preferidos" /></label>
-            <label class="tool-field"><span>Referencias</span><textarea name="references" placeholder="Sitios, marcas o estilos a mirar"></textarea></label>
-            <label class="tool-field"><span>Estilo deseado</span><textarea name="style" placeholder="Minimalista, institucional, premium, cálido..."></textarea></label>
-            <label class="tool-field"><span>Cosas que NO quiere</span><textarea name="donts" placeholder="Colores, estilos o recursos a evitar"></textarea></label>
+            <label class="tool-field"><span>Colores actuales</span><input name="colors" placeholder="Colores de marca o preferidos" /></label>
+            <div class="tool-options">
+              <label class="tool-option"><input type="checkbox" name="brandAssets" value="tiene logo" /> Tiene logo</label>
+              <label class="tool-option"><input type="checkbox" name="brandAssets" value="tiene manual de marca" /> Tiene manual de marca</label>
+            </div>
+            <label class="tool-field"><span>Referencias visuales</span><textarea name="references" placeholder="Sitios, marcas o estilos a mirar"></textarea></label>
+            <label class="tool-field"><span>Estilos que NO quiere</span><textarea name="donts" placeholder="Colores, estilos o recursos a evitar"></textarea></label>
 
             <p class="tool-label">5. Materiales</p>
-            <div class="tool-options">
-              <label class="tool-option"><input type="checkbox" name="materials" value="logo" /> Logo</label>
-              <label class="tool-option"><input type="checkbox" name="materials" value="fotos" /> Fotos</label>
-              <label class="tool-option"><input type="checkbox" name="materials" value="videos" /> Videos</label>
-              <label class="tool-option"><input type="checkbox" name="materials" value="links" /> Links</label>
-              <label class="tool-option"><input type="checkbox" name="materials" value="archivos" /> Archivos</label>
-            </div>
+            <label class="tool-field"><span>Links a fotos</span><textarea name="photoLinks" placeholder="Drive, Dropbox, WeTransfer, carpeta compartida..."></textarea></label>
+            <label class="tool-field"><span>Links a logo</span><textarea name="logoLinks" placeholder="Link a archivos de logo"></textarea></label>
+            <label class="tool-field"><span>Textos existentes</span><textarea name="currentTexts" placeholder="Pegá textos actuales o indicá dónde están"></textarea></label>
+            <label class="tool-field"><span>Videos</span><textarea name="videos" placeholder="Links a videos si aplica"></textarea></label>
+            <label class="tool-field"><span>Redes sociales</span><textarea name="socials" placeholder="Instagram, LinkedIn, TikTok, Facebook..."></textarea></label>
+            <label class="tool-field"><span>Otros archivos</span><textarea name="otherFiles" placeholder="Cualquier otro material útil"></textarea></label>
 
             <p class="tool-label">6. Funcionalidades</p>
             <div class="tool-options">
@@ -109,34 +109,17 @@
               <label class="tool-option"><input type="checkbox" name="features" value="IA futura" /> IA futura</label>
             </div>
 
-            <p class="tool-label">7. Secciones deseadas</p>
-            <div class="tool-options">
-              <label class="tool-option"><input type="checkbox" name="sections" value="inicio" checked /> Inicio</label>
-              <label class="tool-option"><input type="checkbox" name="sections" value="servicios" /> Servicios</label>
-              <label class="tool-option"><input type="checkbox" name="sections" value="nosotros" /> Nosotros</label>
-              <label class="tool-option"><input type="checkbox" name="sections" value="productos" /> Productos</label>
-              <label class="tool-option"><input type="checkbox" name="sections" value="testimonios" /> Testimonios</label>
-              <label class="tool-option"><input type="checkbox" name="sections" value="contacto" checked /> Contacto</label>
-              <label class="tool-option"><input type="checkbox" name="sections" value="preguntas frecuentes" /> Preguntas frecuentes</label>
+            <div class="tool-actions">
+              <button class="button button-light" type="submit">Enviar brief</button>
             </div>
           </form>
 
-          <aside class="tool-result">
-            <p class="result-kicker">Salida operativa</p>
-            <h2>Brief listo para producir</h2>
-            <p>Se actualiza automáticamente con las respuestas del cliente.</p>
-            <p class="tool-label">A. Resumen del proyecto</p>
-            <div class="brief-output-block" data-brief-summary></div>
-            <p class="tool-label">B. Materiales faltantes</p>
-            <ul class="tool-result-list" data-brief-missing></ul>
-            <p class="tool-label">C. Estructura recomendada</p>
-            <ul class="tool-result-list" data-brief-structure></ul>
-            <label class="tool-field">
-              <span>D. Prompt exacto para Codex</span>
-              <textarea class="copy-box" data-brief-output readonly></textarea>
-            </label>
-            <div class="tool-actions">
-              <button class="button button-dark" type="button" data-copy-brief>Copiar prompt</button>
+          <aside class="tool-result brief-public-card">
+            <p class="result-kicker">Armado de web</p>
+            <h2>Ordenamos la información antes de producir.</h2>
+            <p>Cuanto más claro esté el material, más rápido podemos avanzar con el diseño, los textos y la estructura final.</p>
+            <div class="brief-confirmation" data-brief-confirmation hidden>
+              Perfecto. Recibimos la información para armar tu web. El equipo de Runia Web va a revisar el material y continuar con la producción.
             </div>
           </aside>
         </div>
@@ -150,12 +133,9 @@
           <span>Web</span>
         </a>
         <div class="footer-links">
-          <a href="../cotizador/">Cotizador</a>
-          <a href="../brief/">Brief</a>
-          <a href="../catalogo/">Catálogo</a>
-          <a href="../presupuestador/">Presupuesto</a>
+          <a href="../">Volver a Runia Web</a>
         </div>
-        <p>Sistema comercial de Runia Web.</p>
+        <p>Brief postventa de Runia Web.</p>
       </div>
     </footer>
 
