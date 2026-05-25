@@ -185,6 +185,21 @@ const initBudget = () => {
   const renderBudget = () => {
     const data = getBudget();
     const { values, selectedType, extras, base, extrasTotal, subtotal, discount, total, commissionPercent, commissionAmount, rate } = data;
+    const proposalDate = values.date || new Date().toISOString().slice(0, 10);
+    const validity = values.validity || "7 días";
+    const terms = values.terms || "50% para comenzar. Entrega según alcance acordado.";
+    const itemRows = [
+      {
+        name: selectedType.name,
+        detail: selectedType.detail,
+        amount: MONEY_USD.format(base)
+      },
+      ...extras.map((item) => ({
+        name: item.name,
+        detail: "Extra solicitado",
+        amount: item.displayPrice ? item.displayPrice : MONEY_USD.format(item.price)
+      }))
+    ];
     totalUsd.textContent = MONEY_USD.format(total);
     totalArs.textContent = MONEY_ARS.format(total * rate);
     summary.innerHTML = `
@@ -197,53 +212,95 @@ const initBudget = () => {
     `;
     preview.innerHTML = `
       <div class="proposal-preview" id="proposalDocument">
-        <header class="proposal-header">
-          <a class="proposal-brand" href="../"><img src="https://www.runia.ar/images/runialogo.png" alt="Runia" /><span>Web</span></a>
-          <div class="proposal-meta">
-            <p>Cliente: <strong>${escapeHtml(values.client || "-")}</strong></p>
-            <p>Empresa: <strong>${escapeHtml(values.company || "-")}</strong></p>
-            <p>Fecha: <strong>${escapeHtml(values.date || new Date().toISOString().slice(0, 10))}</strong></p>
-            <p>Validez: <strong>${escapeHtml(values.validity || "7 días")}</strong></p>
+        <header class="proposal-header proposal-hero">
+          <div>
+            <a class="proposal-brand" href="../" aria-label="Runia Web"><img crossorigin="anonymous" src="https://www.runia.ar/images/runialogo.png" alt="Runia" /><span>Web</span></a>
+            <p class="proposal-kicker">Propuesta comercial</p>
+            <h2>${escapeHtml(selectedType.name)}</h2>
+            <p class="proposal-lead">${escapeHtml(selectedType.detail)}</p>
+          </div>
+          <div class="proposal-meta-card">
+            <span>Total final</span>
+            <strong>${MONEY_USD.format(total)}</strong>
+            <p>Referencia ARS: ${MONEY_ARS.format(total * rate)}</p>
           </div>
         </header>
-        <div class="proposal-frame">
-          <p class="tool-label">Presupuesto Runia Web</p>
-          <h2>${escapeHtml(selectedType.name)}</h2>
-          <p>${escapeHtml(selectedType.detail)}</p>
+
+        <div class="proposal-info-grid">
+          <div>
+            <span>Cliente</span>
+            <strong>${escapeHtml(values.client || "-")}</strong>
+          </div>
+          <div>
+            <span>Empresa</span>
+            <strong>${escapeHtml(values.company || "-")}</strong>
+          </div>
+          <div>
+            <span>Rubro</span>
+            <strong>${escapeHtml(values.industry || "-")}</strong>
+          </div>
+          <div>
+            <span>Fecha</span>
+            <strong>${escapeHtml(proposalDate)}</strong>
+          </div>
+          <div>
+            <span>Validez</span>
+            <strong>${escapeHtml(validity)}</strong>
+          </div>
+          <div>
+            <span>Tiempo estimado</span>
+            <strong>${escapeHtml(values.time || "-")}</strong>
+          </div>
         </div>
-        <div class="proposal-frame">
-          <p class="tool-label">Datos del cliente</p>
-          <ul class="proposal-items">
-            <li><strong>Rubro</strong> · ${escapeHtml(values.industry || "-")}</li>
-            <li><strong>Vendedor / partner</strong> · ${escapeHtml(values.seller || "-")}</li>
-            <li><strong>Tiempo estimado</strong> · ${escapeHtml(values.time || "-")}</li>
-          </ul>
+
+        <div class="proposal-section">
+          <div class="proposal-section-head">
+            <span>01</span>
+            <h3>Detalle del presupuesto</h3>
+          </div>
+          <div class="proposal-table">
+            ${itemRows.map((item) => `
+              <div class="proposal-row">
+                <div>
+                  <strong>${escapeHtml(item.name)}</strong>
+                  <p>${escapeHtml(item.detail)}</p>
+                </div>
+                <span>${escapeHtml(item.amount)}</span>
+              </div>
+            `).join("")}
+          </div>
         </div>
-        <div class="proposal-frame">
-          <p class="tool-label">Detalle de ítems</p>
-          <ul class="proposal-items">
-            <li><strong>${escapeHtml(selectedType.name)}</strong> · ${escapeHtml(selectedType.detail)} · ${MONEY_USD.format(base)}</li>
-            ${extras.map((item) => `<li><strong>${escapeHtml(item.name)}</strong> · Extra solicitado · ${item.displayPrice ? escapeHtml(item.displayPrice) : MONEY_USD.format(item.price)}</li>`).join("")}
-          </ul>
+
+        <div class="proposal-section proposal-economic">
+          <div class="proposal-section-head">
+            <span>02</span>
+            <h3>Resumen económico</h3>
+          </div>
+          <div class="proposal-summary-grid">
+            <div><span>Precio base</span><strong>${MONEY_USD.format(base)}</strong></div>
+            <div><span>Extras</span><strong>${MONEY_USD.format(extrasTotal)}</strong></div>
+            <div><span>Descuento</span><strong>${MONEY_USD.format(discount)}</strong></div>
+            <div class="proposal-summary-total"><span>Total final</span><strong>${MONEY_USD.format(total)}</strong></div>
+          </div>
         </div>
-        <div class="proposal-frame">
-          <p class="tool-label">Resumen económico</p>
-          <ul class="proposal-items">
-            <li><strong>Subtotal</strong> · ${MONEY_USD.format(subtotal)}</li>
-            <li><strong>Descuento</strong> · ${MONEY_USD.format(discount)}</li>
-            <li><strong>Comisión partner</strong> · ${commissionPercent}% · ${MONEY_USD.format(commissionAmount)}</li>
-          </ul>
-          <p class="proposal-total">Total final: ${MONEY_USD.format(total)} · Referencia ARS: ${MONEY_ARS.format(total * rate)}</p>
+
+        <div class="proposal-section">
+          <div class="proposal-section-head">
+            <span>03</span>
+            <h3>Condiciones y próximos pasos</h3>
+          </div>
+          <p class="proposal-terms">${escapeHtml(terms)}</p>
+          <div class="proposal-steps">
+            <div><span>1</span><p>Confirmar alcance y materiales disponibles.</p></div>
+            <div><span>2</span><p>Enviar seña para reservar producción.</p></div>
+            <div><span>3</span><p>Completar brief Runia Web para iniciar implementación.</p></div>
+          </div>
         </div>
-        <div class="proposal-frame">
-          <p class="tool-label">Condiciones y próximos pasos</p>
-          <p>${escapeHtml(values.terms || "50% para comenzar. Entrega según alcance acordado.")}</p>
-          <ul class="proposal-items">
-            <li>Confirmar alcance y materiales disponibles.</li>
-            <li>Enviar seña para reservar producción.</li>
-            <li>Completar brief Runia Web para iniciar implementación.</li>
-          </ul>
-        </div>
+
+        <footer class="proposal-footer">
+          <span>Runia Web</span>
+          <p>Webs claras, modernas y preparadas para captar mejores consultas.</p>
+        </footer>
       </div>
     `;
   };
