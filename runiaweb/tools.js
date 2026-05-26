@@ -46,6 +46,7 @@ const QUOTE_EXTRAS = {
 const getCheckedValues = (form, name) => Array.from(form.querySelectorAll(`[name="${name}"]:checked`)).map((input) => input.value);
 const getFormObject = (form) => Object.fromEntries(new FormData(form).entries());
 const priceText = (price) => `desde USD ${Number(price || 0).toLocaleString("en-US", { maximumFractionDigits: 0 })}`;
+const usdLabel = (price) => `USD ${Number(price || 0).toLocaleString("en-US", { maximumFractionDigits: 0 })}`;
 const escapeHtml = (value) => String(value ?? "").replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" })[char]);
 
 const recommendPack = (values, features = []) => {
@@ -163,7 +164,7 @@ const initBudget = () => {
     brandingPro: { name: "Branding pro", price: 650 },
     copywriting: { name: "Copywriting avanzado", price: 250 },
     productsLoad: { name: "Carga de productos o servicios", price: 150 },
-    maintenance: { name: "Mantenimiento mensual", price: 80 },
+    maintenance: { name: "Mantenimiento mensual", price: 80, displayPrice: "desde USD 80/mes", recurring: true },
     automationAI: { name: "Automatización / IA", price: 0, displayPrice: "a cotizar" }
   };
 
@@ -171,20 +172,23 @@ const initBudget = () => {
     const values = getFormObject(form);
     const selectedType = webTypes[values.webType] || webTypes.comercial;
     const extras = getCheckedValues(form, "budgetExtras").map((key) => budgetExtras[key]).filter(Boolean);
+    const oneTimeExtras = extras.filter((item) => !item.recurring);
+    const recurringExtras = extras.filter((item) => item.recurring);
     const base = Number(values.basePrice || selectedType.price || 0);
-    const extrasTotal = extras.reduce((sum, item) => sum + item.price, 0);
+    const extrasTotal = oneTimeExtras.reduce((sum, item) => sum + item.price, 0);
+    const monthlyTotal = recurringExtras.reduce((sum, item) => sum + item.price, 0);
     const subtotal = base + extrasTotal;
     const discount = Math.min(Number(values.discount || 0), subtotal);
     const total = Math.max(subtotal - discount, 0);
     const commissionPercent = Number(values.commission || 0);
     const commissionAmount = total * (commissionPercent / 100);
     const rate = Number(values.rate || 1300);
-    return { values, selectedType, extras, base, extrasTotal, subtotal, discount, total, commissionPercent, commissionAmount, rate };
+    return { values, selectedType, extras, oneTimeExtras, recurringExtras, base, extrasTotal, monthlyTotal, subtotal, discount, total, commissionPercent, commissionAmount, rate };
   };
 
   const renderBudget = () => {
     const data = getBudget();
-    const { values, selectedType, extras, base, extrasTotal, subtotal, discount, total, commissionPercent, commissionAmount, rate } = data;
+    const { values, selectedType, oneTimeExtras, recurringExtras, base, extrasTotal, monthlyTotal, discount, total, commissionPercent, commissionAmount, rate } = data;
     const proposalDate = values.date || new Date().toISOString().slice(0, 10);
     const validity = values.validity || "7 días";
     const terms = values.terms || "50% para comenzar. Entrega según alcance acordado.";
@@ -192,20 +196,26 @@ const initBudget = () => {
       {
         name: selectedType.name,
         detail: selectedType.detail,
-        amount: MONEY_USD.format(base)
+        amount: usdLabel(base)
       },
-      ...extras.map((item) => ({
+      ...oneTimeExtras.map((item) => ({
         name: item.name,
         detail: "Extra solicitado",
-        amount: item.displayPrice ? item.displayPrice : MONEY_USD.format(item.price)
+        amount: item.displayPrice ? item.displayPrice : usdLabel(item.price)
       }))
     ];
+    const recurringRows = recurringExtras.map((item) => ({
+      name: item.name,
+      detail: "Fee mensual opcional. No incluido en el total inicial.",
+      amount: item.displayPrice ? item.displayPrice : `${usdLabel(item.price)}/mes`
+    }));
     totalUsd.textContent = MONEY_USD.format(total);
     totalArs.textContent = MONEY_ARS.format(total * rate);
     summary.innerHTML = `
       <ul class="tool-result-list">
         <li>Precio base: ${MONEY_USD.format(base)}</li>
         <li>Extras: ${MONEY_USD.format(extrasTotal)}</li>
+        <li>Fee mensual: ${monthlyTotal ? `${MONEY_USD.format(monthlyTotal)}/mes` : "No aplica"}</li>
         <li>Descuento: ${MONEY_USD.format(discount)}</li>
         <li>Comisión partner: ${commissionPercent}% · ${MONEY_USD.format(commissionAmount)}</li>
       </ul>
@@ -214,14 +224,14 @@ const initBudget = () => {
       <div class="proposal-preview" id="proposalDocument">
         <header class="proposal-header proposal-hero">
           <div>
-            <a class="proposal-brand" href="../" aria-label="Runia Web"><img crossorigin="anonymous" src="https://www.runia.ar/images/runialogo.png" alt="Runia" /><span>Web</span></a>
+            <a class="proposal-brand" href="../" aria-label="Runia Web"><img src="../runialogo.png" alt="Runia" /><span>Web</span></a>
             <p class="proposal-kicker">Propuesta comercial</p>
             <h2>${escapeHtml(selectedType.name)}</h2>
             <p class="proposal-lead">${escapeHtml(selectedType.detail)}</p>
           </div>
           <div class="proposal-meta-card">
             <span>Total final</span>
-            <strong>${MONEY_USD.format(total)}</strong>
+            <strong>${usdLabel(total)}</strong>
             <p>Referencia ARS: ${MONEY_ARS.format(total * rate)}</p>
           </div>
         </header>
@@ -271,22 +281,43 @@ const initBudget = () => {
           </div>
         </div>
 
+        ${recurringRows.length ? `
+          <div class="proposal-section proposal-recurring">
+            <div class="proposal-section-head">
+              <span>02</span>
+              <h3>Servicios mensuales opcionales</h3>
+            </div>
+            <div class="proposal-table">
+              ${recurringRows.map((item) => `
+                <div class="proposal-row">
+                  <div>
+                    <strong>${escapeHtml(item.name)}</strong>
+                    <p>${escapeHtml(item.detail)}</p>
+                  </div>
+                  <span>${escapeHtml(item.amount)}</span>
+                </div>
+              `).join("")}
+            </div>
+          </div>
+        ` : ""}
+
         <div class="proposal-section proposal-economic">
           <div class="proposal-section-head">
-            <span>02</span>
+            <span>${recurringRows.length ? "03" : "02"}</span>
             <h3>Resumen económico</h3>
           </div>
           <div class="proposal-summary-grid">
-            <div><span>Precio base</span><strong>${MONEY_USD.format(base)}</strong></div>
-            <div><span>Extras</span><strong>${MONEY_USD.format(extrasTotal)}</strong></div>
-            <div><span>Descuento</span><strong>${MONEY_USD.format(discount)}</strong></div>
-            <div class="proposal-summary-total"><span>Total final</span><strong>${MONEY_USD.format(total)}</strong></div>
+            <div><span>Precio base</span><strong>${usdLabel(base)}</strong></div>
+            <div><span>Extras</span><strong>${usdLabel(extrasTotal)}</strong></div>
+            <div><span>Descuento</span><strong>${usdLabel(discount)}</strong></div>
+            <div><span>Mensual</span><strong>${monthlyTotal ? `${usdLabel(monthlyTotal)}/mes` : "No aplica"}</strong></div>
+            <div class="proposal-summary-total"><span>Total final</span><strong>${usdLabel(total)}</strong></div>
           </div>
         </div>
 
         <div class="proposal-section">
           <div class="proposal-section-head">
-            <span>03</span>
+            <span>${recurringRows.length ? "04" : "03"}</span>
             <h3>Condiciones y próximos pasos</h3>
           </div>
           <p class="proposal-terms">${escapeHtml(terms)}</p>
