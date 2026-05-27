@@ -223,6 +223,112 @@ if (!prefersReducedMotion) {
   }, { passive: true });
 }
 
+const deliveryGrid = document.querySelector("[data-delivery-steps]");
+const deliveryCards = deliveryGrid ? Array.from(deliveryGrid.querySelectorAll(".delivery-card")) : [];
+const deliveryPanel = document.querySelector("[data-delivery-panel]");
+
+if (deliveryGrid && deliveryCards.length && deliveryPanel) {
+  const deliveryCurrent = deliveryPanel.querySelector("[data-delivery-current]");
+  const deliveryTitle = deliveryPanel.querySelector(".delivery-statement-copy h3");
+  const deliveryText = deliveryPanel.querySelector(".delivery-statement-copy > p:not(.delivery-kicker)");
+  const deliveryStatusTitle = deliveryPanel.querySelector("[data-delivery-status-title]");
+  const deliveryStatusNumber = deliveryPanel.querySelector("[data-delivery-status-number]");
+  const deliveryStatusItems = Array.from(deliveryPanel.querySelectorAll(".delivery-status li"));
+  const deliveryCopy = [
+    {
+      title: "Brief centralizado",
+      text: "La informacion entra ordenada desde el inicio para que el proyecto avance sin reuniones de mas.",
+      checks: ["Informacion ordenada", "Objetivo claro", "Material recibido"]
+    },
+    {
+      title: "Sistema modular",
+      text: "Usamos una base de componentes probada para construir rapido sin perder criterio visual.",
+      checks: ["Estructura definida", "Componentes listos", "Secciones armadas"]
+    },
+    {
+      title: "Diseno enfocado",
+      text: "Ajustamos jerarquia, recorrido y llamados a la accion para que la web ayude a convertir.",
+      checks: ["Mensaje claro", "CTA visibles", "Mobile revisado"]
+    },
+    {
+      title: "Lanzamiento rapido",
+      text: "Publicamos una primera version solida y dejamos la base preparada para seguir creciendo.",
+      checks: ["Publicacion preparada", "Contacto conectado", "Base escalable"]
+    }
+  ];
+
+  let activeDeliveryStep = 0;
+  let deliveryTimer;
+  let deliveryCheckTimers = [];
+
+  const clearDeliveryCheckTimers = () => {
+    deliveryCheckTimers.forEach((timer) => window.clearTimeout(timer));
+    deliveryCheckTimers = [];
+  };
+
+  const animateDeliveryChecks = () => {
+    clearDeliveryCheckTimers();
+    deliveryStatusItems.forEach((item) => item.classList.remove("is-complete"));
+
+    if (prefersReducedMotion) {
+      deliveryStatusItems.forEach((item) => item.classList.add("is-complete"));
+      return;
+    }
+
+    deliveryStatusItems.forEach((item, itemIndex) => {
+      const timer = window.setTimeout(() => {
+        item.classList.add("is-complete");
+      }, 260 + itemIndex * 520);
+      deliveryCheckTimers.push(timer);
+    });
+  };
+
+  const setDeliveryStep = (index) => {
+    activeDeliveryStep = index % deliveryCards.length;
+    const current = deliveryCopy[activeDeliveryStep];
+    const progress = `${((activeDeliveryStep + 1) / deliveryCards.length) * 100}%`;
+
+    deliveryCards.forEach((card, cardIndex) => {
+      const isActive = cardIndex === activeDeliveryStep;
+      card.classList.toggle("is-active", isActive);
+      card.style.setProperty("--step-progress", cardIndex <= activeDeliveryStep ? "1" : "0.22");
+    });
+
+    deliveryPanel.style.setProperty("--delivery-progress", progress);
+    if (deliveryCurrent) deliveryCurrent.textContent = String(activeDeliveryStep + 1).padStart(2, "0");
+    if (deliveryTitle) deliveryTitle.textContent = current.title;
+    if (deliveryText) deliveryText.textContent = current.text;
+    if (deliveryStatusTitle) deliveryStatusTitle.textContent = current.title;
+    if (deliveryStatusNumber) deliveryStatusNumber.textContent = String(activeDeliveryStep + 1).padStart(2, "0");
+    deliveryStatusItems.forEach((item, itemIndex) => {
+      item.textContent = current.checks[itemIndex] || "";
+    });
+    animateDeliveryChecks();
+  };
+
+  setDeliveryStep(0);
+
+  if (!prefersReducedMotion) {
+    deliveryTimer = window.setInterval(() => {
+      setDeliveryStep(activeDeliveryStep + 1);
+    }, 3600);
+
+    deliveryCards.forEach((card, index) => {
+      card.addEventListener("mouseenter", () => {
+        window.clearInterval(deliveryTimer);
+        setDeliveryStep(index);
+      });
+    });
+
+    deliveryGrid.addEventListener("mouseleave", () => {
+      window.clearInterval(deliveryTimer);
+      deliveryTimer = window.setInterval(() => {
+        setDeliveryStep(activeDeliveryStep + 1);
+      }, 3600);
+    });
+  }
+}
+
 const counters = document.querySelectorAll("[data-count]");
 
 const animateCounter = (element) => {

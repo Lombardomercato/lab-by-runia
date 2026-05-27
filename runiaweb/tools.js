@@ -223,7 +223,7 @@ Quiero agendar una llamada para avanzar.`;
   update();
 };
 
-const initBudget = () => {
+const initBudgetLegacy = () => {
   const form = document.querySelector("[data-budget-form]");
   if (!form) return;
 
@@ -233,7 +233,6 @@ const initBudget = () => {
   const preview = document.querySelector("[data-proposal-preview]");
   const exportButtons = document.querySelectorAll("[data-export-pdf]");
   const budgetWhatsapp = document.querySelector("[data-budget-whatsapp]");
-  const budgetMeeting = document.querySelector("[data-budget-meeting]");
 
   const webTypes = {
     web48: { name: "Web 48hs", price: 450, detail: "Para empresas que necesitan salir online rápido. Incluye landing one page, diseño responsive, WhatsApp integrado, formulario simple, CTA principal, estructura comercial base y entrega express 48hs." },
@@ -297,24 +296,12 @@ const initBudget = () => {
       sistema: ["Web comercial", "CRM o pipeline simple", "Automatización inicial", "Seguimiento de consultas", "Dashboards básicos", "Integración futura con Runia"]
     };
     const scopeBullets = scopeBulletsByType[values.webType] || scopeBulletsByType.comercial;
-    const oneTimeExtrasLabel = oneTimeExtras.map((item) => item.name).join(" · ");
-    const monthlyLabel = recurringRows.map((item) => `${item.name}: ${item.amount}`).join(" · ");
+    const oneTimeExtrasLabel = oneTimeExtras.map((item) => item.name).join(" - ");
+    const monthlyLabel = recurringRows.map((item) => `${item.name}: ${item.amount}`).join(" - ");
     const highlightedScope = new Set(["Landing responsive", "WhatsApp integrado", "CTA comercial"]);
     totalUsd.textContent = MONEY_USD.format(total);
     totalArs.textContent = MONEY_ARS.format(total * rate);
     const clientLabel = values.company || values.client || "Cliente sin empresa";
-    const budgetMessage = `Hola Runia Web. Te comparto la propuesta generada.
-Cliente: ${values.client || "-"}
-Empresa: ${values.company || "-"}
-Rubro: ${values.industry || "-"}
-Plan: ${selectedType.name}
-InversiÃ³n inicial: ${usdLabel(total)}
-Referencia ARS: ${MONEY_ARS.format(total * rate)}
-DÃ³lar tomado: ${MONEY_ARS.format(rate)} ARS
-Extras iniciales: ${oneTimeExtrasLabel || "-"}
-Mensual opcional: ${monthlyLabel || "-"}
-Validez: ${validity}
-Tiempo estimado: ${values.time || "SegÃºn alcance"}`;
     const budgetMessageForClient = `Hola Runia Web. Te comparto la propuesta generada.
 Cliente: ${values.client || "-"}
 Empresa: ${values.company || "-"}
@@ -328,19 +315,10 @@ Mensual opcional: ${monthlyLabel || "-"}
 Validez: ${validity}
 Tiempo estimado: ${values.time || "Segun alcance"}`;
     summary.innerHTML = `
-      <ul class="tool-result-list">
-        <li>Precio base: ${MONEY_USD.format(base)}</li>
-        <li>Extras: ${MONEY_USD.format(extrasTotal)}</li>
-        <li>Fee mensual: ${monthlyTotal ? `${MONEY_USD.format(monthlyTotal)}/mes` : "No aplica"}</li>
-        <li>Descuento: ${MONEY_USD.format(discount)}</li>
-        <li>Comisión partner: ${commissionPercent}% · ${MONEY_USD.format(commissionAmount)}</li>
-      </ul>
-    `;
-    summary.innerHTML = `
       <div class="budget-client-card">
         <span>Propuesta comercial</span>
         <strong>${escapeHtml(selectedType.name)}</strong>
-        <p>${escapeHtml(clientLabel)} Â· ${escapeHtml(values.industry || "Rubro pendiente")}</p>
+        <p>${escapeHtml(clientLabel)} - ${escapeHtml(values.industry || "Rubro pendiente")}</p>
       </div>
       <div class="budget-summary-grid">
         <div><span>Precio base</span><strong>${MONEY_USD.format(base)}</strong></div>
@@ -351,17 +329,12 @@ Tiempo estimado: ${values.time || "Segun alcance"}`;
       <div class="lead-management-strip">
         <div><span>Estado lead</span><strong>Propuesta generada</strong></div>
         <div><span>Origen</span><strong>Presupuestador interno</strong></div>
-        <div><span>Presupuesto</span><strong>${escapeHtml(selectedType.name)} Â· ${usdLabel(total)}</strong></div>
+        <div><span>Presupuesto</span><strong>${escapeHtml(selectedType.name)} - ${usdLabel(total)}</strong></div>
       </div>
-      <p class="budget-helper">Descarga la propuesta en PDF, enviala por WhatsApp o coordina una llamada para cerrar alcance.</p>
+      <p class="budget-helper">Descarga la propuesta en PDF o compartila por WhatsApp cuando el alcance este listo.</p>
     `;
     if (budgetWhatsapp) {
       budgetWhatsapp.href = `https://api.whatsapp.com/send?text=${encodeURIComponent(budgetMessageForClient)}`;
-    }
-    if (budgetMeeting) {
-      budgetMeeting.href = `https://api.whatsapp.com/send?text=${encodeURIComponent(`${budgetMessageForClient}
-
-Quiero agendar una reunion para revisar la propuesta.`)}`;
     }
     preview.innerHTML = `
       <style data-proposal-deck-style>
@@ -934,72 +907,602 @@ Quiero agendar una reunion para revisar la propuesta.`)}`;
   renderBudget();
 };
 
+const initBudget = () => {
+  const form = document.querySelector("[data-budget-form]");
+  if (!form) return;
+
+  const totalUsd = document.querySelector("[data-total-usd]");
+  const totalArs = document.querySelector("[data-total-ars]");
+  const summary = document.querySelector("[data-budget-summary]");
+  const preview = document.querySelector("[data-proposal-preview]");
+  const exportButtons = document.querySelectorAll("[data-export-pdf]");
+  const budgetWhatsapp = document.querySelector("[data-budget-whatsapp]");
+  const partnerFields = document.querySelector("[data-partner-fields]");
+  const pricingWarning = document.querySelector("[data-pricing-warning]");
+  let partnerLogoData = "";
+
+  const webTypes = {
+    web48: {
+      name: "Web 48hs",
+      price: 450,
+      min: 450,
+      detail: "Landing one page clara, moderna y profesional para salir online rapido.",
+      scope: ["Landing one page", "Diseno responsive", "WhatsApp integrado", "Formulario simple", "CTA principal", "Estructura comercial base", "Entrega express 48hs"]
+    },
+    comercial: {
+      name: "Web Comercial",
+      price: 850,
+      min: 850,
+      detail: "Web con estructura comercial para captar mas consultas y comunicar mejor los servicios.",
+      scope: ["Web con estructura comercial", "Secciones estrategicas", "Copy base", "WhatsApp y formularios", "Optimizacion mobile", "Base lista para campanas", "Mejor recorrido comercial"]
+    },
+    sistema: {
+      name: "Web + Sistema",
+      price: 1500,
+      min: 1500,
+      detail: "Web comercial preparada para conectar seguimiento, CRM o automatizacion.",
+      scope: ["Web comercial", "CRM o pipeline simple", "Automatizacion inicial", "Seguimiento de consultas", "Dashboards basicos", "Integracion futura con Runia"]
+    }
+  };
+
+  const budgetExtras = {
+    brandingBasic: { name: "Branding basico", price: 250, detail: "Logo simple, paleta, tipografias sugeridas y guia visual basica." },
+    brandingPro: { name: "Branding pro", price: 650, detail: "Logo, variantes, paleta, tipografias, sistema visual basico y mini manual de marca." },
+    copywriting: { name: "Copywriting avanzado", price: 250, detail: "Textos comerciales mas trabajados para explicar mejor la propuesta." },
+    productsLoad: { name: "Carga de productos o servicios", price: 150, detail: "Organizacion y carga inicial de contenido." },
+    maintenance: { name: "Mantenimiento mensual", price: 80, displayPrice: "desde USD 80/mes", recurring: true, detail: "Acompanamiento mensual para ajustes y continuidad." },
+    automationAI: { name: "Automatizacion / IA", price: 0, displayPrice: "a cotizar", detail: "Conexion futura con herramientas comerciales, seguimiento o atencion automatizada." }
+  };
+
+  const getMode = () => form.elements.budgetMode?.value || "runia";
+  const isPartnerMode = () => getMode() === "partner";
+
+  const getBudget = () => {
+    const values = getFormObject(form);
+    const selectedType = webTypes[values.webType] || webTypes.comercial;
+    const extras = getCheckedValues(form, "budgetExtras").map((key) => budgetExtras[key]).filter(Boolean);
+    const oneTimeExtras = extras.filter((item) => !item.recurring);
+    const recurringExtras = extras.filter((item) => item.recurring);
+    const mode = getMode();
+    const clientPrice = mode === "partner"
+      ? Number(values.finalClientPrice || values.basePrice || selectedType.price || 0)
+      : Number(values.basePrice || selectedType.price || 0);
+    const internalCost = mode === "partner"
+      ? Number(values.internalCost || selectedType.price || 0)
+      : Number(values.basePrice || selectedType.price || 0);
+    const base = clientPrice;
+    const extrasTotal = oneTimeExtras.reduce((sum, item) => sum + item.price, 0);
+    const monthlyTotal = recurringExtras.reduce((sum, item) => sum + item.price, 0);
+    const subtotal = base + extrasTotal;
+    const discount = Math.min(Number(values.discount || 0), subtotal);
+    const total = Math.max(subtotal - discount, 0);
+    const commissionPercent = Number(values.commission || 0);
+    const commissionAmount = total * (commissionPercent / 100);
+    const margin = mode === "partner" ? Math.max(total - internalCost, 0) : 0;
+    const rate = Number(values.rate || 1300);
+    const belowMin = base < selectedType.min;
+    const proposalDate = values.date || new Date().toISOString().slice(0, 10);
+    const validity = values.validity || "7 dias";
+    const terms = values.terms || "50% para comenzar. Entrega segun alcance acordado.";
+    const monthlyLabel = recurringExtras.map((item) => `${item.name}: ${item.displayPrice || `${usdLabel(item.price)}/mes`}`).join(" - ");
+    const oneTimeExtrasLabel = oneTimeExtras.map((item) => item.name).join(" - ");
+    const brandName = mode === "partner" && values.partnerName ? values.partnerName : "Runia Web";
+    const logoSrc = mode === "partner" && partnerLogoData ? partnerLogoData : "../runialogo-black.png";
+    const reference = `RW-${proposalDate.replaceAll("-", "")}-${(values.company || values.client || "CLIENTE").slice(0, 4).toUpperCase()}`;
+    return {
+      values,
+      selectedType,
+      extras,
+      oneTimeExtras,
+      recurringExtras,
+      mode,
+      base,
+      internalCost,
+      extrasTotal,
+      monthlyTotal,
+      subtotal,
+      discount,
+      total,
+      commissionPercent,
+      commissionAmount,
+      margin,
+      rate,
+      belowMin,
+      proposalDate,
+      validity,
+      terms,
+      monthlyLabel,
+      oneTimeExtrasLabel,
+      brandName,
+      logoSrc,
+      reference
+    };
+  };
+
+  const renderBudget = () => {
+    const data = getBudget();
+    const {
+      values,
+      selectedType,
+      oneTimeExtras,
+      recurringExtras,
+      mode,
+      base,
+      internalCost,
+      extrasTotal,
+      monthlyTotal,
+      discount,
+      total,
+      commissionPercent,
+      commissionAmount,
+      margin,
+      rate,
+      belowMin,
+      proposalDate,
+      validity,
+      terms,
+      monthlyLabel,
+      oneTimeExtrasLabel,
+      brandName,
+      logoSrc,
+      reference
+    } = data;
+
+    const clientLabel = values.company || values.client || "Cliente sin empresa";
+    const isPartner = mode === "partner";
+    const nextSteps = ["Confirmacion del proyecto", "Envio del brief", "Produccion", "Entrega inicial"];
+    const contactLabel = isPartner && values.partnerName ? values.partnerName : "Runia Web";
+    const whatsappMessage = `Hola ${contactLabel}. Te comparto la propuesta generada.
+Cliente: ${values.client || "-"}
+Empresa: ${values.company || "-"}
+Rubro: ${values.industry || "-"}
+Plan: ${selectedType.name}
+Inversion inicial: ${usdLabel(total)}
+Referencia ARS: ${MONEY_ARS.format(total * rate)}
+Dolar tomado: ${MONEY_ARS.format(rate)} ARS
+Extras iniciales: ${oneTimeExtrasLabel || "-"}
+Mensual opcional: ${monthlyLabel || "-"}
+Validez: ${validity}
+Tiempo estimado: ${values.time || "Segun alcance"}`;
+
+    partnerFields.hidden = !isPartner;
+    if (pricingWarning) {
+      pricingWarning.hidden = !belowMin;
+      pricingWarning.textContent = `El precio ingresado esta por debajo del minimo recomendado Runia: ${usdLabel(selectedType.min)}.`;
+    }
+    form.classList.toggle("is-partner-mode", isPartner);
+    totalUsd.textContent = MONEY_USD.format(total);
+    totalArs.textContent = MONEY_ARS.format(total * rate);
+    if (budgetWhatsapp) budgetWhatsapp.href = `https://api.whatsapp.com/send?text=${encodeURIComponent(whatsappMessage)}`;
+
+    summary.innerHTML = `
+      <div class="budget-client-card">
+        <span>${isPartner ? "Modo Partner" : "Modo Runia Web"}</span>
+        <strong>${escapeHtml(selectedType.name)}</strong>
+        <p>${escapeHtml(clientLabel)} - ${escapeHtml(values.industry || "Rubro pendiente")}</p>
+      </div>
+      ${belowMin ? `<div class="pricing-warning is-visible">Precio por debajo del minimo protegido: ${usdLabel(selectedType.min)}</div>` : ""}
+      <div class="budget-summary-grid">
+        <div><span>Precio cliente</span><strong>${MONEY_USD.format(base)}</strong></div>
+        <div><span>Extras</span><strong>${MONEY_USD.format(extrasTotal)}</strong></div>
+        <div><span>Descuento</span><strong>${MONEY_USD.format(discount)}</strong></div>
+        <div><span>Mensual</span><strong>${monthlyTotal ? `${MONEY_USD.format(monthlyTotal)}/mes` : "No aplica"}</strong></div>
+      </div>
+      <div class="lead-management-strip">
+        <div><span>Estado</span><strong>Propuesta generada</strong></div>
+        <div><span>Referencia</span><strong>${escapeHtml(reference)}</strong></div>
+        <div><span>PDF</span><strong>${escapeHtml(brandName)}</strong></div>
+      </div>
+      ${isPartner ? `
+        <div class="partner-internal-summary">
+          <div><span>Costo Runia</span><strong>${MONEY_USD.format(internalCost)}</strong></div>
+          <div><span>Margen estimado</span><strong>${MONEY_USD.format(margin)}</strong></div>
+          <div><span>Comision partner</span><strong>${commissionPercent}% - ${MONEY_USD.format(commissionAmount)}</strong></div>
+        </div>
+      ` : ""}
+      <p class="budget-helper">El PDF no muestra costo Runia, margen, comision ni precio minimo. Solo muestra la propuesta comercial para el cliente.</p>
+    `;
+
+    preview.innerHTML = `
+      <div class="proposal-master proposal-master-commercial" id="proposalDocument">
+        <section class="proposal-page proposal-page-cover">
+          <div class="proposal-page-top proposal-pdf-header">
+            <a class="proposal-brand" href="../" aria-label="${escapeHtml(brandName)}"><img src="${escapeHtml(logoSrc)}" alt="${escapeHtml(brandName)}" /><span>${escapeHtml(isPartner && values.partnerName ? values.partnerName : "Web")}</span></a>
+            <div>
+              <span>${escapeHtml(reference)}</span>
+              <span>${escapeHtml(proposalDate)}</span>
+            </div>
+          </div>
+          <div class="proposal-cover-grid proposal-cover-commercial">
+            <div>
+              <p class="proposal-page-kicker">Propuesta comercial</p>
+              <h2>Desarrollo de <span>${escapeHtml(selectedType.name)}</span> para ${escapeHtml(values.company || values.client || "tu empresa")}.</h2>
+              <p class="proposal-page-lead">${escapeHtml(selectedType.detail)}</p>
+              <div class="proposal-ref-line">
+                <strong>Cliente</strong><span>${escapeHtml(values.client || "-")}</span>
+                <strong>Rubro</strong><span>${escapeHtml(values.industry || "-")}</span>
+              </div>
+            </div>
+            <aside class="proposal-investment-master">
+              <span>Inversion inicial</span>
+              <strong>${usdLabel(total)}</strong>
+              <p>Referencia ARS: ${MONEY_ARS.format(total * rate)}. Dolar tomado: ${MONEY_ARS.format(rate)} ARS.</p>
+            </aside>
+          </div>
+          <div class="proposal-page-footer">
+            <span>${escapeHtml(brandName)}</span>
+            <span>Validez: ${escapeHtml(validity)}</span>
+          </div>
+        </section>
+
+        <section class="proposal-page">
+          <div class="proposal-page-top proposal-pdf-header">
+            <a class="proposal-brand" href="../" aria-label="${escapeHtml(brandName)}"><img src="${escapeHtml(logoSrc)}" alt="${escapeHtml(brandName)}" /><span>${escapeHtml(isPartner && values.partnerName ? values.partnerName : "Web")}</span></a>
+            <span>02 / Alcance</span>
+          </div>
+          <div class="proposal-section-title">
+            <p>Resumen del proyecto</p>
+            <h2>Desarrollo de ${escapeHtml(selectedType.name)} para ${escapeHtml(values.company || values.client || "tu empresa")}.</h2>
+          </div>
+          <div class="proposal-scope-list">
+            ${selectedType.scope.map((item) => `<div><span></span><strong>${escapeHtml(item)}</strong></div>`).join("")}
+          </div>
+          <div class="proposal-benefits-row">
+            <div><span>01</span><strong>Claridad comercial</strong><p>Una estructura pensada para explicar rapido que hace la empresa.</p></div>
+            <div><span>02</span><strong>Contacto directo</strong><p>CTA, WhatsApp y formularios listos para recibir consultas.</p></div>
+            <div><span>03</span><strong>Base escalable</strong><p>Preparada para campanas, seguimiento o automatizacion futura.</p></div>
+          </div>
+        </section>
+
+        <section class="proposal-page">
+          <div class="proposal-page-top proposal-pdf-header">
+            <a class="proposal-brand" href="../" aria-label="${escapeHtml(brandName)}"><img src="${escapeHtml(logoSrc)}" alt="${escapeHtml(brandName)}" /><span>${escapeHtml(isPartner && values.partnerName ? values.partnerName : "Web")}</span></a>
+            <span>03 / Extras</span>
+          </div>
+          <div class="proposal-section-title">
+            <p>Extras seleccionados</p>
+            <h2>${oneTimeExtras.length || recurringExtras.length ? "Complementos para dejar la propuesta lista." : "Sin extras adicionales por ahora."}</h2>
+          </div>
+          <div class="proposal-extra-list">
+            ${oneTimeExtras.length || recurringExtras.length ? [...oneTimeExtras, ...recurringExtras].map((item) => `<div><span>${escapeHtml(item.displayPrice || usdLabel(item.price))}</span><strong>${escapeHtml(item.name)}</strong><p>${escapeHtml(item.detail)}</p></div>`).join("") : `<div><span>Incluido</span><strong>Alcance base</strong><p>La propuesta avanza con el plan seleccionado y sus funcionalidades incluidas.</p></div>`}
+          </div>
+        </section>
+
+        <section class="proposal-page">
+          <div class="proposal-page-top proposal-pdf-header">
+            <a class="proposal-brand" href="../" aria-label="${escapeHtml(brandName)}"><img src="${escapeHtml(logoSrc)}" alt="${escapeHtml(brandName)}" /><span>${escapeHtml(isPartner && values.partnerName ? values.partnerName : "Web")}</span></a>
+            <span>04 / Inversion</span>
+          </div>
+          <div class="proposal-section-title proposal-money-title">
+            <p>Inversion</p>
+            <h2>${usdLabel(total)}</h2>
+            <span>Total final</span>
+          </div>
+          <div class="proposal-money-grid proposal-invest-grid">
+            <div><span>Subtotal</span><strong>${MONEY_USD.format(base)}</strong></div>
+            <div><span>Extras</span><strong>${MONEY_USD.format(extrasTotal)}</strong></div>
+            <div><span>Descuento</span><strong>${MONEY_USD.format(discount)}</strong></div>
+            <div><span>Total final</span><strong>${MONEY_USD.format(total)}</strong></div>
+            <div><span>Mantenimiento opcional</span><strong>${monthlyTotal ? `${MONEY_USD.format(monthlyTotal)}/mes` : "No aplica"}</strong></div>
+            <div><span>Tiempo estimado</span><strong>${escapeHtml(values.time || "Segun alcance")}</strong></div>
+          </div>
+          <p class="proposal-note">Referencia en pesos: ${MONEY_ARS.format(total * rate)}. Dolar tomado: ${MONEY_ARS.format(rate)} ARS.</p>
+        </section>
+
+        <section class="proposal-page proposal-page-close">
+          <div class="proposal-page-top proposal-pdf-header">
+            <a class="proposal-brand" href="../" aria-label="${escapeHtml(brandName)}"><img src="${escapeHtml(logoSrc)}" alt="${escapeHtml(brandName)}" /><span>${escapeHtml(isPartner && values.partnerName ? values.partnerName : "Web")}</span></a>
+            <span>05 / Cierre</span>
+          </div>
+          <div class="proposal-section-title">
+            <p>Proximos pasos</p>
+            <h2>Avanzamos con un proceso simple y ordenado.</h2>
+          </div>
+          <div class="proposal-timeline-master proposal-next-steps">
+            ${nextSteps.map((item, index) => `<div><span>${String(index + 1).padStart(2, "0")}</span><strong>${escapeHtml(item)}</strong></div>`).join("")}
+          </div>
+          <div class="proposal-conditions">
+            <p>${escapeHtml(terms)}</p>
+            <p>Validez de la propuesta: ${escapeHtml(validity)}.</p>
+          </div>
+          <div class="proposal-contact-block">
+            <strong>Gracias por confiar en ${escapeHtml(brandName)}.</strong>
+            <span>Webs claras, modernas y preparadas para captar mejores consultas.</span>
+            <p>Contacto: WhatsApp / ${escapeHtml(contactLabel)}</p>
+          </div>
+        </section>
+      </div>
+    `;
+  };
+
+  const syncBasePrice = (force = false) => {
+    const type = form.elements.webType?.value;
+    const selectedType = webTypes[type] || webTypes.comercial;
+    if (form.elements.basePrice && (force || !form.elements.basePrice.value)) form.elements.basePrice.value = selectedType.price;
+    if (form.elements.internalCost && (force || !form.elements.internalCost.value)) form.elements.internalCost.value = selectedType.price;
+    if (form.elements.finalClientPrice && (force || !form.elements.finalClientPrice.value)) form.elements.finalClientPrice.value = selectedType.price;
+  };
+
+  form.addEventListener("input", renderBudget);
+  form.addEventListener("change", (event) => {
+    if (event.target?.name === "partnerLogo" && event.target.files?.[0]) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        partnerLogoData = String(reader.result || "");
+        renderBudget();
+      };
+      reader.readAsDataURL(event.target.files[0]);
+      return;
+    }
+    if (event.target?.name === "webType") syncBasePrice(true);
+    renderBudget();
+  });
+
+  const exportProposal = async () => {
+    if (!window.html2canvas || !window.jspdf) {
+      window.print();
+      return;
+    }
+    const docNode = document.getElementById("proposalDocument");
+    if (!docNode) return;
+    const exportHost = document.createElement("div");
+    exportHost.className = "proposal-export-host";
+    exportHost.innerHTML = docNode.outerHTML;
+    document.body.appendChild(exportHost);
+    try {
+      const { jsPDF } = window.jspdf;
+      const pages = Array.from(exportHost.querySelectorAll(".proposal-page"));
+      let pdf = null;
+      for (const page of pages) {
+        const canvas = await window.html2canvas(page, { backgroundColor: "#fffdf9", scale: 2, useCORS: true });
+        const image = canvas.toDataURL("image/png", 1);
+        if (!pdf) {
+          pdf = new jsPDF({ unit: "px", format: [canvas.width, canvas.height] });
+        } else {
+          pdf.addPage([canvas.width, canvas.height], canvas.width > canvas.height ? "landscape" : "portrait");
+        }
+        pdf.addImage(image, "PNG", 0, 0, canvas.width, canvas.height);
+      }
+      if (!pdf) return;
+      pdf.save(`Runia_Web_${(getFormObject(form).client || "Presupuesto").replace(/\s+/g, "_")}.pdf`);
+    } finally {
+      exportHost.remove();
+    }
+  };
+
+  exportButtons.forEach((button) => button.addEventListener("click", exportProposal));
+
+  if (form.elements.date) form.elements.date.value = new Date().toISOString().slice(0, 10);
+  syncBasePrice();
+  renderBudget();
+};
+
 const initBrief = () => {
   const form = document.querySelector("[data-brief-form]");
   if (!form) return;
+
   const confirmation = document.querySelector("[data-brief-confirmation]");
   const briefGrid = form.closest(".tool-grid");
   const submitButton = form.querySelector('[type="submit"]');
+  const adminPanel = document.querySelector("[data-brief-admin]");
+  const adminSummary = document.querySelector("[data-brief-admin-summary]");
+  const adminStructure = document.querySelector("[data-brief-admin-structure]");
+  const adminChecklist = document.querySelector("[data-brief-admin-checklist]");
+  const promptOutput = document.querySelector("[data-brief-prompt-output]");
+  const copyPromptButton = document.querySelector("[data-copy-brief-prompt]");
   const params = new URLSearchParams(window.location.search);
+  const adminParam = params.get("admin");
+  const isAdmin = adminParam === "true";
 
   if (params.get("negocio") && form.querySelector('[name="business"]')) form.querySelector('[name="business"]').value = params.get("negocio");
   if (params.get("whatsapp") && form.querySelector('[name="whatsapp"]')) form.querySelector('[name="whatsapp"]').value = params.get("whatsapp");
 
-  const buildInternalSummary = () => {
+  const listText = (items) => items.length ? items.join(", ") : "-";
+  const hasAnyText = (...items) => items.some((item) => String(item || "").trim().length > 0);
+
+  const getBriefData = () => {
     const v = getFormObject(form);
     const objectives = getCheckedValues(form, "objective");
     const brandAssets = getCheckedValues(form, "brandAssets");
     const features = getCheckedValues(form, "features");
-
-    return `BRIEF DE ARMADO - RUNIA WEB
-
-DATOS DEL NEGOCIO
-Nombre: ${v.business || "-"}
-Rubro: ${v.industry || "-"}
-Ubicación: ${v.location || "-"}
-WhatsApp: ${v.whatsapp || "-"}
-Email: ${v.email || "-"}
-Instagram: ${v.instagram || "-"}
-Web actual: ${v.currentWebsite || "-"}
-Dominio: ${v.domain || "-"}
-
-OBJETIVO DE LA WEB
-${objectives.join(", ") || "-"}
-
-SERVICIOS / PRODUCTOS
-Qué ofrece la empresa: ${v.offer || "-"}
-Servicios principales: ${v.services || "-"}
-Productos principales: ${v.products || "-"}
-Diferencial del negocio: ${v.differential || "-"}
-Cliente ideal: ${v.audience || "-"}
-
-ESTÉTICA
-Colores actuales: ${v.colors || "-"}
-Marca disponible: ${brandAssets.join(", ") || "-"}
-Referencias visuales: ${v.references || "-"}
-Estilos que NO quiere: ${v.donts || "-"}
-
-MATERIALES
-Links a fotos: ${v.photoLinks || "-"}
-Links a logo: ${v.logoLinks || "-"}
-Textos existentes: ${v.currentTexts || "-"}
-Videos: ${v.videos || "-"}
-Redes sociales: ${v.socials || "-"}
-Otros archivos: ${v.otherFiles || "-"}
-
-FUNCIONALIDADES
-${features.join(", ") || "-"}`;
+    return { v, objectives, brandAssets, features };
   };
+
+  const buildInternalSummary = () => {
+    const { v, objectives, brandAssets, features } = getBriefData();
+    return [
+      "BRIEF DE ARMADO - RUNIA WEB",
+      "",
+      "DATOS DEL NEGOCIO",
+      "Nombre: " + (v.business || "-"),
+      "Rubro: " + (v.industry || "-"),
+      "Ubicacion: " + (v.location || "-"),
+      "WhatsApp: " + (v.whatsapp || "-"),
+      "Email: " + (v.email || "-"),
+      "Instagram: " + (v.instagram || "-"),
+      "Web actual: " + (v.currentWebsite || "-"),
+      "Dominio: " + (v.domain || "-"),
+      "",
+      "OBJETIVO DE LA WEB",
+      listText(objectives),
+      "",
+      "SERVICIOS / PRODUCTOS",
+      "Que ofrece la empresa: " + (v.offer || "-"),
+      "Servicios principales: " + (v.services || "-"),
+      "Productos principales: " + (v.products || "-"),
+      "Diferencial del negocio: " + (v.differential || "-"),
+      "Cliente ideal: " + (v.audience || "-"),
+      "CTA principal: " + (v.primaryCta || "-"),
+      "Tono: " + (v.tone || "-"),
+      "",
+      "ESTETICA",
+      "Colores actuales: " + (v.colors || "-"),
+      "Marca disponible: " + listText(brandAssets),
+      "Referencias visuales: " + (v.references || "-"),
+      "Estilos que NO quiere: " + (v.donts || "-"),
+      "",
+      "MATERIALES",
+      "Links a fotos: " + (v.photoLinks || "-"),
+      "Links a logo: " + (v.logoLinks || "-"),
+      "Textos existentes: " + (v.currentTexts || "-"),
+      "Videos: " + (v.videos || "-"),
+      "Redes sociales: " + (v.socials || "-"),
+      "Otros archivos: " + (v.otherFiles || "-"),
+      "",
+      "FUNCIONALIDADES",
+      listText(features)
+    ].join("\n");
+  };
+
+  const buildChecklist = () => {
+    const { v, brandAssets, features } = getBriefData();
+    const hasLogo = brandAssets.includes("tiene logo") || hasAnyText(v.logoLinks);
+    const hasBranding = hasLogo || brandAssets.includes("tiene manual de marca") || hasAnyText(v.colors);
+    const hasTexts = hasAnyText(v.currentTexts, v.offer, v.services, v.products);
+    const hasPhotos = hasAnyText(v.photoLinks);
+    const wantsAutomation = features.includes("automatizacion futura") || features.includes("IA futura");
+    return [
+      { text: hasLogo ? "Tiene logo" : "Falta logo", status: hasLogo ? "ok" : "missing" },
+      { text: v.domain ? "Tiene dominio" : "Falta dominio", status: v.domain ? "ok" : "missing" },
+      { text: hasPhotos ? "Tiene fotos o links visuales" : "Falta fotos/material visual", status: hasPhotos ? "ok" : "missing" },
+      { text: v.whatsapp || features.includes("WhatsApp") ? "Tiene WhatsApp" : "Falta WhatsApp", status: v.whatsapp || features.includes("WhatsApp") ? "ok" : "missing" },
+      { text: hasBranding ? "Tiene base de branding" : "Necesita definir branding", status: hasBranding ? "ok" : "warn" },
+      { text: hasTexts ? "Tiene contenido base" : "Necesita copy base", status: hasTexts ? "ok" : "warn" },
+      { text: wantsAutomation ? "Necesita automatizacion futura" : "Sin automatizacion futura declarada", status: wantsAutomation ? "warn" : "ok" }
+    ];
+  };
+
+  const buildStructure = () => {
+    const { objectives, features } = getBriefData();
+    const sections = ["Hero comercial", "Servicios / propuesta", "Diferenciales", "Contacto"];
+    if (objectives.includes("mostrar productos") || features.includes("catalogo")) sections.splice(2, 0, "Catalogo / productos");
+    if (objectives.includes("vender")) sections.splice(2, 0, "Bloque de conversion");
+    if (features.includes("mapa")) sections.push("Ubicacion / mapa");
+    if (features.includes("agenda")) sections.push("Agenda / reserva");
+    return sections;
+  };
+
+  const buildPrompt = () => {
+    const { v, objectives, brandAssets, features } = getBriefData();
+    return [
+      "Crear una web para " + (v.business || "[empresa]") + ", rubro " + (v.industry || "[rubro]") + ", usando la plantilla base Runia Web.",
+      "",
+      "Mantener:",
+      "",
+      "* estetica actual Runia Web,",
+      "* dark premium,",
+      "* tipografias,",
+      "* spacing,",
+      "* componentes,",
+      "* estructura modular,",
+      "* navegacion,",
+      "* hero estilo Runia.",
+      "",
+      "Personalizar:",
+      "",
+      "* copy,",
+      "* imagenes,",
+      "* servicios,",
+      "* CTA,",
+      "* branding,",
+      "* colores secundarios,",
+      "* modulos necesarios,",
+      "* WhatsApp,",
+      "* formularios.",
+      "",
+      "OBJETIVO:",
+      "La web debe ayudar a " + listText(objectives) + ".",
+      "",
+      "SERVICIOS PRINCIPALES:",
+      v.services || v.offer || "[servicios]",
+      "",
+      "CTA PRINCIPAL:",
+      v.primaryCta || "Consultar por WhatsApp",
+      "",
+      "TONO:",
+      v.tone || "[tono]",
+      "",
+      "ESTILO VISUAL:",
+      "Colores: " + (v.colors || "-"),
+      "Branding disponible: " + listText(brandAssets),
+      "Referencias: " + (v.references || "-"),
+      "Evitar: " + (v.donts || "-"),
+      "",
+      "FUNCIONALIDADES:",
+      listText(features),
+      "",
+      "MATERIALES:",
+      "Logo: " + (v.logoLinks || "-"),
+      "Fotos: " + (v.photoLinks || "-"),
+      "Textos: " + (v.currentTexts || "-"),
+      "Redes: " + (v.socials || "-"),
+      "",
+      "IMPORTANTE:",
+      "NO reinterpretar el sistema visual.",
+      "NO crear una web experimental.",
+      "Trabajar sobre la estructura modular Runia Web."
+    ].join("\n");
+  };
+
+  const renderAdminOutput = () => {
+    if (!isAdmin || !adminPanel) return;
+    const { v, objectives, brandAssets, features } = getBriefData();
+    const checklist = buildChecklist();
+    const structure = buildStructure();
+    adminPanel.hidden = false;
+    document.body.classList.add("is-brief-admin");
+
+    if (adminSummary) {
+      const rows = [
+        ["Nombre", v.business || "-"],
+        ["Rubro", v.industry || "-"],
+        ["Objetivo", listText(objectives)],
+        ["Servicios", v.services || v.offer || "-"],
+        ["CTA principal", v.primaryCta || "Consultar por WhatsApp"],
+        ["Tono", v.tone || "-"],
+        ["Branding", listText(brandAssets)],
+        ["Funcionalidades", listText(features)],
+        ["Assets faltantes", checklist.filter((item) => item.status === "missing").map((item) => item.text).join(", ") || "Sin faltantes criticos"]
+      ];
+      adminSummary.innerHTML = rows.map(([label, value]) => "<div><span>" + escapeHtml(label) + "</span><strong>" + escapeHtml(value) + "</strong></div>").join("");
+    }
+
+    if (adminStructure) {
+      adminStructure.innerHTML = structure.map((item, index) => "<div><span>" + String(index + 1).padStart(2, "0") + "</span><strong>" + escapeHtml(item) + "</strong></div>").join("");
+    }
+
+    if (adminChecklist) {
+      adminChecklist.innerHTML = checklist.map((item) => "<li class=\"is-" + item.status + "\">" + escapeHtml(item.text) + "</li>").join("");
+    }
+
+    if (promptOutput) promptOutput.textContent = buildPrompt();
+  };
+
+  if (isAdmin) {
+    renderAdminOutput();
+    form.addEventListener("input", renderAdminOutput);
+    form.addEventListener("change", renderAdminOutput);
+  }
+
+  copyPromptButton?.addEventListener("click", async () => {
+    const prompt = buildPrompt();
+    try {
+      await navigator.clipboard.writeText(prompt);
+      copyPromptButton.textContent = "Prompt copiado";
+      window.setTimeout(() => {
+        copyPromptButton.textContent = "Copiar prompt";
+      }, 1800);
+    } catch (error) {
+      console.warn("No se pudo copiar el prompt", error);
+    }
+  });
 
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
     if (submitButton?.disabled) return;
 
     const summary = buildInternalSummary();
-    const values = getFormObject(form);
-    const objectives = getCheckedValues(form, "objective");
-    const brandAssets = getCheckedValues(form, "brandAssets");
-    const features = getCheckedValues(form, "features");
+    const { v: values, objectives, brandAssets, features } = getBriefData();
     const payload = {
       type: "brief",
       fecha: new Date().toISOString(),
@@ -1022,15 +1525,12 @@ ${features.join(", ") || "-"}`;
       confirmacion_recepcion: "pendiente"
     };
 
-    if (submitButton) submitButton.disabled = true;
-    await sendToGoogleSheets(payload, "brief");
-
-    try {
-      await navigator.clipboard.writeText(summary);
-    } catch (error) {
-      const mail = `mailto:?subject=${encodeURIComponent("Brief de armado Runia Web")}&body=${encodeURIComponent(summary)}`;
-      window.location.href = mail;
+    if (submitButton) {
+      submitButton.disabled = true;
+      submitButton.textContent = "Formulario enviado";
     }
+
+    await sendToGoogleSheets(payload, "brief");
 
     if (confirmation) {
       form.hidden = true;
@@ -1038,6 +1538,8 @@ ${features.join(", ") || "-"}`;
       confirmation.hidden = false;
       confirmation.scrollIntoView({ behavior: "smooth", block: "center" });
     }
+
+    renderAdminOutput();
   });
 };
 

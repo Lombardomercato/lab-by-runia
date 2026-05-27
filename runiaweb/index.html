@@ -3,14 +3,34 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <title>RUNIA Web | Páginas web comerciales para empresas</title>
+    <title>RUNIA Web | Creamos Páginas Web en 48hs o no pagás.</title>
     <meta
       name="description"
-      content="RUNIA Web crea sitios comerciales claros, profesionales y preparados para captar consultas y escalar con sistemas."
+      content="Creamos Páginas Web en 48hs o no pagás. Sitios comerciales claros, profesionales y preparados para captar consultas."
     />
+    <meta name="robots" content="index, follow" />
     <meta name="theme-color" content="#f7f4ef" />
+    <link rel="canonical" href="https://www.runia.ar/runiaweb/" />
     <link rel="icon" type="image/png" href="https://www.runia.ar/images/logo-runia-ico.png" />
     <link rel="preconnect" href="https://www.runia.ar" crossorigin />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="es_AR" />
+    <meta property="og:site_name" content="RUNIA Web" />
+    <meta property="og:title" content="RUNIA Web | Creamos Páginas Web en 48hs o no pagás." />
+    <meta
+      property="og:description"
+      content="Sitios comerciales claros, profesionales y preparados para captar consultas. Lanzá online rápido con RUNIA Web."
+    />
+    <meta property="og:url" content="https://www.runia.ar/runiaweb/" />
+    <meta property="og:image" content="https://www.runia.ar/images/runialogo.png" />
+    <meta property="og:image:alt" content="RUNIA Web | Creamos Páginas Web en 48hs o no pagás." />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="RUNIA Web | Creamos Páginas Web en 48hs o no pagás." />
+    <meta
+      name="twitter:description"
+      content="Sitios comerciales claros, profesionales y preparados para captar consultas. Lanzá online rápido con RUNIA Web."
+    />
+    <meta name="twitter:image" content="https://www.runia.ar/images/runialogo.png" />
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
@@ -42,7 +62,7 @@
               <span class="title-product">Páginas web</span>
               <span class="title-soft">claras,<br class="mobile-break" /> modernas</span>
               <span class="title-light title-inline">y listas en</span>
-              <span class="title-accent">48hs.</span>
+              <span class="title-accent"><span class="title-accent-main">48hs<span class="title-accent-comma">,</span></span><span class="title-accent-note">o no pagás.</span></span>
             </h1>
             <p class="lead">
               Creamos webs profesionales para empresas que necesitan verse mejor, captar clientes
@@ -218,7 +238,7 @@
             </p>
           </div>
 
-          <div class="delivery-grid" aria-label="Proceso de entrega en 48 horas">
+          <div class="delivery-grid" aria-label="Proceso de entrega en 48 horas" data-delivery-steps>
             <article class="delivery-card">
               <span>01</span>
               <h3>Brief centralizado</h3>
@@ -253,15 +273,32 @@
             </article>
           </div>
 
-          <div class="delivery-statement">
+          <div class="delivery-statement" data-delivery-panel>
+            <div class="delivery-statement-copy">
+              <p class="delivery-kicker">Paso <span data-delivery-current>01</span> / 04</p>
             <h3>Lanzar rápido no significa improvisar.</h3>
             <p>
               Creamos un sistema pensado para reducir tiempos, ordenar procesos y ayudarte a salir
               online en días, no meses.
             </p>
+              <div class="delivery-progress" aria-hidden="true">
+                <span></span>
+              </div>
+            </div>
+            <div class="delivery-status" aria-hidden="true">
+              <div class="delivery-status-head">
+                <span data-delivery-status-title>Brief centralizado</span>
+                <strong data-delivery-status-number>01</strong>
+              </div>
+              <ul>
+                <li class="is-complete">InformaciÃ³n ordenada</li>
+                <li>Componentes listos</li>
+                <li>PublicaciÃ³n preparada</li>
+              </ul>
             <div class="delivery-actions">
               <a class="button button-light" href="./cotizador/">Quiero mi web</a>
               <a class="button button-soft" href="./cotizador/">Calcular mi proyecto</a>
+            </div>
             </div>
           </div>
         </div>

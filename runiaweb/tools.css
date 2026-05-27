@@ -697,6 +697,68 @@
   justify-content: center;
 }
 
+.budget-mode-box {
+  border-color: rgba(237, 154, 38, 0.24);
+  background: rgba(237, 154, 38, 0.04);
+}
+
+.budget-mode-options {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.partner-budget-fields {
+  margin: 1.15rem 0;
+  padding: 1.1rem;
+  border: 1px solid rgba(247, 244, 239, 0.12);
+  background:
+    linear-gradient(rgba(247, 244, 239, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(247, 244, 239, 0.04) 1px, transparent 1px),
+    rgba(247, 244, 239, 0.035);
+  background-size: 44px 44px;
+}
+
+.pricing-warning {
+  margin-top: 0.95rem;
+  padding: 0.9rem 1rem;
+  border: 1px solid rgba(237, 154, 38, 0.42);
+  background: rgba(237, 154, 38, 0.12);
+  color: #ffd19a;
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+.pricing-warning.is-visible {
+  margin: 1rem 0;
+  color: #8f5b13;
+  background: rgba(237, 154, 38, 0.13);
+}
+
+.partner-internal-summary {
+  display: grid;
+  gap: 0.75rem;
+  margin-top: 1rem;
+  padding: 1rem;
+  border: 1px solid rgba(27, 25, 22, 0.09);
+  background: rgba(27, 25, 22, 0.035);
+}
+
+.partner-internal-summary span {
+  color: rgba(27, 25, 22, 0.48);
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.66rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.partner-internal-summary strong {
+  display: block;
+  margin-top: 0.35rem;
+  color: var(--ink);
+  font-weight: 430;
+}
+
 .featured-tool-card {
   box-shadow: inset 0 3px 0 var(--orange);
 }
@@ -1032,6 +1094,155 @@
 .proposal-contact-block span,
 .proposal-contact-block p {
   color: rgba(255, 253, 249, 0.68);
+}
+
+.proposal-master-commercial .proposal-page {
+  background:
+    linear-gradient(rgba(27, 25, 22, 0.012) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(27, 25, 22, 0.012) 1px, transparent 1px),
+    #fffdf9;
+  background-size: 58px 58px;
+}
+
+.proposal-master-commercial .proposal-page::before {
+  border-color: rgba(27, 25, 22, 0.026);
+}
+
+.proposal-pdf-header .proposal-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.72rem;
+}
+
+.proposal-pdf-header .proposal-brand img {
+  max-width: 8.2rem;
+  max-height: 2.7rem;
+  object-fit: contain;
+}
+
+.proposal-pdf-header .proposal-brand span {
+  color: rgba(27, 25, 22, 0.58);
+  font-family: "Instrument Sans", Inter, "Helvetica Neue", Arial, sans-serif;
+  font-size: 0.92rem;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.proposal-pdf-header > div {
+  display: grid;
+  gap: 0.35rem;
+  text-align: right;
+}
+
+.proposal-cover-commercial {
+  grid-template-columns: minmax(0, 1fr) 300px;
+  gap: 4rem;
+}
+
+.proposal-ref-line {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 0.55rem 1rem;
+  max-width: 470px;
+  margin-top: 2.2rem;
+  padding-top: 1.2rem;
+  border-top: 1px solid rgba(27, 25, 22, 0.08);
+}
+
+.proposal-ref-line strong {
+  color: rgba(27, 25, 22, 0.44);
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.66rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.proposal-ref-line span {
+  color: rgba(27, 25, 22, 0.74);
+}
+
+.proposal-scope-list,
+.proposal-extra-list {
+  display: grid;
+  gap: 1px;
+  margin-top: 3.5rem;
+  border: 1px solid rgba(27, 25, 22, 0.075);
+  background: rgba(27, 25, 22, 0.075);
+}
+
+.proposal-scope-list {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.proposal-scope-list div,
+.proposal-extra-list div {
+  min-height: 7.4rem;
+  padding: 1.25rem;
+  background: rgba(255, 253, 249, 0.94);
+}
+
+.proposal-scope-list span {
+  display: block;
+  width: 0.42rem;
+  height: 0.42rem;
+  margin-bottom: 1.2rem;
+  background: var(--orange);
+}
+
+.proposal-scope-list strong,
+.proposal-extra-list strong {
+  display: block;
+  color: var(--ink);
+  font-size: 1.16rem;
+  line-height: 1.22;
+  font-weight: 430;
+}
+
+.proposal-extra-list div {
+  min-height: 6.8rem;
+}
+
+.proposal-extra-list span {
+  color: var(--orange);
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.proposal-extra-list p {
+  margin-top: 0.8rem;
+  color: rgba(27, 25, 22, 0.6);
+  font-size: 0.92rem;
+  line-height: 1.55;
+}
+
+.proposal-invest-grid div:nth-child(4) {
+  background: var(--ink);
+}
+
+.proposal-invest-grid div:nth-child(4) span,
+.proposal-invest-grid div:nth-child(4) strong {
+  color: var(--bg);
+}
+
+.proposal-next-steps {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1px;
+  border: 1px solid rgba(27, 25, 22, 0.08);
+  background: rgba(27, 25, 22, 0.08);
+}
+
+.proposal-next-steps div {
+  display: block;
+  min-height: 9rem;
+  padding: 1.25rem;
+  border: 0;
+  background: rgba(255, 253, 249, 0.94);
+}
+
+.proposal-next-steps strong {
+  margin-top: 2.2rem;
 }
 
 .proposal-preview {
@@ -2144,6 +2355,25 @@
   align-self: start;
 }
 
+.brief-client-steps {
+  display: grid;
+  gap: 0.7rem;
+  margin-top: 1.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid rgba(27, 25, 22, 0.08);
+}
+
+.brief-client-steps span {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  color: rgba(27, 25, 22, 0.58);
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.74rem;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
 .tool-grid.is-brief-submitted {
   grid-template-columns: minmax(0, 760px);
   justify-content: center;
@@ -2180,6 +2410,179 @@
   margin-top: 1rem;
   color: rgba(27, 25, 22, 0.68);
   font-size: 1.03rem;
+}
+
+.brief-admin-panel {
+  margin-top: 2.5rem;
+}
+
+.brief-admin-header {
+  display: grid;
+  gap: 1rem;
+  max-width: 760px;
+  margin-bottom: 1.4rem;
+}
+
+.brief-admin-header h2 {
+  margin: 0;
+  color: var(--ink);
+  font-family: "Instrument Sans", Inter, "Helvetica Neue", Arial, sans-serif;
+  font-size: clamp(2.3rem, 5vw, 5rem);
+  font-weight: 420;
+  line-height: 0.96;
+  letter-spacing: 0;
+}
+
+.brief-admin-header p:last-child {
+  max-width: 42rem;
+  color: rgba(27, 25, 22, 0.62);
+  line-height: 1.6;
+}
+
+.brief-admin-grid {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr 0.9fr;
+  gap: 1rem;
+}
+
+.brief-admin-card {
+  position: relative;
+  overflow: hidden;
+  padding: 1.4rem;
+  border: 1px solid rgba(255, 253, 249, 0.13);
+  background:
+    linear-gradient(135deg, rgba(255, 253, 249, 0.055), rgba(255, 253, 249, 0.018)),
+    #101411;
+  color: var(--cream);
+  box-shadow: 0 24px 70px rgba(16, 20, 17, 0.12);
+}
+
+.brief-admin-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255, 253, 249, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 253, 249, 0.035) 1px, transparent 1px);
+  background-size: 48px 48px;
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+.brief-admin-card > * {
+  position: relative;
+}
+
+.brief-admin-card .tool-label {
+  color: rgba(255, 253, 249, 0.58);
+}
+
+.brief-admin-output {
+  display: grid;
+  gap: 0.85rem;
+  margin-top: 1.15rem;
+}
+
+.brief-admin-output div {
+  display: grid;
+  gap: 0.32rem;
+  padding-bottom: 0.85rem;
+  border-bottom: 1px solid rgba(255, 253, 249, 0.09);
+}
+
+.brief-admin-output div:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+
+.brief-admin-output span,
+.brief-admin-checklist li::before {
+  color: var(--orange);
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.brief-admin-output strong {
+  color: rgba(255, 253, 249, 0.86);
+  font-size: 0.98rem;
+  font-weight: 420;
+  line-height: 1.45;
+}
+
+.brief-admin-checklist {
+  display: grid;
+  gap: 0.75rem;
+  margin: 1.15rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.brief-admin-checklist li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.7rem;
+  color: rgba(255, 253, 249, 0.82);
+  line-height: 1.4;
+}
+
+.brief-admin-checklist li::before {
+  content: "OK";
+  min-width: 2.2rem;
+}
+
+.brief-admin-checklist li.is-missing::before {
+  content: "FALTA";
+}
+
+.brief-admin-checklist li.is-warn::before {
+  content: "VER";
+}
+
+.brief-prompt-card {
+  margin-top: 1rem;
+}
+
+.brief-prompt-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.brief-prompt-head h3 {
+  margin: 0.35rem 0 0;
+  color: var(--cream);
+  font-size: clamp(1.65rem, 3vw, 2.7rem);
+  font-weight: 420;
+  line-height: 1;
+  letter-spacing: 0;
+}
+
+.brief-prompt-output {
+  min-height: 320px;
+  max-height: 560px;
+  margin: 1.35rem 0 0;
+  padding: 1.2rem;
+  overflow: auto;
+  border: 1px solid rgba(255, 253, 249, 0.12);
+  background: rgba(255, 253, 249, 0.05);
+  color: rgba(255, 253, 249, 0.8);
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.78rem;
+  line-height: 1.65;
+  white-space: pre-wrap;
+}
+
+@media (max-width: 980px) {
+  .brief-admin-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .brief-prompt-head {
+    display: grid;
+  }
 }
 
 .copy-box {

@@ -3,13 +3,91 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <title>Catálogo | Runia Web</title>
-    <meta name="description" content="Catálogo de soluciones, packs y módulos comerciales de Runia Web." />
-    <meta name="robots" content="noindex, nofollow" />
+    <title>Planes Runia Web | Runia Web</title>
+    <meta name="description" content="Planes comerciales de Runia Web para lanzar tu web y hacer crecer tu presencia digital." />
+    <meta name="robots" content="index, follow" />
     <meta name="theme-color" content="#f7f4ef" />
     <link rel="icon" type="image/png" href="https://www.runia.ar/images/logo-runia-ico.png" />
     <link rel="stylesheet" href="../styles.css" />
     <link rel="stylesheet" href="../tools.css" />
+    <style>
+      .catalog-title .accent {
+        font-size: 1.14em;
+      }
+
+      .catalog-grid > [hidden] {
+        display: none !important;
+      }
+
+      .catalog-grid > .tool-card {
+        display: flex;
+        flex-direction: column;
+        min-height: 100%;
+        padding: 1.55rem;
+      }
+
+      .catalog-grid > .tool-card .catalog-list {
+        flex: 1;
+        margin-top: 1.45rem;
+      }
+
+      .catalog-grid > .tool-card .tool-label {
+        margin: 0;
+        color: rgba(27, 25, 22, 0.48);
+      }
+
+      .catalog-grid > .tool-card h3 {
+        max-width: 9.5em;
+        margin-top: 0.45rem;
+        color: var(--ink);
+        font-size: clamp(1.9rem, 3vw, 3.05rem);
+        line-height: 0.94;
+        font-weight: 410;
+      }
+
+      .catalog-grid > .tool-card > p:not(.tool-label):not(.catalog-price) {
+        max-width: 28rem;
+        margin-top: 1.05rem;
+        color: rgba(27, 25, 22, 0.6);
+        font-size: 1.02rem;
+        line-height: 1.55;
+      }
+
+      .catalog-grid > .tool-card .catalog-list li {
+        padding: 0.72rem 0;
+        color: rgba(27, 25, 22, 0.64);
+        font-size: 0.96rem;
+        line-height: 1.4;
+      }
+
+      .catalog-grid > .tool-card .catalog-price {
+        min-height: 6.35rem;
+        margin: auto -1.55rem -1.55rem;
+        padding: 1.18rem 1.55rem 1.3rem;
+        display: grid;
+        align-content: center;
+        gap: 0.46rem;
+        border-top: 1px solid rgba(27, 25, 22, 0.1);
+        background: rgba(255, 253, 249, 0.38);
+      }
+
+      .catalog-grid > .tool-card .catalog-price span {
+        color: rgba(27, 25, 22, 0.44);
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.68rem;
+        letter-spacing: 0.12em;
+        line-height: 1;
+        text-transform: uppercase;
+      }
+
+      .catalog-grid > .tool-card .catalog-price strong {
+        color: var(--ink);
+        font-size: clamp(1.72rem, 2.65vw, 2.55rem);
+        line-height: 1;
+        font-weight: 390;
+        letter-spacing: 0;
+      }
+    </style>
   </head>
   <body class="tool-page">
     <header class="header">
@@ -31,19 +109,19 @@
         <div class="container tool-hero-grid">
           <div>
             <p class="eyebrow"><span></span> Catálogo comercial</p>
-            <h1 class="tool-title">
-              <span>Productos claros.</span>
-              <span class="muted">Webs vendibles.</span>
-              <span class="accent">Sistema repetible.</span>
+            <h1 class="tool-title catalog-title">
+              <span>Planes</span>
+              <span class="muted">Runia</span>
+              <span class="accent">Web.</span>
             </h1>
             <p class="tool-lead">
-              Catálogo de productos Runia Web para entender planes, extras y opciones de crecimiento sin procesos eternos.
+              Elegí el punto de partida ideal para lanzar tu web y hacer crecer tu presencia digital.
             </p>
           </div>
           <aside class="tool-status-card">
             <p class="tool-label">Entrada comercial</p>
             <strong>48hs</strong>
-            <p>El catálogo ayuda a vender velocidad con alcance claro, sin prometer complejidad innecesaria.</p>
+            <p>Webs modernas, comerciales y preparadas para que tu negocio se vea profesional desde el primer día.</p>
           </aside>
         </div>
       </section>
@@ -55,7 +133,6 @@
             <button class="button button-soft" type="button" data-catalog-filter="web">Webs</button>
             <button class="button button-soft" type="button" data-catalog-filter="system">Sistema</button>
             <button class="button button-soft" type="button" data-catalog-filter="extra">Extras</button>
-            <button class="button button-soft" type="button" data-catalog-filter="partner">Partners</button>
           </div>
 
           <div class="catalog-grid" style="margin-top: 2rem;">
@@ -72,7 +149,7 @@
                 <li>Estructura comercial base</li>
                 <li>Entrega express 48hs</li>
               </ul>
-              <p class="catalog-price">USD 450</p>
+              <p class="catalog-price"><span>Inversión</span><strong>USD 450</strong></p>
             </article>
             <article class="tool-card featured-tool-card" data-catalog-card="web">
               <p class="tool-label">02 · Web</p>
@@ -87,7 +164,7 @@
                 <li>Base lista para campañas</li>
                 <li>Mejor jerarquía visual y recorrido comercial</li>
               </ul>
-              <p class="catalog-price">USD 850</p>
+              <p class="catalog-price"><span>Inversión</span><strong>USD 850</strong></p>
             </article>
             <article class="tool-card" data-catalog-card="system">
               <p class="tool-label">03 · Sistema</p>
@@ -101,7 +178,7 @@
                 <li>Dashboards básicos</li>
                 <li>Integración futura con Runia</li>
               </ul>
-              <p class="catalog-price">Desde USD 1.500</p>
+              <p class="catalog-price"><span>Inversión</span><strong>Desde USD 1.500</strong></p>
             </article>
             <article class="tool-card" data-catalog-card="extra">
               <p class="tool-label">04 · Extra</p>
@@ -114,7 +191,7 @@
                 <li>Decisiones visuales básicas</li>
                 <li>Mini guía de uso</li>
               </ul>
-              <p class="catalog-price">USD 250</p>
+              <p class="catalog-price"><span>Inversión</span><strong>USD 250</strong></p>
             </article>
             <article class="tool-card" data-catalog-card="extra">
               <p class="tool-label">05 · Extra</p>
@@ -129,7 +206,7 @@
                 <li>Mini manual de marca</li>
                 <li>Aplicaciones simples</li>
               </ul>
-              <p class="catalog-price">USD 650</p>
+              <p class="catalog-price"><span>Inversión</span><strong>USD 650</strong></p>
             </article>
             <article class="tool-card" data-catalog-card="extra">
               <p class="tool-label">06 · Extras</p>
@@ -141,35 +218,17 @@
                 <li>Mantenimiento mensual · desde USD 80/mes</li>
                 <li>Automatización / IA · a cotizar</li>
               </ul>
-              <p class="catalog-price">Según alcance</p>
-            </article>
-            <article class="tool-card" data-catalog-card="partner">
-              <p class="tool-label">07 · Partners</p>
-              <h3>Vendé webs Runia y ganá comisión.</h3>
-              <p>Un producto claro, repetible y fácil de ofrecer a clientes que necesitan ordenar su presencia digital.</p>
-              <ul class="catalog-list">
-                <li>Producto empaquetado</li>
-                <li>Entrega rápida</li>
-                <li>Comisión partner sugerida: 15% a 25% según operación</li>
-                <li>Escalamiento a Runia</li>
-              </ul>
-              <p class="catalog-price">Programa partner</p>
+              <p class="catalog-price"><span>Inversión</span><strong>Según alcance</strong></p>
             </article>
           </div>
         </div>
       </section>
 
       <section class="tool-section dark">
-        <div class="container">
-          <div class="section-heading">
-            <p class="eyebrow"><span></span> Próximo paso</p>
-            <h2 class="split-title"><span class="title-main">Elegí un punto de partida.</span><span class="title-muted">Cotizá tu web en 1 minuto.</span></h2>
-          </div>
-          <div class="flow-grid" style="margin-top: 3rem;">
-            <article class="tool-card"><h3>Elegís el plan</h3><p>Comparás las opciones y entendés qué incluye cada una.</p></article>
-            <article class="tool-card"><h3>Cotizás rápido</h3><p>Respondés unas preguntas y vemos qué conviene para tu negocio.</p></article>
-            <article class="tool-card"><h3>Hablamos</h3><p>Definimos alcance, tiempos y próximos pasos sin vueltas.</p></article>
-          </div>
+        <div class="container final-panel">
+          <h2 class="split-title"><span class="title-main">Elegí cómo querés empezar.</span></h2>
+          <p>Si necesitás salir rápido, empezá por Web 48hs. Si querés captar más consultas, Web Comercial. Si querés conectar procesos y automatización, Web + Sistema.</p>
+          <a class="button button-light" href="../cotizador/">Cotizar mi web</a>
         </div>
       </section>
     </main>
