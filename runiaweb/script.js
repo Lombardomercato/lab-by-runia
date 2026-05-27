@@ -1,5 +1,8 @@
+document.documentElement.classList.add("js");
+
 const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 const header = document.querySelector(".header");
+const sections = document.querySelectorAll("main section");
 
 const updateHeader = () => {
   header?.classList.toggle("is-scrolled", window.scrollY > 20);
@@ -105,10 +108,16 @@ if (cardSwap && swapCards.length) {
 }
 
 const revealTargets = document.querySelectorAll(
-  ".speed-panel, .speed-cards article, .problem-list article, .system-board article, .result-strip article, .runia-panel, .timeline li, .compare-grid article, .plans article, .final-panel"
+  ".hero-copy > *, .runia-card-swap, .proof-grid article, .speed-panel, .speed-cards article, .section-heading, .problem-list article, .delivery-heading, .delivery-card, .delivery-statement, .system-board article, .result-strip article, .runia-panel, .timeline li, .compare-grid article, .plans article, .final-panel"
 );
 
 revealTargets.forEach((element) => element.classList.add("reveal"));
+
+sections.forEach((section) => {
+  section.querySelectorAll(".reveal").forEach((element, index) => {
+    element.style.setProperty("--reveal-delay", `${Math.min(index * 70, 420)}ms`);
+  });
+});
 
 if (prefersReducedMotion) {
   revealTargets.forEach((element) => element.classList.add("is-visible"));
@@ -126,6 +135,92 @@ if (prefersReducedMotion) {
   );
 
   revealTargets.forEach((element) => revealObserver.observe(element));
+}
+
+const motionSurfaces = document.querySelectorAll(
+  ".proof-grid article, .speed-cards article, .problem-list article, .delivery-card, .system-board article, .result-strip article, .timeline li, .compare-grid article, .plans article"
+);
+
+motionSurfaces.forEach((surface) => surface.classList.add("motion-surface"));
+
+if (!prefersReducedMotion) {
+  let pointerRaf = 0;
+  const pointer = {
+    x: window.innerWidth * 0.5,
+    y: window.innerHeight * 0.25,
+    active: false
+  };
+  const spot = {
+    x: 50,
+    y: 24,
+    tx: 50,
+    ty: 24,
+    opacity: 0,
+    targetOpacity: 0
+  };
+
+  const updatePointerMotion = () => {
+    pointerRaf = 0;
+
+    spot.x += (spot.tx - spot.x) * 0.11;
+    spot.y += (spot.ty - spot.y) * 0.11;
+    spot.opacity += (spot.targetOpacity - spot.opacity) * 0.09;
+
+    document.body.style.setProperty("--spot-x", `${spot.x.toFixed(2)}%`);
+    document.body.style.setProperty("--spot-y", `${spot.y.toFixed(2)}%`);
+    document.body.style.setProperty("--spot-opacity", spot.opacity.toFixed(3));
+
+    motionSurfaces.forEach((surface) => {
+      const rect = surface.getBoundingClientRect();
+      const dx = (pointer.x - (rect.left + rect.width / 2)) / rect.width;
+      const dy = (pointer.y - (rect.top + rect.height / 2)) / rect.height;
+
+      if (!pointer.active || Math.abs(dx) > 1.08 || Math.abs(dy) > 1.08) {
+        surface.style.setProperty("--tilt-x", "0deg");
+        surface.style.setProperty("--tilt-y", "0deg");
+        return;
+      }
+
+      surface.style.setProperty("--tilt-x", `${(-dy * 1.1).toFixed(2)}deg`);
+      surface.style.setProperty("--tilt-y", `${(dx * 1.35).toFixed(2)}deg`);
+      surface.style.setProperty("--shine-x", `${((pointer.x - rect.left) / rect.width * 100).toFixed(2)}%`);
+      surface.style.setProperty("--shine-y", `${((pointer.y - rect.top) / rect.height * 100).toFixed(2)}%`);
+    });
+
+    if (pointer.active || spot.opacity > 0.01) {
+      pointerRaf = requestAnimationFrame(updatePointerMotion);
+    }
+  };
+
+  const requestPointerMotion = () => {
+    if (!pointerRaf) pointerRaf = requestAnimationFrame(updatePointerMotion);
+  };
+
+  window.addEventListener("pointermove", (event) => {
+    if (event.pointerType === "touch") return;
+    pointer.x = event.clientX;
+    pointer.y = event.clientY;
+    pointer.active = true;
+    spot.tx = (event.clientX / window.innerWidth) * 100;
+    spot.ty = (event.clientY / window.innerHeight) * 100;
+    spot.targetOpacity = 0.22;
+    requestPointerMotion();
+  }, { passive: true });
+
+  window.addEventListener("pointerleave", () => {
+    pointer.active = false;
+    spot.targetOpacity = 0;
+    requestPointerMotion();
+  });
+
+  window.addEventListener("scroll", () => {
+    sections.forEach((section, index) => {
+      const rect = section.getBoundingClientRect();
+      const viewportHeight = window.innerHeight || 1;
+      const progress = (rect.top + rect.height * 0.5 - viewportHeight * 0.5) / viewportHeight;
+      section.style.setProperty("--section-shift", `${(progress * (1 + index * 0.18)).toFixed(2)}px`);
+    });
+  }, { passive: true });
 }
 
 const counters = document.querySelectorAll("[data-count]");

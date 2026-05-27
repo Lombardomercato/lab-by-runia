@@ -8,7 +8,7 @@
     <meta name="theme-color" content="#f7f4ef" />
     <link rel="icon" type="image/png" href="https://www.runia.ar/images/logo-runia-ico.png" />
     <link rel="stylesheet" href="../styles.css" />
-    <link rel="stylesheet" href="../tools.css" />
+    <link rel="stylesheet" href="../tools.css?v=master-proposal-1" />
   </head>
   <body class="tool-page budget-page">
     <header class="header">
@@ -94,17 +94,20 @@
             </div>
             <label class="tool-field"><span>Condiciones</span><textarea name="terms">50% para comenzar. Entrega según alcance acordado.</textarea></label>
 
-            <div class="tool-actions">
-              <button class="button button-dark" type="button" data-export-pdf>Exportar PDF</button>
-            </div>
+            <p class="tool-form-note">El PDF no se previsualiza completo en pantalla. Se genera desde el resumen comercial de la derecha.</p>
           </form>
 
-          <aside class="tool-result">
-            <p class="result-kicker">Resumen</p>
+          <aside class="tool-result budget-result" aria-live="polite">
+            <p class="result-kicker">Resumen comercial</p>
             <h2 data-total-usd>USD 0</h2>
             <p class="catalog-price" data-total-ars>$ 0</p>
             <div class="budget-summary" data-budget-summary></div>
-            <div data-proposal-preview></div>
+            <div class="tool-actions budget-actions">
+              <button class="button button-dark" type="button" data-export-pdf>Descargar propuesta PDF</button>
+              <a class="button button-light" data-budget-whatsapp href="#" target="_blank" rel="noopener noreferrer">Enviar por WhatsApp</a>
+              <a class="button button-soft" data-budget-meeting href="#" target="_blank" rel="noopener noreferrer">Agendar reunion</a>
+            </div>
+            <div class="proposal-export-source" data-proposal-preview aria-hidden="true"></div>
           </aside>
         </div>
       </section>
@@ -127,6 +130,6 @@
     <script src="../vendor/html2canvas.min.js"></script>
     <script src="../vendor/jspdf.umd.min.js"></script>
     <script src="../script.js"></script>
-    <script src="../tools.js"></script>
+    <script src="../tools.js?v=master-proposal-1"></script>
   </body>
 </html>

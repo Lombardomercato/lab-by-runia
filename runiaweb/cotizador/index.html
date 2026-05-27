@@ -8,7 +8,7 @@
     <meta name="theme-color" content="#f7f4ef" />
     <link rel="icon" type="image/png" href="https://www.runia.ar/images/logo-runia-ico.png" />
     <link rel="stylesheet" href="../styles.css" />
-    <link rel="stylesheet" href="../tools.css" />
+    <link rel="stylesheet" href="../tools.css?v=commercial-flow-1" />
   </head>
   <body class="tool-page quote-page">
     <header class="header">
@@ -128,9 +128,20 @@
             <h3 class="result-subtitle">Incluye</h3>
             <ul class="tool-result-list" data-quote-list></ul>
             <div class="quote-extras" data-quote-extras></div>
+            <div class="quote-next-card">
+              <p class="tool-label">Proximo paso</p>
+              <strong>EnviÃ¡ el resultado y te respondemos con el alcance recomendado.</strong>
+              <div class="quote-next-steps">
+                <span>01 WhatsApp</span>
+                <span>02 Propuesta</span>
+                <span>03 Inicio</span>
+              </div>
+              <p data-quote-lead-status>Listo para enviar. Al tocar WhatsApp guardamos el lead y abrimos la conversaciÃ³n.</p>
+            </div>
             <div class="tool-actions">
-              <a class="button button-light" data-quote-whatsapp href="#" target="_blank" rel="noopener noreferrer">Enviar resultado por WhatsApp</a>
-              <a class="button button-soft quote-secondary" data-quote-whatsapp href="#" target="_blank" rel="noopener noreferrer">Hablar con Runia Web</a>
+              <a class="button button-light" data-quote-whatsapp data-quote-action="Enviar resultado por WhatsApp" href="#" target="_blank" rel="noopener noreferrer">Enviar resultado por WhatsApp</a>
+              <a class="button button-soft quote-secondary" data-quote-whatsapp data-quote-action="Hablar con Runia Web" href="#" target="_blank" rel="noopener noreferrer">Hablar con Runia Web</a>
+              <a class="button button-soft quote-secondary" data-quote-agenda data-quote-action="Agendar reunion" href="#" target="_blank" rel="noopener noreferrer">Agendar reunion</a>
             </div>
           </aside>
         </div>
@@ -153,6 +164,6 @@
     </footer>
 
     <script src="../script.js"></script>
-    <script src="../tools.js"></script>
+    <script src="../tools.js?v=commercial-flow-1"></script>
   </body>
 </html>

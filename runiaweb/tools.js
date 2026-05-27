@@ -1,5 +1,6 @@
 const MONEY_USD = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 });
 const MONEY_ARS = new Intl.NumberFormat("es-AR", { style: "currency", currency: "ARS", maximumFractionDigits: 0 });
+const GOOGLE_SHEETS_ENDPOINT = window.RUNIA_SHEETS_ENDPOINT || "https://script.google.com/macros/s/AKfycbxWpk3LuXbrUkfIeBnWh_4mB03Rq7OhKciFsl5bsf_iG5JTlv8q9QijpdU959e77McCSA/exec";
 
 const PACKS = {
   "48hs": {
@@ -49,6 +50,25 @@ const priceText = (price) => `desde USD ${Number(price || 0).toLocaleString("en-
 const usdLabel = (price) => `USD ${Number(price || 0).toLocaleString("en-US", { maximumFractionDigits: 0 })}`;
 const escapeHtml = (value) => String(value ?? "").replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" })[char]);
 
+const sendToGoogleSheets = async (payload, context = "Runia Web") => {
+  console.log(`Enviando ${context} a Google Sheets`);
+  console.log("payload completo", payload);
+
+  try {
+    const response = await fetch(GOOGLE_SHEETS_ENDPOINT, {
+      method: "POST",
+      mode: "no-cors",
+      keepalive: true,
+      body: JSON.stringify(payload)
+    });
+    console.log("respuesta del endpoint", response);
+    return true;
+  } catch (error) {
+    console.error(`Error enviando ${context} a Google Sheets`, error);
+    return false;
+  }
+};
+
 const recommendPack = (values, features = []) => {
   const need = values.need || "rapido";
 
@@ -93,6 +113,9 @@ const initQuote = () => {
   const resultList = document.querySelector("[data-quote-list]");
   const resultExtras = document.querySelector("[data-quote-extras]");
   const whatsappLinks = document.querySelectorAll("[data-quote-whatsapp]");
+  const agendaLinks = document.querySelectorAll("[data-quote-agenda]");
+  const leadStatus = document.querySelector("[data-quote-lead-status]");
+  let currentQuote = null;
 
   const update = () => {
     const values = getFormObject(form);
@@ -133,13 +156,70 @@ Necesito: ${values.need || "-"}
 Funcionalidades: ${featuresText.join(", ") || "-"}
 Materiales: ${assets.join(", ") || "-"}
 Extras: ${extras.map((extra) => `${extra.name} (${extra.detail})`).join(", ") || "-"}`;
+    currentQuote = {
+      values,
+      pack,
+      packKey,
+      featuresText,
+      assets,
+      extras,
+      message
+    };
     whatsappLinks.forEach((link) => {
       link.href = `https://api.whatsapp.com/send?text=${encodeURIComponent(message)}`;
+    });
+    agendaLinks.forEach((link) => {
+      const agendaMessage = `${message}
+
+Quiero agendar una llamada para avanzar.`;
+      link.href = `https://api.whatsapp.com/send?text=${encodeURIComponent(agendaMessage)}`;
+    });
+    if (leadStatus) {
+      leadStatus.textContent = "Listo para enviar. Al tocar WhatsApp guardamos el lead y abrimos la conversación.";
+    }
+  };
+
+  const saveQuoteLead = (action = "CTA") => {
+    if (!currentQuote) update();
+    if (!currentQuote) return;
+    const { values, pack, featuresText, assets, extras, message } = currentQuote;
+    if (leadStatus) leadStatus.textContent = "Guardando lead y abriendo WhatsApp...";
+    sendToGoogleSheets({
+      type: "cotizador",
+      fecha: new Date().toISOString(),
+      nombre: values.name || "",
+      empresa: values.business || "",
+      rubro: values.industry || "",
+      whatsapp: values.whatsapp || "",
+      email: values.email || "",
+      plan: pack.name,
+      precio: pack.priceLabel,
+      extras: extras.map((extra) => `${extra.name}: ${extra.detail}`).join(" | "),
+      funcionalidades: featuresText.join(", "),
+      materiales: assets.join(", "),
+      mensaje: message,
+      estado_lead: "Nuevo cotizador",
+      origen: "Cotizador Runia Web",
+      presupuesto_generado: `${pack.name} · ${pack.priceLabel}`,
+      accion_comercial: action,
+      seguimiento: "Contactar por WhatsApp y enviar propuesta si corresponde",
+      email_automatico: "pendiente",
+      confirmacion_recepcion: "pendiente"
+    }, "cotizador").then((saved) => {
+      if (leadStatus) {
+        leadStatus.textContent = saved ? "Lead guardado. Ya podés continuar por WhatsApp." : "No pudimos confirmar el guardado, pero podés continuar por WhatsApp.";
+      }
     });
   };
 
   form.addEventListener("input", update);
   form.addEventListener("change", update);
+  whatsappLinks.forEach((link) => {
+    link.addEventListener("click", () => saveQuoteLead(link.dataset.quoteAction || "WhatsApp"));
+  });
+  agendaLinks.forEach((link) => {
+    link.addEventListener("click", () => saveQuoteLead(link.dataset.quoteAction || "Agendar reunión"));
+  });
   update();
 };
 
@@ -151,7 +231,9 @@ const initBudget = () => {
   const totalArs = document.querySelector("[data-total-ars]");
   const summary = document.querySelector("[data-budget-summary]");
   const preview = document.querySelector("[data-proposal-preview]");
-  const exportButton = document.querySelector("[data-export-pdf]");
+  const exportButtons = document.querySelectorAll("[data-export-pdf]");
+  const budgetWhatsapp = document.querySelector("[data-budget-whatsapp]");
+  const budgetMeeting = document.querySelector("[data-budget-meeting]");
 
   const webTypes = {
     web48: { name: "Web 48hs", price: 450, detail: "Para empresas que necesitan salir online rápido. Incluye landing one page, diseño responsive, WhatsApp integrado, formulario simple, CTA principal, estructura comercial base y entrega express 48hs." },
@@ -209,8 +291,42 @@ const initBudget = () => {
       detail: "Fee mensual opcional. No incluido en el total inicial.",
       amount: item.displayPrice ? item.displayPrice : `${usdLabel(item.price)}/mes`
     }));
+    const scopeBulletsByType = {
+      web48: ["Landing responsive", "WhatsApp integrado", "Formulario simple", "CTA comercial", "Base optimizada para conversión", "Entrega express 48hs"],
+      comercial: ["Estructura comercial", "Secciones estratégicas", "Copy base", "WhatsApp y formularios", "Optimización mobile", "Base lista para campañas"],
+      sistema: ["Web comercial", "CRM o pipeline simple", "Automatización inicial", "Seguimiento de consultas", "Dashboards básicos", "Integración futura con Runia"]
+    };
+    const scopeBullets = scopeBulletsByType[values.webType] || scopeBulletsByType.comercial;
+    const oneTimeExtrasLabel = oneTimeExtras.map((item) => item.name).join(" · ");
+    const monthlyLabel = recurringRows.map((item) => `${item.name}: ${item.amount}`).join(" · ");
+    const highlightedScope = new Set(["Landing responsive", "WhatsApp integrado", "CTA comercial"]);
     totalUsd.textContent = MONEY_USD.format(total);
     totalArs.textContent = MONEY_ARS.format(total * rate);
+    const clientLabel = values.company || values.client || "Cliente sin empresa";
+    const budgetMessage = `Hola Runia Web. Te comparto la propuesta generada.
+Cliente: ${values.client || "-"}
+Empresa: ${values.company || "-"}
+Rubro: ${values.industry || "-"}
+Plan: ${selectedType.name}
+InversiÃ³n inicial: ${usdLabel(total)}
+Referencia ARS: ${MONEY_ARS.format(total * rate)}
+DÃ³lar tomado: ${MONEY_ARS.format(rate)} ARS
+Extras iniciales: ${oneTimeExtrasLabel || "-"}
+Mensual opcional: ${monthlyLabel || "-"}
+Validez: ${validity}
+Tiempo estimado: ${values.time || "SegÃºn alcance"}`;
+    const budgetMessageForClient = `Hola Runia Web. Te comparto la propuesta generada.
+Cliente: ${values.client || "-"}
+Empresa: ${values.company || "-"}
+Rubro: ${values.industry || "-"}
+Plan: ${selectedType.name}
+Inversion inicial: ${usdLabel(total)}
+Referencia ARS: ${MONEY_ARS.format(total * rate)}
+Dolar tomado: ${MONEY_ARS.format(rate)} ARS
+Extras iniciales: ${oneTimeExtrasLabel || "-"}
+Mensual opcional: ${monthlyLabel || "-"}
+Validez: ${validity}
+Tiempo estimado: ${values.time || "Segun alcance"}`;
     summary.innerHTML = `
       <ul class="tool-result-list">
         <li>Precio base: ${MONEY_USD.format(base)}</li>
@@ -220,118 +336,542 @@ const initBudget = () => {
         <li>Comisión partner: ${commissionPercent}% · ${MONEY_USD.format(commissionAmount)}</li>
       </ul>
     `;
+    summary.innerHTML = `
+      <div class="budget-client-card">
+        <span>Propuesta comercial</span>
+        <strong>${escapeHtml(selectedType.name)}</strong>
+        <p>${escapeHtml(clientLabel)} Â· ${escapeHtml(values.industry || "Rubro pendiente")}</p>
+      </div>
+      <div class="budget-summary-grid">
+        <div><span>Precio base</span><strong>${MONEY_USD.format(base)}</strong></div>
+        <div><span>Extras</span><strong>${MONEY_USD.format(extrasTotal)}</strong></div>
+        <div><span>Descuento</span><strong>${MONEY_USD.format(discount)}</strong></div>
+        <div><span>Mensual</span><strong>${monthlyTotal ? `${MONEY_USD.format(monthlyTotal)}/mes` : "No aplica"}</strong></div>
+      </div>
+      <div class="lead-management-strip">
+        <div><span>Estado lead</span><strong>Propuesta generada</strong></div>
+        <div><span>Origen</span><strong>Presupuestador interno</strong></div>
+        <div><span>Presupuesto</span><strong>${escapeHtml(selectedType.name)} Â· ${usdLabel(total)}</strong></div>
+      </div>
+      <p class="budget-helper">Descarga la propuesta en PDF, enviala por WhatsApp o coordina una llamada para cerrar alcance.</p>
+    `;
+    if (budgetWhatsapp) {
+      budgetWhatsapp.href = `https://api.whatsapp.com/send?text=${encodeURIComponent(budgetMessageForClient)}`;
+    }
+    if (budgetMeeting) {
+      budgetMeeting.href = `https://api.whatsapp.com/send?text=${encodeURIComponent(`${budgetMessageForClient}
+
+Quiero agendar una reunion para revisar la propuesta.`)}`;
+    }
     preview.innerHTML = `
-      <div class="proposal-preview" id="proposalDocument">
-        <header class="proposal-header proposal-hero">
+      <style data-proposal-deck-style>
+        #proposalDocument.proposal-deck {
+          width: 920px;
+          min-height: 1180px;
+          position: relative;
+          padding: 3.55rem 4.05rem;
+          color: #1b1916;
+          background: #fffdf9;
+          border: 1px solid rgba(27,25,22,0.04);
+          box-shadow: 0 30px 72px rgba(27,25,22,0.05);
+          font-family: "Instrument Sans", Inter, "Helvetica Neue", Arial, sans-serif;
+          overflow: hidden;
+        }
+        #proposalDocument.proposal-deck::before {
+          content: "";
+          position: absolute;
+          inset: 1.05rem;
+          display: none;
+          border: 0;
+          pointer-events: none;
+        }
+        #proposalDocument .deck-top {
+          display: flex;
+          justify-content: space-between;
+          align-items: flex-start;
+          gap: 2rem;
+        }
+        #proposalDocument .proposal-brand img { width: 7.55rem; filter: none; }
+        #proposalDocument .deck-meta {
+          display: grid;
+          gap: 0.5rem;
+          color: rgba(27,25,22,0.46);
+          font-family: "JetBrains Mono", monospace;
+          font-size: 0.65rem;
+          letter-spacing: 0.12em;
+          line-height: 1.35;
+          text-align: right;
+          text-transform: uppercase;
+        }
+        #proposalDocument .deck-cover {
+          position: relative;
+          display: grid;
+          grid-template-columns: minmax(0, 1fr) 275px;
+          gap: 2.75rem;
+          align-items: stretch;
+          margin-top: 3.25rem;
+          padding: 2.45rem 2.75rem;
+          background: #fffdf9;
+          border: 1px solid rgba(27,25,22,0.065);
+          border-left: 5px solid rgba(237,154,38,0.68);
+        }
+        #proposalDocument .deck-mark {
+          display: none;
+        }
+        #proposalDocument .deck-cover > :not(.deck-mark) { position: relative; z-index: 1; }
+        #proposalDocument .deck-label,
+        #proposalDocument .story-label,
+        #proposalDocument .investment-panel span,
+        #proposalDocument .commercial-value span,
+        #proposalDocument .deck-pill span,
+        #proposalDocument .deck-line span,
+        #proposalDocument .proposal-investment span {
+          color: #ed9a26;
+          display: inline-flex;
+          align-items: center;
+          gap: 0.65rem;
+          width: fit-content;
+          padding: 0;
+          background: transparent;
+          border: 0;
+          font-family: "JetBrains Mono", monospace;
+          font-size: 0.64rem;
+          letter-spacing: 0.14em;
+          line-height: 1;
+          text-transform: uppercase;
+        }
+        #proposalDocument .deck-label::before,
+        #proposalDocument .proposal-investment span::before {
+          content: "";
+          display: inline-block;
+          width: 1.65rem;
+          height: 1px;
+          background: rgba(237,154,38,0.62);
+        }
+        #proposalDocument .deck-title {
+          max-width: 535px;
+          margin-top: 1.55rem;
+          font-family: "Instrument Sans", Inter, "Helvetica Neue", Arial, sans-serif;
+          font-size: 4rem;
+          line-height: 0.93;
+          font-weight: 260;
+          letter-spacing: 0;
+        }
+        #proposalDocument .deck-title strong {
+          color: #ed9a26;
+          font-weight: 310;
+        }
+        #proposalDocument .deck-title em {
+          color: rgba(27,25,22,0.46);
+          font-size: 0.68em;
+          font-style: normal;
+          font-weight: 245;
+        }
+        #proposalDocument .deck-lead {
+          max-width: 455px;
+          margin-top: 1.8rem;
+          color: rgba(27,25,22,0.72);
+          font-size: 1.08rem;
+          line-height: 1.62;
+        }
+        #proposalDocument .proposal-client {
+          margin-top: 1.7rem;
+          color: rgba(27,25,22,0.5);
+          font-family: "JetBrains Mono", monospace;
+          font-size: 0.68rem;
+          letter-spacing: 0.12em;
+          line-height: 1.5;
+          text-transform: uppercase;
+        }
+        #proposalDocument .investment-panel {
+          display: none;
+        }
+        #proposalDocument .proposal-investment {
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          padding: 0 0 0 2rem;
+          background: transparent;
+          border: 0;
+          border-left: 1px solid rgba(27,25,22,0.09);
+        }
+        #proposalDocument .proposal-investment strong {
+          display: block;
+          margin-top: 1.35rem;
+          font-family: "Instrument Sans", Inter, "Helvetica Neue", Arial, sans-serif;
+          font-size: 4.3rem;
+          line-height: 0.86;
+          font-weight: 255;
+        }
+        #proposalDocument .proposal-investment p {
+          margin-top: 1.35rem;
+          color: rgba(27,25,22,0.5);
+          font-size: 0.76rem;
+          line-height: 1.62;
+        }
+        #proposalDocument .proposal-microline {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 0.85rem 1.35rem;
+          margin-top: 0;
+          padding: 0.95rem 2.75rem;
+          color: rgba(27,25,22,0.54);
+          background: #f6f1e8;
+          border: 1px solid rgba(27,25,22,0.055);
+          border-top: 0;
+          font-size: 0.82rem;
+          line-height: 1.4;
+        }
+        #proposalDocument .proposal-microline span::before {
+          content: "";
+          display: inline-block;
+          width: 0.28rem;
+          height: 0.28rem;
+          margin-right: 0.55rem;
+          background: #ed9a26;
+          vertical-align: 0.12rem;
+        }
+        #proposalDocument .deck-split {
+          display: grid;
+          grid-template-columns: minmax(0, 1fr) 245px;
+          gap: 3.25rem;
+          margin-top: 2rem;
+          padding: 2rem 2.35rem;
+          border: 1px solid rgba(27,25,22,0.06);
+          background: #fffdf9;
+        }
+        #proposalDocument .deck-split > div,
+        #proposalDocument .proposal-details {
+          padding: 0;
+        }
+        #proposalDocument .deck-heading {
+          max-width: 430px;
+          margin-bottom: 1.55rem;
+        }
+        #proposalDocument .deck-heading h3 {
+          margin-top: 1rem;
+          font-size: 2.35rem;
+          line-height: 0.96;
+          font-weight: 265;
+        }
+        #proposalDocument .scope-list {
+          display: grid;
+          gap: 0.82rem;
+          max-width: 520px;
+        }
+        #proposalDocument .scope-list li {
+          display: flex;
+          align-items: baseline;
+          gap: 0.7rem;
+          color: rgba(27,25,22,0.76);
+          font-size: 1.02rem;
+          line-height: 1.42;
+          list-style: none;
+        }
+        #proposalDocument .scope-list li.scope-feature {
+          color: #1b1916;
+          font-weight: 470;
+        }
+        #proposalDocument .scope-list li::before {
+          content: "";
+          flex: 0 0 0.36rem;
+          width: 0.36rem;
+          height: 0.36rem;
+          background: #ed9a26;
+        }
+        #proposalDocument .scope-list li.scope-feature::before {
+          flex-basis: 0.48rem;
+          width: 0.48rem;
+          height: 0.48rem;
+        }
+        #proposalDocument .investment-breakdown {
+          display: none;
+        }
+        #proposalDocument .proposal-details {
+          align-self: start;
+          min-height: 100%;
+          background: transparent;
+          border-left: 1px solid rgba(27,25,22,0.065);
+          padding-left: 2rem;
+        }
+        #proposalDocument .proposal-detail-list {
+          display: grid;
+          gap: 1.05rem;
+          margin-top: 1.65rem;
+        }
+        #proposalDocument .proposal-detail-list div {
+          padding-top: 0.82rem;
+          border-top: 1px solid rgba(27,25,22,0.055);
+        }
+        #proposalDocument .proposal-detail-list span {
+          display: block;
+          color: rgba(27,25,22,0.42);
+          font-family: "JetBrains Mono", monospace;
+          font-size: 0.62rem;
+          letter-spacing: 0.12em;
+          text-transform: uppercase;
+        }
+        #proposalDocument .proposal-detail-list strong {
+          display: block;
+          margin-top: 0.5rem;
+          font-size: 0.93rem;
+          line-height: 1.3;
+          font-weight: 390;
+        }
+        #proposalDocument .breakdown-note,
+        #proposalDocument .scope-note {
+          margin-top: 1rem;
+          color: rgba(27,25,22,0.5);
+          font-size: 0.76rem;
+          line-height: 1.52;
+        }
+        #proposalDocument .scope-note span,
+        #proposalDocument .breakdown-note span { color: #1b1916; }
+        #proposalDocument .deck-onboarding {
+          margin-top: 1.15rem;
+          padding: 1.75rem 2.35rem;
+          background: #f7f1e7;
+          border: 1px solid rgba(27,25,22,0.055);
+        }
+        #proposalDocument .onboarding-row {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 1.85rem;
+          margin-top: 1.55rem;
+          border-top: 0;
+        }
+        #proposalDocument .onboarding-row div {
+          min-height: 4.65rem;
+          padding: 1rem 0 0;
+          background: transparent;
+          border: 0;
+          border-top: 1px solid rgba(27,25,22,0.075);
+        }
+        #proposalDocument .onboarding-row span {
+          display: block;
+          color: #ed9a26;
+          font-family: "JetBrains Mono", monospace;
+          font-size: 0.94rem;
+          letter-spacing: 0.08em;
+        }
+        #proposalDocument .onboarding-row p {
+          margin-top: 0.95rem;
+          color: rgba(27,25,22,0.72);
+          font-size: 0.9rem;
+          line-height: 1.45;
+        }
+        #proposalDocument .proposal-terms {
+          max-width: 560px;
+          margin-top: 1.75rem;
+          color: rgba(27,25,22,0.52);
+          font-size: 0.78rem;
+          line-height: 1.58;
+        }
+        #proposalDocument .proposal-close {
+          display: flex;
+          justify-content: space-between;
+          align-items: flex-end;
+          gap: 2rem;
+          margin-top: 1.15rem;
+          padding: 1.45rem 2.35rem;
+          background: #1b1916;
+          border: 0;
+          color: #fffdf9;
+        }
+        #proposalDocument .proposal-close strong {
+          display: block;
+          max-width: 520px;
+          font-family: "Instrument Sans", Inter, "Helvetica Neue", Arial, sans-serif;
+          font-size: 2.28rem;
+          line-height: 0.98;
+          font-weight: 265;
+        }
+        #proposalDocument .proposal-close span {
+          color: #ed9a26;
+        }
+        #proposalDocument .proposal-close p {
+          color: rgba(255,253,249,0.58);
+          font-family: "JetBrains Mono", monospace;
+          font-size: 0.62rem;
+          letter-spacing: 0.12em;
+          text-transform: uppercase;
+          white-space: nowrap;
+        }
+        #proposalDocument .proposal-footer {
+          display: none;
+        }
+        #proposalDocument .proposal-footer span { color: #1b1916; font-weight: 470; }
+      </style>
+      <div class="proposal-preview proposal-deck" id="proposalDocument">
+        <div class="deck-top">
+          <a class="proposal-brand" href="../" aria-label="Runia Web"><img src="../runialogo-black.png" alt="Runia" /><span>Web</span></a>
+          <div class="deck-meta">
+            <span>${escapeHtml(values.company || values.client || "Propuesta")}</span>
+            <span>${escapeHtml(proposalDate)} · ${escapeHtml(validity)}</span>
+          </div>
+        </div>
+
+        <header class="deck-cover">
           <div>
-            <a class="proposal-brand" href="../" aria-label="Runia Web"><img src="../runialogo.png" alt="Runia" /><span>Web</span></a>
-            <p class="proposal-kicker">Propuesta comercial</p>
-            <h2>${escapeHtml(selectedType.name)}</h2>
-            <p class="proposal-lead">${escapeHtml(selectedType.detail)}</p>
+            <p class="deck-label">Propuesta comercial</p>
+            <h2 class="deck-title">Una web clara <em>para</em> <strong>vender mejor.</strong></h2>
+            <p class="deck-lead">Presencia profesional, contacto ordenado y una base lista para crecer.</p>
+            <p class="proposal-client">${escapeHtml(values.company || values.client || "Tu empresa")} · ${escapeHtml(selectedType.name)}</p>
           </div>
-          <div class="proposal-meta-card">
-            <span>Total final</span>
+          <section class="proposal-investment">
+            <span>Inversión inicial</span>
             <strong>${usdLabel(total)}</strong>
-            <p>Referencia ARS: ${MONEY_ARS.format(total * rate)}</p>
-          </div>
+            <p>Referencia ARS: ${MONEY_ARS.format(total * rate)} · Dólar tomado: ${MONEY_ARS.format(rate)} ARS.</p>
+          </section>
         </header>
 
-        <div class="proposal-info-grid">
-          <div>
-            <span>Cliente</span>
-            <strong>${escapeHtml(values.client || "-")}</strong>
-          </div>
-          <div>
-            <span>Empresa</span>
-            <strong>${escapeHtml(values.company || "-")}</strong>
-          </div>
-          <div>
-            <span>Rubro</span>
-            <strong>${escapeHtml(values.industry || "-")}</strong>
-          </div>
-          <div>
-            <span>Fecha</span>
-            <strong>${escapeHtml(proposalDate)}</strong>
-          </div>
-          <div>
-            <span>Validez</span>
-            <strong>${escapeHtml(validity)}</strong>
-          </div>
-          <div>
-            <span>Tiempo estimado</span>
-            <strong>${escapeHtml(values.time || "-")}</strong>
-          </div>
+        <div class="proposal-microline">
+          <span>Diseño responsive</span>
+          <span>Contacto directo</span>
+          <span>Base comercial lista para crecer</span>
         </div>
 
-        <div class="proposal-section">
-          <div class="proposal-section-head">
-            <span>01</span>
-            <h3>Detalle del presupuesto</h3>
-          </div>
-          <div class="proposal-table">
-            ${itemRows.map((item) => `
-              <div class="proposal-row">
-                <div>
-                  <strong>${escapeHtml(item.name)}</strong>
-                  <p>${escapeHtml(item.detail)}</p>
-                </div>
-                <span>${escapeHtml(item.amount)}</span>
-              </div>
-            `).join("")}
-          </div>
-        </div>
-
-        ${recurringRows.length ? `
-          <div class="proposal-section proposal-recurring">
-            <div class="proposal-section-head">
-              <span>02</span>
-              <h3>Servicios mensuales opcionales</h3>
+        <section class="deck-split">
+          <div>
+            <div class="deck-heading">
+              <span class="deck-label">Solución propuesta</span>
+              <h3>Alcance incluido.</h3>
             </div>
-            <div class="proposal-table">
-              ${recurringRows.map((item) => `
-                <div class="proposal-row">
-                  <div>
-                    <strong>${escapeHtml(item.name)}</strong>
-                    <p>${escapeHtml(item.detail)}</p>
-                  </div>
-                  <span>${escapeHtml(item.amount)}</span>
-                </div>
-              `).join("")}
+            <ul class="scope-list">
+              ${scopeBullets.map((item) => `<li class="${highlightedScope.has(item) || /Landing|WhatsApp|CTA|Estructura comercial|Base lista|CRM|Seguimiento|Dashboards/.test(item) ? "scope-feature" : ""}">${escapeHtml(item)}</li>`).join("")}
+            </ul>
+            ${oneTimeExtrasLabel ? `<p class="scope-note"><span>Extras incluidos:</span> ${escapeHtml(oneTimeExtrasLabel)}</p>` : ""}
+          </div>
+          <aside class="proposal-details">
+            <span class="deck-label">Datos para aprobar</span>
+            <div class="proposal-detail-list">
+              <div><span>Plan</span><strong>${escapeHtml(selectedType.name)}</strong></div>
+              <div><span>Validez</span><strong>${escapeHtml(validity)}</strong></div>
+              <div><span>Tiempo</span><strong>${escapeHtml(values.time || "Según alcance")}</strong></div>
+              ${monthlyLabel ? `<div><span>Mensual opcional</span><strong>${escapeHtml(monthlyLabel)}</strong></div>` : ""}
             </div>
-          </div>
-        ` : ""}
+          </aside>
+        </section>
 
-        <div class="proposal-section proposal-economic">
-          <div class="proposal-section-head">
-            <span>${recurringRows.length ? "03" : "02"}</span>
-            <h3>Resumen económico</h3>
-          </div>
-          <div class="proposal-summary-grid">
-            <div><span>Precio base</span><strong>${usdLabel(base)}</strong></div>
-            <div><span>Extras</span><strong>${usdLabel(extrasTotal)}</strong></div>
-            <div><span>Descuento</span><strong>${usdLabel(discount)}</strong></div>
-            <div><span>Mensual</span><strong>${monthlyTotal ? `${usdLabel(monthlyTotal)}/mes` : "No aplica"}</strong></div>
-            <div class="proposal-summary-total"><span>Total final</span><strong>${usdLabel(total)}</strong></div>
-          </div>
-        </div>
-
-        <div class="proposal-section">
-          <div class="proposal-section-head">
-            <span>${recurringRows.length ? "04" : "03"}</span>
-            <h3>Condiciones y próximos pasos</h3>
+        <section class="deck-onboarding">
+          <span class="deck-label">Cómo avanzamos</span>
+          <div class="onboarding-row">
+            <div><span>01</span><p>Confirmamos alcance</p></div>
+            <div><span>02</span><p>Reservamos producción</p></div>
+            <div><span>03</span><p>Iniciamos implementación</p></div>
           </div>
           <p class="proposal-terms">${escapeHtml(terms)}</p>
-          <div class="proposal-steps">
-            <div><span>1</span><p>Confirmar alcance y materiales disponibles.</p></div>
-            <div><span>2</span><p>Enviar seña para reservar producción.</p></div>
-            <div><span>3</span><p>Completar brief Runia Web para iniciar implementación.</p></div>
-          </div>
-        </div>
+        </section>
 
-        <footer class="proposal-footer">
-          <span>Runia Web</span>
-          <p>Webs claras, modernas y preparadas para captar mejores consultas.</p>
-        </footer>
+        <section class="proposal-close">
+          <strong>Lista para aprobar y empezar <span>producción.</span></strong>
+          <p>Runia Web</p>
+        </section>
+      </div>
+    `;
+    preview.innerHTML = `
+      <div class="proposal-master" id="proposalDocument">
+        <section class="proposal-page proposal-page-cover">
+          <div class="proposal-page-top">
+            <a class="proposal-brand" href="../" aria-label="Runia Web"><img src="../runialogo-black.png" alt="Runia" /><span>Web</span></a>
+            <span>Propuesta comercial</span>
+          </div>
+          <div class="proposal-cover-grid">
+            <div>
+              <p class="proposal-page-kicker">Runia Web</p>
+              <h2>Una web clara para <span>vender mejor.</span></h2>
+              <p class="proposal-page-lead">Presencia profesional, contacto ordenado y una base preparada para crecer.</p>
+            </div>
+            <aside class="proposal-investment-master">
+              <span>Inversion inicial</span>
+              <strong>${usdLabel(total)}</strong>
+              <p>${escapeHtml(values.company || values.client || "Tu empresa")} · ${escapeHtml(selectedType.name)}</p>
+            </aside>
+          </div>
+          <div class="proposal-page-footer">
+            <span>${escapeHtml(proposalDate)}</span>
+            <span>Validez: ${escapeHtml(validity)}</span>
+          </div>
+        </section>
+
+        <section class="proposal-page">
+          <div class="proposal-page-top">
+            <a class="proposal-brand" href="../" aria-label="Runia Web"><img src="../runialogo-black.png" alt="Runia" /><span>Web</span></a>
+            <span>02 / Alcance</span>
+          </div>
+          <div class="proposal-section-title">
+            <p>Alcance incluido</p>
+            <h2>Lo esencial para salir con una presencia clara y comercial.</h2>
+          </div>
+          <div class="proposal-bullet-grid">
+            ${scopeBullets.map((item) => `<div><span></span><strong>${escapeHtml(item)}</strong></div>`).join("")}
+          </div>
+          <div class="proposal-benefits-row">
+            <div><span>01</span><strong>Mensaje claro</strong><p>El cliente entiende rapido que ofreces y como avanzar.</p></div>
+            <div><span>02</span><strong>Contacto directo</strong><p>WhatsApp, formularios y CTA visibles para generar consultas.</p></div>
+            <div><span>03</span><strong>Base escalable</strong><p>La web queda lista para campanas, seguimiento o automatizacion.</p></div>
+          </div>
+        </section>
+
+        <section class="proposal-page">
+          <div class="proposal-page-top">
+            <a class="proposal-brand" href="../" aria-label="Runia Web"><img src="../runialogo-black.png" alt="Runia" /><span>Web</span></a>
+            <span>03 / Proceso</span>
+          </div>
+          <div class="proposal-section-title">
+            <p>Como trabajamos</p>
+            <h2>Un proceso simple para avanzar sin friccion.</h2>
+          </div>
+          <div class="proposal-timeline-master">
+            <div><span>01</span><strong>Confirmamos alcance</strong><p>Validamos plan, materiales disponibles y condiciones de inicio.</p></div>
+            <div><span>02</span><strong>Reservamos produccion</strong><p>Se agenda el trabajo y se ordena la informacion necesaria.</p></div>
+            <div><span>03</span><strong>Implementamos</strong><p>Disenamos, armamos y dejamos la web lista para revisar.</p></div>
+            <div><span>04</span><strong>Publicamos</strong><p>Ajustes finales, conexion de contacto y salida online.</p></div>
+          </div>
+        </section>
+
+        <section class="proposal-page">
+          <div class="proposal-page-top">
+            <a class="proposal-brand" href="../" aria-label="Runia Web"><img src="../runialogo-black.png" alt="Runia" /><span>Web</span></a>
+            <span>04 / Inversion</span>
+          </div>
+          <div class="proposal-section-title proposal-money-title">
+            <p>Resumen economico</p>
+            <h2>${usdLabel(total)}</h2>
+            <span>Inversion inicial</span>
+          </div>
+          <div class="proposal-money-grid">
+            <div><span>Precio base</span><strong>${MONEY_USD.format(base)}</strong></div>
+            <div><span>Extras iniciales</span><strong>${MONEY_USD.format(extrasTotal)}</strong></div>
+            <div><span>Descuento</span><strong>${MONEY_USD.format(discount)}</strong></div>
+            <div><span>Mantenimiento opcional</span><strong>${monthlyTotal ? `${MONEY_USD.format(monthlyTotal)}/mes` : "No aplica"}</strong></div>
+            <div><span>Referencia ARS</span><strong>${MONEY_ARS.format(total * rate)}</strong></div>
+            <div><span>Dolar tomado</span><strong>${MONEY_ARS.format(rate)} ARS</strong></div>
+          </div>
+          ${oneTimeExtrasLabel ? `<p class="proposal-note"><span>Extras incluidos:</span> ${escapeHtml(oneTimeExtrasLabel)}</p>` : ""}
+          ${monthlyLabel ? `<p class="proposal-note"><span>Servicio mensual opcional:</span> ${escapeHtml(monthlyLabel)}</p>` : ""}
+        </section>
+
+        <section class="proposal-page proposal-page-close">
+          <div class="proposal-page-top">
+            <a class="proposal-brand" href="../" aria-label="Runia Web"><img src="../runialogo-black.png" alt="Runia" /><span>Web</span></a>
+            <span>05 / Cierre</span>
+          </div>
+          <div class="proposal-section-title">
+            <p>Condiciones simples</p>
+            <h2>Lista para aprobar y empezar produccion.</h2>
+          </div>
+          <div class="proposal-conditions">
+            <p>${escapeHtml(terms)}</p>
+            <p>Tiempo estimado: ${escapeHtml(values.time || "Segun alcance")}.</p>
+            <p>Validez de la propuesta: ${escapeHtml(validity)}.</p>
+          </div>
+          <div class="proposal-contact-block">
+            <strong>Runia Web</strong>
+            <span>Webs claras, modernas y preparadas para captar mejores consultas.</span>
+            <p>Contacto: WhatsApp / Runia Web</p>
+          </div>
+        </section>
       </div>
     `;
   };
@@ -351,18 +891,42 @@ const initBudget = () => {
     renderBudget();
   });
 
-  exportButton?.addEventListener("click", async () => {
+  const exportProposal = async () => {
     if (!window.html2canvas || !window.jspdf) {
       window.print();
       return;
     }
     const docNode = document.getElementById("proposalDocument");
-    const canvas = await window.html2canvas(docNode, { backgroundColor: "#fffdf9", scale: 2, useCORS: true });
-    const image = canvas.toDataURL("image/png", 1);
-    const { jsPDF } = window.jspdf;
-    const pdf = new jsPDF({ unit: "px", format: [canvas.width, canvas.height] });
-    pdf.addImage(image, "PNG", 0, 0, canvas.width, canvas.height);
-    pdf.save(`Runia_Web_${(getFormObject(form).client || "Presupuesto").replace(/\s+/g, "_")}.pdf`);
+    if (!docNode) return;
+    const exportHost = document.createElement("div");
+    exportHost.className = "proposal-export-host";
+    exportHost.innerHTML = docNode.outerHTML;
+    document.body.appendChild(exportHost);
+    try {
+      const { jsPDF } = window.jspdf;
+      const pages = Array.from(exportHost.querySelectorAll(".proposal-page"));
+      let pdf = null;
+
+      for (const page of pages) {
+        const canvas = await window.html2canvas(page, { backgroundColor: "#fffdf9", scale: 2, useCORS: true });
+        const image = canvas.toDataURL("image/png", 1);
+        if (!pdf) {
+          pdf = new jsPDF({ unit: "px", format: [canvas.width, canvas.height] });
+        } else {
+          pdf.addPage([canvas.width, canvas.height], canvas.width > canvas.height ? "landscape" : "portrait");
+        }
+        pdf.addImage(image, "PNG", 0, 0, canvas.width, canvas.height);
+      }
+
+      if (!pdf) return;
+      pdf.save(`Runia_Web_${(getFormObject(form).client || "Presupuesto").replace(/\s+/g, "_")}.pdf`);
+    } finally {
+      exportHost.remove();
+    }
+  };
+
+  exportButtons.forEach((button) => {
+    button.addEventListener("click", exportProposal);
   });
 
   if (form.elements.date) form.elements.date.value = new Date().toISOString().slice(0, 10);
@@ -374,6 +938,8 @@ const initBrief = () => {
   const form = document.querySelector("[data-brief-form]");
   if (!form) return;
   const confirmation = document.querySelector("[data-brief-confirmation]");
+  const briefGrid = form.closest(".tool-grid");
+  const submitButton = form.querySelector('[type="submit"]');
   const params = new URLSearchParams(window.location.search);
 
   if (params.get("negocio") && form.querySelector('[name="business"]')) form.querySelector('[name="business"]').value = params.get("negocio");
@@ -427,7 +993,37 @@ ${features.join(", ") || "-"}`;
 
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
+    if (submitButton?.disabled) return;
+
     const summary = buildInternalSummary();
+    const values = getFormObject(form);
+    const objectives = getCheckedValues(form, "objective");
+    const brandAssets = getCheckedValues(form, "brandAssets");
+    const features = getCheckedValues(form, "features");
+    const payload = {
+      type: "brief",
+      fecha: new Date().toISOString(),
+      nombre: values.contactName || values.name || values.business || "",
+      empresa: values.business || "",
+      whatsapp: values.whatsapp || "",
+      email: values.email || "",
+      datos_completos: {
+        ...values,
+        objetivos: objectives,
+        marca_disponible: brandAssets,
+        funcionalidades: features
+      },
+      resumen: summary,
+      origen: "Brief Runia Web",
+      estado_lead: "Brief recibido",
+      presupuesto_generado: "Postventa",
+      seguimiento: "Revisar materiales e iniciar produccion",
+      email_automatico: "pendiente",
+      confirmacion_recepcion: "pendiente"
+    };
+
+    if (submitButton) submitButton.disabled = true;
+    await sendToGoogleSheets(payload, "brief");
 
     try {
       await navigator.clipboard.writeText(summary);
@@ -437,6 +1033,8 @@ ${features.join(", ") || "-"}`;
     }
 
     if (confirmation) {
+      form.hidden = true;
+      briefGrid?.classList.add("is-brief-submitted");
       confirmation.hidden = false;
       confirmation.scrollIntoView({ behavior: "smooth", block: "center" });
     }
