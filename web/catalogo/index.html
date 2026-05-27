@@ -19,11 +19,24 @@
         display: none !important;
       }
 
+      .catalog-grid {
+        column-gap: clamp(1.15rem, 1.8vw, 1.55rem) !important;
+        row-gap: clamp(2rem, 3.2vw, 3rem) !important;
+        border: 0;
+        background: transparent;
+      }
+
       .catalog-grid > .tool-card {
         display: flex;
         flex-direction: column;
         min-height: 100%;
         padding: 1.55rem;
+        border: 1px solid rgba(27, 25, 22, 0.1);
+        background: rgba(255, 253, 249, 0.72);
+      }
+
+      .catalog-grid > .tool-card[hidden] {
+        display: none !important;
       }
 
       .catalog-grid > .tool-card .catalog-list {
@@ -86,6 +99,21 @@
         line-height: 1;
         font-weight: 390;
         letter-spacing: 0;
+      }
+
+      .runia-portfolio-compact {
+        margin-bottom: -1px;
+      }
+
+      .runia-portfolio-compact + .tool-section.dark {
+        border-top: 0;
+      }
+
+      @media (max-width: 780px) {
+        .catalog-grid {
+          row-gap: 1.25rem !important;
+          column-gap: 1rem !important;
+        }
       }
     </style>
   </head>
