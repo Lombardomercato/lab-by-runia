@@ -1300,6 +1300,10 @@ const initBrief = () => {
   const adminParam = params.get("admin");
   const isAdmin = adminParam === "true";
 
+  if (!isAdmin && adminPanel) {
+    adminPanel.remove();
+  }
+
   if (params.get("negocio") && form.querySelector('[name="business"]')) form.querySelector('[name="business"]').value = params.get("negocio");
   if (params.get("whatsapp") && form.querySelector('[name="whatsapp"]')) form.querySelector('[name="whatsapp"]').value = params.get("whatsapp");
 
@@ -1322,7 +1326,7 @@ const initBrief = () => {
       "DATOS DEL NEGOCIO",
       "Nombre: " + (v.business || "-"),
       "Rubro: " + (v.industry || "-"),
-      "Ubicacion: " + (v.location || "-"),
+      "Ubicación: " + (v.location || "-"),
       "WhatsApp: " + (v.whatsapp || "-"),
       "Email: " + (v.email || "-"),
       "Instagram: " + (v.instagram || "-"),
@@ -1333,7 +1337,7 @@ const initBrief = () => {
       listText(objectives),
       "",
       "SERVICIOS / PRODUCTOS",
-      "Que ofrece la empresa: " + (v.offer || "-"),
+      "Qué ofrece la empresa: " + (v.offer || "-"),
       "Servicios principales: " + (v.services || "-"),
       "Productos principales: " + (v.products || "-"),
       "Diferencial del negocio: " + (v.differential || "-"),
@@ -1341,7 +1345,7 @@ const initBrief = () => {
       "CTA principal: " + (v.primaryCta || "-"),
       "Tono: " + (v.tone || "-"),
       "",
-      "ESTETICA",
+      "ESTÉTICA",
       "Colores actuales: " + (v.colors || "-"),
       "Marca disponible: " + listText(brandAssets),
       "Referencias visuales: " + (v.references || "-"),
@@ -1366,7 +1370,7 @@ const initBrief = () => {
     const hasBranding = hasLogo || brandAssets.includes("tiene manual de marca") || hasAnyText(v.colors);
     const hasTexts = hasAnyText(v.currentTexts, v.offer, v.services, v.products);
     const hasPhotos = hasAnyText(v.photoLinks);
-    const wantsAutomation = features.includes("automatizacion futura") || features.includes("IA futura");
+    const wantsAutomation = features.includes("automatización futura") || features.includes("IA futura");
     return [
       { text: hasLogo ? "Tiene logo" : "Falta logo", status: hasLogo ? "ok" : "missing" },
       { text: v.domain ? "Tiene dominio" : "Falta dominio", status: v.domain ? "ok" : "missing" },
@@ -1374,16 +1378,16 @@ const initBrief = () => {
       { text: v.whatsapp || features.includes("WhatsApp") ? "Tiene WhatsApp" : "Falta WhatsApp", status: v.whatsapp || features.includes("WhatsApp") ? "ok" : "missing" },
       { text: hasBranding ? "Tiene base de branding" : "Necesita definir branding", status: hasBranding ? "ok" : "warn" },
       { text: hasTexts ? "Tiene contenido base" : "Necesita copy base", status: hasTexts ? "ok" : "warn" },
-      { text: wantsAutomation ? "Necesita automatizacion futura" : "Sin automatizacion futura declarada", status: wantsAutomation ? "warn" : "ok" }
+      { text: wantsAutomation ? "Necesita automatización futura" : "Sin automatización futura declarada", status: wantsAutomation ? "warn" : "ok" }
     ];
   };
 
   const buildStructure = () => {
     const { objectives, features } = getBriefData();
     const sections = ["Hero comercial", "Servicios / propuesta", "Diferenciales", "Contacto"];
-    if (objectives.includes("mostrar productos") || features.includes("catalogo")) sections.splice(2, 0, "Catalogo / productos");
-    if (objectives.includes("vender")) sections.splice(2, 0, "Bloque de conversion");
-    if (features.includes("mapa")) sections.push("Ubicacion / mapa");
+    if (objectives.includes("mostrar productos") || features.includes("catálogo")) sections.splice(2, 0, "Catálogo / productos");
+    if (objectives.includes("vender")) sections.splice(2, 0, "Bloque de conversión");
+    if (features.includes("mapa")) sections.push("Ubicación / mapa");
     if (features.includes("agenda")) sections.push("Agenda / reserva");
     return sections;
   };
@@ -1395,24 +1399,24 @@ const initBrief = () => {
       "",
       "Mantener:",
       "",
-      "* estetica actual Runia Web,",
+      "* estética actual Runia Web,",
       "* dark premium,",
-      "* tipografias,",
+      "* tipografías,",
       "* spacing,",
       "* componentes,",
       "* estructura modular,",
-      "* navegacion,",
+      "* navegación,",
       "* hero estilo Runia.",
       "",
       "Personalizar:",
       "",
       "* copy,",
-      "* imagenes,",
+      "* imágenes,",
       "* servicios,",
       "* CTA,",
       "* branding,",
       "* colores secundarios,",
-      "* modulos necesarios,",
+      "* módulos necesarios,",
       "* WhatsApp,",
       "* formularios.",
       "",
@@ -1468,7 +1472,7 @@ const initBrief = () => {
         ["Tono", v.tone || "-"],
         ["Branding", listText(brandAssets)],
         ["Funcionalidades", listText(features)],
-        ["Assets faltantes", checklist.filter((item) => item.status === "missing").map((item) => item.text).join(", ") || "Sin faltantes criticos"]
+        ["Assets faltantes", checklist.filter((item) => item.status === "missing").map((item) => item.text).join(", ") || "Sin faltantes críticos"]
       ];
       adminSummary.innerHTML = rows.map(([label, value]) => "<div><span>" + escapeHtml(label) + "</span><strong>" + escapeHtml(value) + "</strong></div>").join("");
     }
@@ -1526,7 +1530,7 @@ const initBrief = () => {
       origen: "Brief Runia Web",
       estado_lead: "Brief recibido",
       presupuesto_generado: "Postventa",
-      seguimiento: "Revisar materiales e iniciar produccion",
+      seguimiento: "Revisar materiales e iniciar producción",
       email_automatico: "pendiente",
       confirmacion_recepcion: "pendiente"
     };

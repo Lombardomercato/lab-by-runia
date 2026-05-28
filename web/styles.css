@@ -2460,8 +2460,8 @@ h2 {
 }
 
 .runia-portfolio-carousel {
-  width: 330px;
-  height: 270px;
+  width: 384px;
+  aspect-ratio: 16 / 9;
   position: relative;
   transform-style: preserve-3d;
   animation: runia-portfolio-spin 26s linear infinite;
@@ -2540,23 +2540,23 @@ h2 {
 }
 
 .runia-portfolio-face:nth-child(1) {
-  transform: rotateY(0deg) translateZ(390px);
+  transform: rotateY(0deg) translateZ(430px);
 }
 
 .runia-portfolio-face:nth-child(2) {
-  transform: rotateY(72deg) translateZ(390px);
+  transform: rotateY(72deg) translateZ(430px);
 }
 
 .runia-portfolio-face:nth-child(3) {
-  transform: rotateY(144deg) translateZ(390px);
+  transform: rotateY(144deg) translateZ(430px);
 }
 
 .runia-portfolio-face:nth-child(4) {
-  transform: rotateY(216deg) translateZ(390px);
+  transform: rotateY(216deg) translateZ(430px);
 }
 
 .runia-portfolio-face:nth-child(5) {
-  transform: rotateY(288deg) translateZ(390px);
+  transform: rotateY(288deg) translateZ(430px);
 }
 
 @keyframes runia-portfolio-spin {
@@ -3006,28 +3006,27 @@ h2 {
   }
 
   .runia-portfolio-carousel {
-    width: min(66vw, 260px);
-    height: min(42vw, 170px);
+    width: min(72vw, 288px);
   }
 
   .runia-portfolio-face:nth-child(1) {
-    transform: rotateY(0deg) translateZ(285px);
+    transform: rotateY(0deg) translateZ(300px);
   }
 
   .runia-portfolio-face:nth-child(2) {
-    transform: rotateY(72deg) translateZ(285px);
+    transform: rotateY(72deg) translateZ(300px);
   }
 
   .runia-portfolio-face:nth-child(3) {
-    transform: rotateY(144deg) translateZ(285px);
+    transform: rotateY(144deg) translateZ(300px);
   }
 
   .runia-portfolio-face:nth-child(4) {
-    transform: rotateY(216deg) translateZ(285px);
+    transform: rotateY(216deg) translateZ(300px);
   }
 
   .runia-portfolio-face:nth-child(5) {
-    transform: rotateY(288deg) translateZ(285px);
+    transform: rotateY(288deg) translateZ(300px);
   }
 
   .runia-portfolio-face p {
@@ -3115,28 +3114,27 @@ h2 {
   }
 
   .runia-portfolio-carousel {
-    width: min(70vw, 230px);
-    height: 150px;
+    width: min(72vw, 240px);
   }
 
   .runia-portfolio-face:nth-child(1) {
-    transform: rotateY(0deg) translateZ(245px);
+    transform: rotateY(0deg) translateZ(250px);
   }
 
   .runia-portfolio-face:nth-child(2) {
-    transform: rotateY(72deg) translateZ(245px);
+    transform: rotateY(72deg) translateZ(250px);
   }
 
   .runia-portfolio-face:nth-child(3) {
-    transform: rotateY(144deg) translateZ(245px);
+    transform: rotateY(144deg) translateZ(250px);
   }
 
   .runia-portfolio-face:nth-child(4) {
-    transform: rotateY(216deg) translateZ(245px);
+    transform: rotateY(216deg) translateZ(250px);
   }
 
   .runia-portfolio-face:nth-child(5) {
-    transform: rotateY(288deg) translateZ(245px);
+    transform: rotateY(288deg) translateZ(250px);
   }
 }
 
@@ -3161,7 +3159,8 @@ h2 {
   .runia-portfolio-face,
   .runia-portfolio-face:nth-child(n) {
     position: relative;
-    min-height: 170px;
+    aspect-ratio: 16 / 9;
+    min-height: 0;
     transform: none;
   }
 }

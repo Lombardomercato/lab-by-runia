@@ -415,9 +415,6 @@ const initRuniaPortfolio = () => {
       markMissing();
     } else {
       image.addEventListener("error", markMissing, { once: true });
-      window.setTimeout(() => {
-        if (!image.naturalWidth) markMissing();
-      }, 2600);
     }
   });
 };
